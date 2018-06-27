@@ -32,7 +32,6 @@
 /* Styles for mobile menu */
 #mobile-menu {
   display: none;
-  max-height: 300px;
   -webkit-transition: all 0.5s ease-in-out;
   transition: all 0.5s ease-in-out;
 }
