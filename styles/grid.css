@@ -30,7 +30,7 @@ nav {
 .page-container {
   display: grid;
   grid-template-columns: auto;
-  grid-template-rows: 70px calc(100vh - 130px) 80px;
+  grid-template-rows: 70px calc(100vh - 150px) 80px;
   grid-template-areas: 
     "header"
     "main"
