@@ -1,0 +1,35 @@
+{
+  "name": "ref2014-dashboard",
+  "version": "1.0.0",
+  "main": "scripts/index.js",
+  "repository": "https://github.com/HebaNAS/D3js-Dashboard.git",
+  "author": "Heba El-Shimy <HebaNAS@users.noreply.github.com>",
+  "license": "MIT",
+  "description": "REF2014 Data Visualization - F21DV Coursework",
+  "scripts": {
+    "start": "parcel index.html --https",
+    "build": "parcel build index.html --out-dir docs --public-url ./docs"
+  },
+  "keywords": [
+    "Data Visualization",
+    "d3",
+    "d3.js",
+    "Data Science"
+  ],
+  "bugs": {
+    "url": "https://github.com/HebaNAS/D3js-Dashboard/issues"
+  },
+  "homepage": "https://hebanas.github.io/D3js-Dashboard/",
+  "engines": {
+    "node": "6.x"
+  },
+  "dependencies": {
+    "babel-preset-env": "^1.7.0",
+    "d3": "^5.5.0",
+    "normalize.css": "^8.0.0",
+    "purecss": "^1.0.0"
+  },
+  "devDependencies": {
+    "@fortawesome/fontawesome-free": "^5.1.0"
+  }
+}

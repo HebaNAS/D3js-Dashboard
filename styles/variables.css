@@ -1,0 +1,16 @@
+/*****************************************************************************/
+/*               Name: Data Visualization Coursework - F21DV                 */
+/*                     File Description: CSS Variables                       */
+/*                          Author: Heba El-Shimy                            */
+/*                          Email: he12@hw.ac.uk                             */
+/*                           Date: 25 June 2018                              */
+/*****************************************************************************/
+
+:root {
+  --charcoal-grey: #202B33;
+  --medium-charcoal-grey: #253139;
+  --lighter-charcoal-grey: #42505B;
+  --tinted-grey: #72848B;
+  --transparent-tinted-grey: rgba(114, 132, 139, 0.2);
+  --white: #FFFFFF;
+}

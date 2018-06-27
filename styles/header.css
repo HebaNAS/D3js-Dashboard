@@ -1,0 +1,111 @@
+/*****************************************************************************/
+/*               Name: Data Visualization Coursework - F21DV                 */
+/*                    File Description: Header Styles                        */
+/*                        Author: Heba El-Shimy                              */
+/*                        Email: he12@hw.ac.uk                               */
+/*                        Date: 25 June 2018                                 */
+/*****************************************************************************/
+
+.header--bg-light {
+  background-color: var(--medium-charcoal-grey);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 7px rgba(0, 0, 0, 0.1);
+}
+.header--height-50px {
+  height: 50px;
+}
+.header__nav-item {
+  width: 170px;
+  height: 95%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+.header__nav-item:hover {
+  border-bottom: 2px solid var(--white);
+  color: var(--white);
+}
+.header__nav-item:hover > a {
+  color: var(--white);
+}
+
+/* Styles for mobile menu */
+#mobile-menu {
+  display: none;
+  max-height: 600px;
+  -webkit-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+}
+.menu-toggle {
+  width: 34px;
+  height: 34px;
+  position: absolute;
+  top: 2.5vh;
+  right: 2.5vw;
+  display: none;
+}
+.menu-toggle .bar {
+  background-color: #777;
+  display: block;
+  width: 20px;
+  height: 2px;
+  border-radius: 100px;
+  position: absolute;
+  top: 18px;
+  right: 7px;
+  -webkit-transition: all 0.5s;
+  transition: all 0.5s;
+}
+.menu-toggle .bar:first-child {
+  -webkit-transform: translateY(-6px);
+  -moz-transform: translateY(-6px);
+  -ms-transform: translateY(-6px);
+  transform: translateY(-6px);
+}
+.menu-toggle.x .bar {
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.menu-toggle.x .bar:first-child {
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
+/*
+ * Styles for Mobile Screens
+ */
+@media (max-width: 768px) {
+  .flex#menu {
+    display: none;
+  }
+  .menu-toggle {
+    display: block;
+  }
+  #mobile-menu {
+    flex-flow: column;
+    justify-content: space-evenly;
+    position: absolute;
+    width: 100%;
+    top: 70px;
+    z-index: 10;
+    background-color: var(--lighter-charcoal-grey);
+    box-shadow: inset 0 -1px 4px rgba(0, 0, 0, 0.1);
+  }
+  #mobile-menu .mobile-menu-item {
+    margin-top: 10px;
+    padding-top: 15px;
+    height: 55px;
+    border-bottom: 1px solid var(--tinted-grey);
+  }
+  #mobile-menu .mobile-menu-item:last-of-type {
+    border-bottom: none;
+  }
+  #mobile-menu .mobile-menu-item > a {
+    color: var(--white);
+  }
+}

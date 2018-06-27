@@ -1,0 +1,45 @@
+/*****************************************************************************/
+/*               Name: Data Visualization Coursework - F21DV                 */
+/*                       File Description: Grids                             */
+/*                        Author: Heba El-Shimy                              */
+/*                        Email: he12@hw.ac.uk                               */
+/*                        Date: 26 June 2018                                 */
+/*****************************************************************************/
+
+/* Using Native CSS grids */
+
+header {
+  grid-area: header;
+}
+main {
+  grid-area: main;
+}
+footer {
+  grid-area: footer;
+}
+nav {
+  grid-area: nav;
+  justify-content: flex-end;
+  justify-items: center;
+}
+.logo {
+  grid-area: logo;
+  align-self: center;
+}
+
+.page-container {
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: 70px calc(100vh - 130px) 80px;
+  grid-template-areas: 
+    "header"
+    "main"
+    "footer";
+}
+.header-container {
+  display: grid;
+  grid-template-columns: 2vw 200px auto 36% 2vw;
+  grid-template-rows: auto;
+  grid-template-areas:
+    ". logo . nav ."
+}
