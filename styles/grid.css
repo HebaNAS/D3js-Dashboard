@@ -38,7 +38,7 @@ nav {
 }
 .header-container {
   display: grid;
-  grid-template-columns: 2vw 200px auto 36% 2vw;
+  grid-template-columns: 2vw 200px auto 50% 2vw;
   grid-template-rows: auto;
   grid-template-areas:
     ". logo . nav ."

@@ -34,7 +34,7 @@ a, a:visited, a:active, a:hover {
   text-align: center;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1096px) {
   body, html {
     padding: 0 !important;
     margin: 0 !important;
