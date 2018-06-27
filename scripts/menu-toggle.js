@@ -18,6 +18,7 @@ export default function toggleMenu(window, document) {
   function toggleMenu() {
     if (!menu.classList.contains('open')) {
       menu.style.display = 'flex';
+      menu.style.transition= 'all 0.5s ease-in-out';
       setTimeout(function() {
         menu.style.opacity = 1;
         menu.style.height = '200px';
@@ -27,6 +28,7 @@ export default function toggleMenu(window, document) {
       button.classList.add('x');
     } else {
       menu.style.display = 'none';
+      menu.style.transition= 'all 0.5s ease-in-out';
       setTimeout(function() {
         menu.style.opacity = 0;
         menu.style.height = 0;
