@@ -8,7 +8,7 @@
   "description": "REF2014 Data Visualization - F21DV Coursework",
   "scripts": {
     "start": "parcel index.html --https",
-    "build": "parcel build index.html --out-dir docs --public-url ./docs"
+    "build": "parcel build index.html --out-dir docs --public-url ./"
   },
   "keywords": [
     "Data Visualization",
