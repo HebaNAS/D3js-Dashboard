@@ -18345,7 +18345,7 @@ Object.defineProperty(exports, "event", {get: function() { return d3Selection.ev
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-							value: true
+		value: true
 });
 exports.default = loadData;
 
@@ -18356,90 +18356,90 @@ var _data2 = _interopRequireDefault(_data);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function loadData() {
-							var filteredData = [];
+		var filteredData = [];
 
-							var dataManager = new _data2.default();
-							var dataset = [];
+		var dataManager = new _data2.default();
+		var dataset = [];
 
-							dataset[0] = dataManager.loadDataset('../_data/REF2014_Results.csv') || dataManager.loadDataset('https://raw.githubusercontent.com/HebaNAS/D3js-Dashboard/master/docs/_data/REF2014_Results.csv');
-							dataset[1] = dataManager.loadDataset('../_data/learning-providers-plus.csv') || dataManager.loadDataset('https://raw.githubusercontent.com/HebaNAS/D3js-Dashboard/master/docs/_data/learning-providers-plus.csv');
+		dataset[0] = dataManager.loadDataset('https://raw.githubusercontent.com/HebaNAS/D3js-Dashboard/master/docs/_data/REF2014_Results.csv');
+		dataset[1] = dataManager.loadDataset('https://raw.githubusercontent.com/HebaNAS/D3js-Dashboard/master/docs/_data/learning-providers-plus.csv');
 
-							console.log(dataset);
+		console.log(dataset);
 
-							// function loadExtraDataset() {
-							// 	dataManager.loadDataset('../../datasets/learning-providers-plus.csv',
-							// 	function(error) {
-							// 		console.log('Error', error);
-							// 	},
-							// 	function(data) {
-							// 		dataset[1] = data;
-							// 		compareDatasets();
-							// 	});
-							// }
+		// function loadExtraDataset() {
+		// 	dataManager.loadDataset('../../datasets/learning-providers-plus.csv',
+		// 	function(error) {
+		// 		console.log('Error', error);
+		// 	},
+		// 	function(data) {
+		// 		dataset[1] = data;
+		// 		compareDatasets();
+		// 	});
+		// }
 
-							// function compareDatasets() {
-							// 	let filteredData = [];
-							// 	let firstDataset = dataset[0];
-							// 	let secondDataset = dataset[1];
+		// function compareDatasets() {
+		// 	let filteredData = [];
+		// 	let firstDataset = dataset[0];
+		// 	let secondDataset = dataset[1];
 
-							// 	for (let i=0; i<secondDataset.length; i++) {
-							// 		for (let j=0; j<firstDataset.length; j++) {
-							// 			if (firstDataset[j]['Institution code (UKPRN)'] == secondDataset[i]['UKPRN']) {
-							// 				filteredData.push(firstDataset[i]);
-							// 			}
-							// 		}   
-							// 	}
+		// 	for (let i=0; i<secondDataset.length; i++) {
+		// 		for (let j=0; j<firstDataset.length; j++) {
+		// 			if (firstDataset[j]['Institution code (UKPRN)'] == secondDataset[i]['UKPRN']) {
+		// 				filteredData.push(firstDataset[i]);
+		// 			}
+		// 		}   
+		// 	}
 
-							// 	dataset[0] = filteredData;
-							// 	joinDatasets();
-							// }
+		// 	dataset[0] = filteredData;
+		// 	joinDatasets();
+		// }
 
-							// function joinDatasets(callback) {
-							// 	let filteredData = dataset[0];
-							// 	let secondDataset = dataset[1];
-							// 	let primaryKey = 'Institution code (UKPRN)';
-							// 	let foreignKey = 'UKPRN';
+		// function joinDatasets(callback) {
+		// 	let filteredData = dataset[0];
+		// 	let secondDataset = dataset[1];
+		// 	let primaryKey = 'Institution code (UKPRN)';
+		// 	let foreignKey = 'UKPRN';
 
-							// 	let index = [];
-							// 	let cleanedData = [];
+		// 	let index = [];
+		// 	let cleanedData = [];
 
-							// 	let select = function(filteredData, secondDataset) {
-							// 		return {
-							// 			'UKPRN': filteredData['Institution code (UKPRN)'],
-							// 			'InstitutionName': filteredData['Institution name'],
-							// 			'SortOrder': filteredData['Institution sort order'],
-							// 			'MainPanel': filteredData['Main panel'],
-							// 			'UOA_Number': filteredData['Unit of assessment number'],
-							// 			'UOA_Name': filteredData['Unit of assessment name'],
-							// 			'Profile': filteredData.Profile,
-							// 			'FTEA_Submitted': filteredData['FTE Category A staff submitted'],
-							// 			'FourStar': filteredData['4*'],
-							// 			'ThreeStar': filteredData['3*'],
-							// 			'TwoStar': filteredData['2*'],
-							// 			'OneStar': filteredData['1*'],
-							// 			'Building': secondDataset.BUILDING_NAME_NUMBER,
-							// 			'Street': secondDataset.STREET_NAME,
-							// 			'Town': secondDataset.TOWN,
-							// 			'Postcode': secondDataset.POSTCODE,
-							// 			'Url': secondDataset.WEBSITE_URL,
-							// 			'Lng': secondDataset.LONGITUDE,
-							// 			'Lat': secondDataset.LATITUDE,
-							// 			'Easting': secondDataset.EASTING,
-							// 			'Northing': secondDataset.NORTHING
-							// 		};
-							// 	};
+		// 	let select = function(filteredData, secondDataset) {
+		// 		return {
+		// 			'UKPRN': filteredData['Institution code (UKPRN)'],
+		// 			'InstitutionName': filteredData['Institution name'],
+		// 			'SortOrder': filteredData['Institution sort order'],
+		// 			'MainPanel': filteredData['Main panel'],
+		// 			'UOA_Number': filteredData['Unit of assessment number'],
+		// 			'UOA_Name': filteredData['Unit of assessment name'],
+		// 			'Profile': filteredData.Profile,
+		// 			'FTEA_Submitted': filteredData['FTE Category A staff submitted'],
+		// 			'FourStar': filteredData['4*'],
+		// 			'ThreeStar': filteredData['3*'],
+		// 			'TwoStar': filteredData['2*'],
+		// 			'OneStar': filteredData['1*'],
+		// 			'Building': secondDataset.BUILDING_NAME_NUMBER,
+		// 			'Street': secondDataset.STREET_NAME,
+		// 			'Town': secondDataset.TOWN,
+		// 			'Postcode': secondDataset.POSTCODE,
+		// 			'Url': secondDataset.WEBSITE_URL,
+		// 			'Lng': secondDataset.LONGITUDE,
+		// 			'Lat': secondDataset.LATITUDE,
+		// 			'Easting': secondDataset.EASTING,
+		// 			'Northing': secondDataset.NORTHING
+		// 		};
+		// 	};
 
-							// 	for (let i = 0; i < secondDataset.length; i++) { // loop through l items
-							// 			let row = secondDataset[i];
-							// 			index[row[foreignKey]] = row; // create an index for lookup table
-							// 	}
-							// 	for (let j = 0; j < filteredData.length; j++) { // loop through m items
-							// 			let y = filteredData[j];
-							// 			let x = index[y[primaryKey]]; // get corresponding row from lookupTable
-							// 			cleanedData.push(select(y, x)); // select only the columns you need
-							// 	}
+		// 	for (let i = 0; i < secondDataset.length; i++) { // loop through l items
+		// 			let row = secondDataset[i];
+		// 			index[row[foreignKey]] = row; // create an index for lookup table
+		// 	}
+		// 	for (let j = 0; j < filteredData.length; j++) { // loop through m items
+		// 			let y = filteredData[j];
+		// 			let x = index[y[primaryKey]]; // get corresponding row from lookupTable
+		// 			cleanedData.push(select(y, x)); // select only the columns you need
+		// 	}
 
-							//   dataset = cleanedData;
+		//   dataset = cleanedData;
 }
 
 },{"../models/data":35}],34:[function(require,module,exports){

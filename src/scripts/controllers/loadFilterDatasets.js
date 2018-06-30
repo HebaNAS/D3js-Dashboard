@@ -6,11 +6,9 @@ export default function loadData() {
 	const dataManager = new DataManager();
 	let dataset = [];
 
-	dataset[0] = dataManager.loadDataset('../_data/REF2014_Results.csv') ||
-								dataManager.loadDataset
+	dataset[0] = dataManager.loadDataset
 								('https://raw.githubusercontent.com/HebaNAS/D3js-Dashboard/master/docs/_data/REF2014_Results.csv');
-	dataset[1] = dataManager.loadDataset('../_data/learning-providers-plus.csv') ||
-								dataManager.loadDataset('https://raw.githubusercontent.com/HebaNAS/D3js-Dashboard/master/docs/_data/learning-providers-plus.csv');
+	dataset[1] = dataManager.loadDataset('https://raw.githubusercontent.com/HebaNAS/D3js-Dashboard/master/docs/_data/learning-providers-plus.csv');
 
 	console.log(dataset);
 
