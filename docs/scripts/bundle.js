@@ -18361,8 +18361,8 @@ function loadData() {
 							var dataManager = new _data2.default();
 							var dataset = [];
 
-							dataset[0] = dataManager.loadDataset('../_data/REF2014_Results.csv') || dataManager.loadDataset('https://github.com/HebaNAS/D3js-Dashboard/tree/master/_data/REF2014_Results.csv');
-							dataset[1] = dataManager.loadDataset('../_data/learning-providers-plus.csv') || dataManager.loadDataset('https://github.com/HebaNAS/D3js-Dashboard/tree/master/_data/learning-providers-plus.csv');
+							dataset[0] = dataManager.loadDataset('../_data/REF2014_Results.csv') || dataManager.loadDataset('https://raw.githubusercontent.com/HebaNAS/D3js-Dashboard/master/docs/_data/REF2014_Results.csv');
+							dataset[1] = dataManager.loadDataset('../_data/learning-providers-plus.csv') || dataManager.loadDataset('https://raw.githubusercontent.com/HebaNAS/D3js-Dashboard/master/docs/_data/learning-providers-plus.csv');
 
 							console.log(dataset);
 
