@@ -18359,9 +18359,12 @@ function loadData() {
 		var filteredData = [];
 
 		var dataManager = new _data2.default();
-		//let dataset = [];
+		var dataset = [];
 
-		dataManager.loadDataset('../../datasets/REF2014_Results.csv');
+		dataset[0] = dataManager.loadDataset('../../datasets/REF2014_Results.csv');
+		dataset[1] = dataManager.loadDataset('../../datasets/learning-providers-plus.csv');
+
+		console.log(dataset);
 
 		// function loadExtraDataset() {
 		// 	dataManager.loadDataset('../../datasets/learning-providers-plus.csv',
@@ -18527,7 +18530,6 @@ var DataManager = function () {
 					d.push(data);
 				});
 				this.dataset = d;
-				console.log(this.dataset);
 			} catch (err) {
 				console.log('Error', err);
 			}

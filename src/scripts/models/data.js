@@ -31,7 +31,6 @@ export default class DataManager {
 				d.push(data);
 			});
 			this.dataset = d;
-			console.log(this.dataset);
 		}
 		catch (err) {
 			console.log('Error', err);

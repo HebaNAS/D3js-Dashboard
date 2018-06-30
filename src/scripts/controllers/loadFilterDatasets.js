@@ -4,9 +4,12 @@ export default function loadData() {
   let filteredData = [];
 
 	const dataManager = new DataManager();
-	//let dataset = [];
+	let dataset = [];
 
-	dataManager.loadDataset('../../datasets/REF2014_Results.csv');
+	dataset[0] = dataManager.loadDataset('../../datasets/REF2014_Results.csv');
+	dataset[1] = dataManager.loadDataset('../../datasets/learning-providers-plus.csv');
+
+	console.log(dataset);
 
 	// function loadExtraDataset() {
 	// 	dataManager.loadDataset('../../datasets/learning-providers-plus.csv',
