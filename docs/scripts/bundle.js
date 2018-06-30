@@ -18361,8 +18361,8 @@ function loadData() {
 		var dataManager = new _data2.default();
 		var dataset = [];
 
-		dataset[0] = dataManager.loadDataset('../../datasets/REF2014_Results.csv');
-		dataset[1] = dataManager.loadDataset('../../datasets/learning-providers-plus.csv');
+		dataset[0] = dataManager.loadDataset('../datasets/REF2014_Results.csv');
+		dataset[1] = dataManager.loadDataset('../datasets/learning-providers-plus.csv');
 
 		console.log(dataset);
 
