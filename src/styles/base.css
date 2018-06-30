@@ -1,0 +1,44 @@
+/******************************************************************************/
+/*               Name: Data Visualization Coursework - F21DV                  */
+/*                   File Description: Page Base Styles                       */
+/*                         Author: Heba El-Shimy                              */
+/*                         Email: he12@hw.ac.uk                               */
+/*                          Date: 25 June 2018                                */
+/******************************************************************************/
+
+html {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+body {
+  background-color: var(--charcoal-grey);
+  color: var(--tinted-grey);
+  -webkit-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+  -ms-transition: all 0.5s;
+  transition: all 0.5s;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+a, a:visited, a:active, a:hover {
+  text-decoration: none;
+  color: var(--tinted-grey);
+}
+.container {
+  width: 97.5%;
+  margin: 0 auto;
+}
+.flex {
+  display: flex;
+}
+.text-center {
+  text-align: center;
+}
+
+@media (max-width: 1096px) {
+  body, html {
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden!important;
+    max-height: 100% !important;
+  }
+}

@@ -1,0 +1,21 @@
+/*****************************************************************************/
+/*               Name: Data Visualization Coursework - F21DV                 */
+/*                File Description: Font File Definitions                    */
+/*           References: Google Fonts - https://fonts.google.com/            */
+/*                          Author: Heba El-Shimy                            */
+/*                          Email: he12@hw.ac.uk                             */
+/*                           Date: 25 June 2018                              */
+/*****************************************************************************/
+
+@font-face {
+  font-family: ComfortaaRegular;
+  src: url('../fonts/Comfortaa/Comfortaa-Regular.ttf');
+}
+@font-face {
+  font-family: ComfortaaLight;
+  src: url('../fonts/Comfortaa/Comfortaa-Light.ttf');
+}
+@font-face {
+  font-family: ComfortaaBold;
+  src: url('../fonts/Comfortaa/Comfortaa-Bold.ttf');
+}

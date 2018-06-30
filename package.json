@@ -7,8 +7,8 @@
   "license": "MIT",
   "description": "REF2014 Data Visualization - F21DV Coursework",
   "scripts": {
-    "start": "parcel index.html --https",
-    "build": "parcel build index.html --out-dir docs --public-url ./"
+    "start": "watchify src/scripts/index.js -o src/scripts/bundle.js -t [ babelify ]",
+    "build": "rimraf docs/ && npx babel src --out-dir docs --ignore ./src/scripts --copy-files && cp src/imgs/favicon.ico docs/favicon.ico && browserify src/scripts/index.js -o docs/scripts/bundle.js -t [ babelify ]"
   },
   "keywords": [
     "Data Visualization",
@@ -24,10 +24,13 @@
     "node": "6.x"
   },
   "dependencies": {
+    "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
+    "babelify": "^8.0.0",
     "d3": "^5.5.0",
     "normalize.css": "^8.0.0",
-    "purecss": "^1.0.0"
+    "rimraf": "^2.6.2",
+    "watchify": "^3.11.0"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.1.0"

@@ -6,7 +6,13 @@
 /*                        Date: 25 June 2018                                 */
 /*****************************************************************************/
 
-import toggleMenu from './menu-toggle';
+//import DataManager from './models/data';
+import loadData from './controllers/loadFilterDatasets';
+import toggleMenu from './views/menu-toggle';
+import * as d3 from 'd3';
+
+// Load datasets
+loadData();
 
 // Import Menu Toggle Functionality
 toggleMenu(window, document);

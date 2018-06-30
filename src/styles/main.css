@@ -1,0 +1,17 @@
+/*****************************************************************************/
+/*               Name: Data Visualization Coursework - F21DV                 */
+/*                    File Description: Main Stylesheet                      */
+/*                        Author: Heba El-Shimy                              */
+/*                        Email: he12@hw.ac.uk                               */
+/*                        Date: 25 June 2018                                 */
+/*            References: Google Fonts - https://fonts.google.com/           */
+/*                        Font Awesome - http://fontawesome.com/             */
+/*****************************************************************************/
+
+/* Import all individual styleheets */
+@import url("./variables.css");
+@import url("./fonts.css");
+@import url("./base.css");
+@import url("./grid.css");
+@import url("./header.css");
+@import url("./footer.css");

@@ -1,0 +1,18 @@
+footer {
+  line-height: 10px;
+}
+footer hr {
+  border-color: var(--transparent-tinted-grey);
+  border-width: 2px;
+}
+footer hr:before {
+  position: absolute;
+  display: block;
+  content: '';
+  border-top: 1px solid rgba(0, 0, 0, 0.5);
+  height: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
