@@ -12,8 +12,8 @@ import toggleMenu from './views/menu-toggle';
 // Instantiate a new Data Manager Class
 let dataManager = new DataManager();
 
-console.log(dataManager.loadDatasets('../_data/learning-providers-plus.csv',
-'../_data/REF2014_Results.csv'));
+console.log(dataManager.loadDatasets('https://raw.githubusercontent.com/HebaNAS/D3js-Dashboard/master/_data/REF2014_Results.csv',
+'https://raw.githubusercontent.com/HebaNAS/D3js-Dashboard/master/_data/learning-providers-plus.csv'));
 
 // Import Menu Toggle Functionality
 toggleMenu(window, document);

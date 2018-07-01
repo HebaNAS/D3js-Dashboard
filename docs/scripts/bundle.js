@@ -16223,7 +16223,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var dataManager = new _data2.default();
 
-console.log(dataManager.loadDatasets('../_data/learning-providers-plus.csv', '../_data/REF2014_Results.csv'));
+console.log(dataManager.loadDatasets('https://raw.githubusercontent.com/HebaNAS/D3js-Dashboard/master/_data/REF2014_Results.csv', 'https://raw.githubusercontent.com/HebaNAS/D3js-Dashboard/master/_data/learning-providers-plus.csv'));
 
 // Import Menu Toggle Functionality
 (0, _menuToggle2.default)(window, document);
