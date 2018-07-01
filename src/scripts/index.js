@@ -6,13 +6,14 @@
 /*                        Date: 25 June 2018                                 */
 /*****************************************************************************/
 
-//import DataManager from './models/data';
-import loadData from './controllers/loadFilterDatasets';
+import DataManager from './models/data';
 import toggleMenu from './views/menu-toggle';
-import * as d3 from 'd3';
 
-// Load datasets
-loadData();
+// Instantiate a new Data Manager Class
+let dataManager = new DataManager();
+
+console.log(dataManager.loadDatasets('../_data/learning-providers-plus.csv',
+'../_data/REF2014_Results.csv'));
 
 // Import Menu Toggle Functionality
 toggleMenu(window, document);

@@ -1,9 +1,9 @@
 /***********************************************************************************/
 /*                   Name: Data Visualization Coursework - F21DV                   */
-/*  File Description: Data Manager Module to load and extract data from csv files  */
+/*   File Description: Module to compare, filter and combine different datasets    */
 /*                              Author: Heba El-Shimy                              */
 /*                             Email: he12@hw.ac.uk                                */
-/*                              Date: 27 June 2018                                 */
+/*                              Date: 28 June 2018                                 */
 /***********************************************************************************/
 
 // Import D3js library
@@ -12,92 +12,29 @@ export default class DataManager {
 
 	constructor() {
 		this.dataset = [];
-		// Read contents as a string
-		// Define variables to hold data
-		// this.dataManagerObject = {};
-		// this.dataset = [];
-		// this.UoAFilter = null;
-		// this.ProfileFilter = 'Overall';
-		// this.FourStarFilter = null;
-		// this.InstitutionFilter = null;
-		// this.allUoas = [];
 	}
 
 	// Function to load data from csv files
-	loadDataset(path) {
+	loadDatasets() {
+
+		// Create a temporary empty array to hold loaded data
 		let d = [];
-		try {
-			d3.csv(path, function(data) {
-				d.push(data);
-			});
-			this.dataset = d;
+
+		// Create a variable to hold the queue
+		let q = d3.queue();
+
+		// Loop through the arguments array to get file paths and add them to th queue
+		for (var i = 0; i < arguments.length; i++) {
+			q.defer(d3.csv, arguments[i]);
 		}
-		catch (err) {
-			console.log('Error', err);
-		}
+
+		// Start loading data
+		this.dataset = q.awaitAll(function(error, data) {
+			if (error) throw error;
+			return data;
+		})._data;
+
 		return this.dataset;
 	}
 
-	// dataManagerObject.getAllUoAs = function(data) {
-	// 	dataset = data;
-	// 	let results = d3.nest()
-	// 		.key(function(d) { return d.UOA_Name; })
-	// 		.sortKeys(d3.ascending)
-	// 		.entries(filteredData());
-
-	// 	return results;
-	// };
-
-	// dataManagerObject.getAllUniversities = function(data) {
-	// 	dataset = data;
-		
-	// 	let results = d3.nest()
-	// 		.key(function(d) { return d.InstitutionName; })
-	// 		.sortKeys(d3.ascending)
-	// 		.entries(filteredData());
-
-	// 	return results;
-	// };
-
-	// dataManagerObject.getUniversitiesByUoA = function(data) {
-	// 	dataset = data;
-		
-	// 	let results = null;
-
-	// 	return results;
-	// };
-
-	// dataManagerObject.setUoAFilter = function(UoA) {
-	// 	if (UoAFilter == UoA) {
-	// 		UoAFilter = UoA;
-	// 	} else {
-	// 		UoAFilter = null;
-	// 	}
-	// };
-
-	// dataManagerObject.setProfileFilter = function(Profile) {
-	// 	if (ProfileFilter == Profile) {
-	// 		ProfileFilter = null;
-	// 	} else {
-	// 		ProfileFilter = Profile;
-	// 	}
-	// };
-
-	// dataManagerObject.setFourStartFilter = function(FourStar) {
-	// 	if (FourStarFilter == FourStar) {
-	// 		FourStarFilter = null;
-	// 	} else {
-	// 		FourStarFilter = FourStar;
-	// 	}
-	// };
-
-	// function filteredData() {
-	// 	return dataset.filter(function(entry) {
-	// 		return (UoAFilter === null || UoAFilter === entry.UOA_Name) &&
-	// 		(ProfileFilter === null || ProfileFilter === entry.Profile) &&
-	// 		(FourStarFilter === null || FourStarFilter === entry.FourStar);
-	// 	});
-	// }
-
-  //return dataManagerObject;
 }
