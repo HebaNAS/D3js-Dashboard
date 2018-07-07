@@ -26,6 +26,14 @@ nav {
   grid-area: logo;
   align-self: center;
 }
+.card {
+  grid-area: card;
+}
+.selector {
+  grid-area: selector;
+  align-self: center;
+  justify-self: center;
+}
 
 .page-container {
   display: grid;
@@ -42,4 +50,13 @@ nav {
   grid-template-rows: auto;
   grid-template-areas:
     ". logo . nav ."
+}
+.main-container {
+  display: grid;
+  grid-template-columns: 2vw 3fr 3fr 3fr 2vw;
+  grid-template-rows: 5vh auto 60px;
+  grid-template-areas:
+    ". . . . ."
+    ". card card card ."
+    ". . selector . ."
 }

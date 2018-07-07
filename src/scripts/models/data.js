@@ -15,6 +15,7 @@ import * as d3 from 'd3';
 
 // Import array join code snippet
 import join from '../helpers/join';
+import onlyUnique from '../helpers/getUnique';
 
 export default class DataManager {
 
@@ -87,6 +88,20 @@ export default class DataManager {
 		console.log('Data Loaded & Cleaned...');
 
 		return this.dataset;
+	}
+
+	loadAllUoAs(data) {
+		let filtered = [];
+		
+		// Loopt through the dataset to get all UoAs
+		data.forEach((entry) => {
+			filtered.push(entry.UOA_Name);
+		});
+
+		// Filter only unique values and remove duplicates
+		filtered = [...new Set(filtered)]; 
+		
+		return filtered;
 	}
 
 }

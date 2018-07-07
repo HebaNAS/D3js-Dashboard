@@ -1,6 +1,6 @@
 /*****************************************************************************/
 /*               Name: Data Visualization Coursework - F21DV                 */
-/*                  File Description: Import all modules                     */
+/*       File Description: Import all modules and start the application      */
 /*                        Author: Heba El-Shimy                              */
 /*                        Email: he12@hw.ac.uk                               */
 /*                        Date: 25 June 2018                                 */
@@ -10,6 +10,8 @@ import * as d3 from 'd3';
 
 import DataManager from './models/data';
 import toggleMenu from './views/menu-toggle';
+import createMap from './views/createMap';
+import populateSelections from './views/populateSelections';
 
 // Instantiate a new Data Manager Class
 let dataManager = new DataManager();
@@ -28,9 +30,16 @@ function startApplication() {
   .await((err, mainData, extraData) => {
     // After waiting for datasets to load, do cleaning and pass data for
     // creating the dashboard
-    dataManager.mergeDatasets(mainData, extraData);
-    //createDashboard();
+    let dataset = dataManager.mergeDatasets(mainData, extraData);
+    //console.log(uoas);
+    createDashboard(dataset);
   });
+}
+
+function createDashboard(data) {
+  let uoas = dataManager.loadAllUoAs(data);
+  populateSelections(uoas);
+  createMap();
 }
 
 startApplication();

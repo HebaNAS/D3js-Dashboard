@@ -1,0 +1,36 @@
+/*****************************************************************************/
+/*               Name: Data Visualization Coursework - F21DV                 */
+/*                   File Description: Dahsboard Styles                      */
+/*                        Author: Heba El-Shimy                              */
+/*                        Email: he12@hw.ac.uk                               */
+/*                         Date: 5 July 2018                                 */
+/*****************************************************************************/
+
+.main-container {
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.card-style {
+  border: 1px solid var(--medium-charcoal-grey);
+  border-radius: 5px;
+}
+
+.card-style:first-of-type {
+  margin: 0 1.5vw 0 0;
+}
+
+.card-style:last-of-type {
+  margin: 0 0 0 1.5vw;
+}
+#selector {
+  background: none;
+  color: var(--tinted-grey);
+  border-radius: 1px;
+  border: 1px solid var(--medium-charcoal-grey);
+  font-size: 0.8rem;
+  width: 100%;
+  text-overflow: ellipsis;
+}
+#selector:focus {
+  outline-color: var(--light-charcoal-grey);
+}
