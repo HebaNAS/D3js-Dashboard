@@ -30628,12 +30628,16 @@ var _populateSelections = require('./views/populateSelections');
 
 var _populateSelections2 = _interopRequireDefault(_populateSelections);
 
+var _hBarChart = require('./views/hBarChart');
+
+var _hBarChart2 = _interopRequireDefault(_hBarChart);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 // Instantiate a new Data Manager Class
-var dataManager = new _data2.default(); /*****************************************************************************/
+/*****************************************************************************/
 /*               Name: Data Visualization Coursework - F21DV                 */
 /*       File Description: Import all modules and start the application      */
 /*                        Author: Heba El-Shimy                              */
@@ -30641,6 +30645,13 @@ var dataManager = new _data2.default(); /***************************************
 /*                        Date: 25 June 2018                                 */
 /*****************************************************************************/
 
+// Import d3 library from node_modules
+var dataManager = new _data2.default();
+
+// Create a function where we call all other modules and start the application
+
+
+// Import this application's modules
 function startApplication() {
 
   // Get current server's url and port to pass them to d3.csv request function
@@ -30658,18 +30669,42 @@ function startApplication() {
   });
 }
 
+// Create a function to start drawing the dashboard and visualizations
 function createDashboard(data) {
+
+  console.log(data);
+  // Load all Unit of Assessment options
   var uoas = dataManager.loadAllUoAs(data);
+
+  // Populate the select box with the options
   (0, _populateSelections2.default)(uoas);
-  (0, _createMap2.default)();
+
+  var markers = dataManager.getLocationByUoA(data, 'Law', 'FourStar');
+
+  // Create the map
+  (0, _createMap2.default)(markers);
+
+  // Select DOM Element we will render the bar chart inside
+  var uoaCard = document.getElementById('uoa-card');
+
+  // Instantiate a new Horizontal Barchart Class with our desired specifications
+  // passed in as parameters
+  var hBarChart = new _hBarChart2.default(data, uoaCard, '100%', '100%');
+
+  //dataManager.getOverallScoreByUoA(data);
+
+  // Create a horizontal bar chart
+  hBarChart.appendSvg();
+  //hBarChart.render(scores);
 }
 
+// Call the function that starts all scripts
 startApplication();
 
 // Import Menu Toggle Functionality
 (0, _menuToggle2.default)(window, document);
 
-},{"./models/data":65,"./views/createMap":66,"./views/menu-toggle":67,"./views/populateSelections":68,"d3":60}],65:[function(require,module,exports){
+},{"./models/data":65,"./views/createMap":66,"./views/hBarChart":67,"./views/menu-toggle":68,"./views/populateSelections":69,"d3":60}],65:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30716,6 +30751,14 @@ var DataManager = function () {
 		key: 'mergeDatasets',
 		value: function mergeDatasets(mainData, extraData) {
 
+			var groupBy = function groupBy(xs, key) {
+				return xs.reduce(function (rv, x) {
+					(rv[x[key]] = rv[x[key]] || []).push(x);
+					return rv;
+				}, {});
+			};
+			//console.log(groupBy(mainData, 'Profile'));
+
 			// Define the schema of the final shape we need our dataset to look like after the merge
 			var select = function select(mainData, extraData) {
 				if (extraData !== undefined) {
@@ -30727,11 +30770,31 @@ var DataManager = function () {
 						'UOA_Number': mainData['Unit of assessment number'],
 						'UOA_Name': mainData['Unit of assessment name'],
 						'Profile': mainData.Profile,
+						'Overall': {
+							'FourStar': mainData.Profile === 'Overall' ? mainData['4*'] : 0,
+							'ThreeStar': mainData.Profile === 'Overall' ? mainData['3*'] : 0,
+							'TwoStar': mainData.Profile === 'Overall' ? mainData['2*'] : 0,
+							'OneStar': mainData.Profile === 'Overall' ? mainData['1*'] : 0
+						},
+						'Outputs': {
+							'FourStar': mainData.Profile === 'Outputs' ? mainData['4*'] : 0,
+							'ThreeStar': mainData.Profile === 'Outputs' ? mainData['3*'] : 0,
+							'TwoStar': mainData.Profile === 'Outputs' ? mainData['2*'] : 0,
+							'OneStar': mainData.Profile === 'Outputs' ? mainData['1*'] : 0
+						},
+						'Environment': {
+							'FourStar': mainData.Profile === 'Environment' ? mainData['4*'] : 0,
+							'ThreeStar': mainData.Profile === 'Environment' ? mainData['3*'] : 0,
+							'TwoStar': mainData.Profile === 'Environment' ? mainData['2*'] : 0,
+							'OneStar': mainData.Profile === 'Environment' ? mainData['1*'] : 0
+						},
+						'Impact': {
+							'FourStar': mainData.Profile === 'Impact' ? mainData['4*'] : 0,
+							'ThreeStar': mainData.Profile === 'Impact' ? mainData['3*'] : 0,
+							'TwoStar': mainData.Profile === 'Impact' ? mainData['2*'] : 0,
+							'OneStar': mainData.Profile === 'Impact' ? mainData['1*'] : 0
+						},
 						'FTEA_Submitted': mainData['FTE Category A staff submitted'],
-						'FourStar': mainData['4*'],
-						'ThreeStar': mainData['3*'],
-						'TwoStar': mainData['2*'],
-						'OneStar': mainData['1*'],
 						'Building': extraData.BUILDING_NAME_NUMBER,
 						'Street': extraData.STREET_NAME,
 						'Code': extraData.UKPRN,
@@ -30753,11 +30816,31 @@ var DataManager = function () {
 						'UOA_Number': mainData['Unit of assessment number'],
 						'UOA_Name': mainData['Unit of assessment name'],
 						'Profile': mainData.Profile,
+						'Overall': {
+							'FourStar': mainData.Profile === 'Overall' ? mainData['4*'] : 0,
+							'ThreeStar': mainData.Profile === 'Overall' ? mainData['3*'] : 0,
+							'TwoStar': mainData.Profile === 'Overall' ? mainData['2*'] : 0,
+							'OneStar': mainData.Profile === 'Overall' ? mainData['1*'] : 0
+						},
+						'Outputs': {
+							'FourStar': mainData.Profile === 'Outputs' ? mainData['4*'] : 0,
+							'ThreeStar': mainData.Profile === 'Outputs' ? mainData['3*'] : 0,
+							'TwoStar': mainData.Profile === 'Outputs' ? mainData['2*'] : 0,
+							'OneStar': mainData.Profile === 'Outputs' ? mainData['1*'] : 0
+						},
+						'Environment': {
+							'FourStar': mainData.Profile === 'Environment' ? mainData['4*'] : 0,
+							'ThreeStar': mainData.Profile === 'Environment' ? mainData['3*'] : 0,
+							'TwoStar': mainData.Profile === 'Environment' ? mainData['2*'] : 0,
+							'OneStar': mainData.Profile === 'Environment' ? mainData['1*'] : 0
+						},
+						'Impact': {
+							'FourStar': mainData.Profile === 'Impact' ? mainData['4*'] : 0,
+							'ThreeStar': mainData.Profile === 'Impact' ? mainData['3*'] : 0,
+							'TwoStar': mainData.Profile === 'Impact' ? mainData['2*'] : 0,
+							'OneStar': mainData.Profile === 'Impact' ? mainData['1*'] : 0
+						},
 						'FTEA_Submitted': mainData['FTE Category A staff submitted'],
-						'FourStar': mainData['4*'],
-						'ThreeStar': mainData['3*'],
-						'TwoStar': mainData['2*'],
-						'OneStar': mainData['1*'],
 						'Building': '',
 						'Street': '',
 						'Code': '',
@@ -30792,8 +30875,61 @@ var DataManager = function () {
 
 			// Filter only unique values and remove duplicates
 			filtered = [].concat((0, _toConsumableArray3.default)(new Set(filtered)));
-
+			console.log('UoA count: ', filtered.length);
 			return filtered;
+		}
+	}, {
+		key: 'getOverallScoreByUoA',
+		value: function getOverallScoreByUoA(data) {
+			var nestedData = d3.nest().key(function (d) {
+				return d.UOA_Name;
+			}).key(function (d) {
+				return d.InstitutionName;
+			}).rollup(function (values) {
+				return {
+					OneStar: d3.sum(values, function (item) {
+						return item.Overall.OneStar;
+					}),
+					TwoStar: d3.sum(values, function (item) {
+						return item.Overall.TwoStar;
+					}),
+					ThreeStar: d3.sum(values, function (item) {
+						return item.Overall.ThreeStar;
+					}),
+					FourStar: d3.sum(values, function (item) {
+						return item.Overall.FourStar;
+					})
+				};
+			}).entries(data);
+
+			//return nestedData;
+			console.log(nestedData);
+		}
+	}, {
+		key: 'getLocationByUoA',
+		value: function getLocationByUoA(data, uoa, stars) {
+			var filtered = data.filter(function (item) {
+				return item.UOA_Name === uoa;
+			});
+
+			var nestedData = d3.nest().key(function (d) {
+				return d.InstitutionName;
+			}).rollup(function (values) {
+				return {
+					Lat: d3.mean(values, function (d) {
+						return d.Lat;
+					}),
+					Lng: d3.mean(values, function (d) {
+						return d.Lng;
+					}),
+					Score: d3.max(values, function (d) {
+						return d.Overall[stars];
+					})
+				};
+			}).entries(filtered);
+
+			return nestedData;
+			//console.log(nestedData);
 		}
 	}]);
 	return DataManager;
@@ -30828,21 +30964,41 @@ var L = _interopRequireWildcard(_leaflet);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-function createMap() {
+function createMap(markers) {
   // Create the map and set geographical bounds to UK's latlng as well as set the zoom level
   var map = L.map('map', {
-    dragging: false,
     zoomControl: false
   }).setView([54.505, -3.5], 5);
 
   // Add a new tile layer with the actual map features, set the options
   L.tileLayer('https://api.mapbox.com/styles/v1/hebaelshimy/cjjb2m2ss5cj62so6remsqx4s/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaGViYWVsc2hpbXkiLCJhIjoiY2o4YjdzZWF4MGtxMDJxczB2dDA4ZXNsOSJ9.hUkmJ7j6KuQyVMZPN9Xxpg', {
     minZoom: 5,
-    maxZoom: 18,
+    maxZoom: 15,
     detectRetina: true,
     reuseTiles: true,
     unloadInvisibleTiles: true
   }).addTo(map);
+
+  var currentZoom = map.getZoom();
+
+  markers.forEach(function (marker) {
+    L.circle([marker.value.Lat, marker.value.Lng], {
+      fillOpacity: 0.5,
+      radius: (marker.value.Score + 1) * 20
+    }).addTo(map);
+  });
+
+  map.on('zoomend', function () {
+    currentZoom = map.getZoom();
+
+    map.eachLayer(function (layer) {
+      //let originalRadius = layer._mRadius - 1 / 500 ;
+      //console.log(originalRadius);
+      if (layer._mRadius !== undefined) {
+        layer.setRadius(layer._mRadius / currentZoom);
+      }
+    });
+  });
 } /*****************************************************************************/
 /*               Name: Data Visualization Coursework - F21DV                 */
 /*                     File Description: Create Map                          */
@@ -30854,6 +31010,109 @@ function createMap() {
 // Import Leaflet module for creating maps
 
 },{"leaflet":61}],67:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _d = require('d3');
+
+var d3 = _interopRequireWildcard(_d);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// Create a function to draw a horizontal barchart giving a dataset and a DOM
+// element as arguments
+var HBarChart = function () {
+
+  // Create the constructor function and define variables
+  function HBarChart(data, DOMElement, width, height) {
+    (0, _classCallCheck3.default)(this, HBarChart);
+
+    this.data = data;
+    this.DOMElement = DOMElement;
+    this.svgWidth = width;
+    this.svgHeight = height;
+    this.svg = {};
+    this.xScale = d3.scaleLinear();
+    this.yScale = d3.scaleOrdinal();
+  }
+
+  // Append svg to the selected DOM Element and set its width and height
+
+
+  (0, _createClass3.default)(HBarChart, [{
+    key: 'appendSvg',
+    value: function appendSvg() {
+
+      // Append the svg with the given options
+      d3.select(this.DOMElement).append('svg').attr('width', this.svgWidth).attr('height', this.svgHeight);
+    }
+  }, {
+    key: 'updateScales',
+    value: function updateScales(data) {
+      console.log('Updating scales...');
+
+      //console.log(this.xScale);
+      this.xScale.domain([0, d3.max(data, function (d) {
+        return d.UOA_Name;
+      })]).range([0, this.svgHeight - 20 * 2]);
+
+      this.yScale.domain(data.map(function (d) {
+        console.log(d3.sum(function () {
+          d.OneStar, d.TwoStar, d.ThreeStar, d.FourStar;
+        }));
+      }))
+      //.paddingInner(0.1)
+      .range([20, this.svgWidth - 20]);
+    }
+  }, {
+    key: 'render',
+    value: function render(data) {
+      console.log('Rendering...');
+      console.log(data);
+      // if (this.svg) {
+      //   this.svg.attr("width", this.svgWidth)
+      //           .attr("height", this.svgHeight);
+      // }
+
+      //this.updateScales(data);
+      this.svg = d3.select(this.DOMElement).selectAll('svg');
+      // GUP
+      var bars = this.svg.selectAll('rect').data(data, function (d) {
+        return d.key;
+      });
+
+      // enter 
+      bars.enter().append('rect').attr('x', 0).attr('width', 50).attr('height', 10).attr('y', 0).attr('height', 100);
+    }
+  }]);
+  return HBarChart;
+}(); /*****************************************************************************/
+/*               Name: Data Visualization Coursework - F21DV                 */
+/*       File Description: Create a horizontal bar chart given a dataset     */
+/*                        Author: Heba El-Shimy                              */
+/*                        Email: he12@hw.ac.uk                               */
+/*                         Date: 7 July 2018                                 */
+/*****************************************************************************/
+
+// Import d3 library
+
+
+exports.default = HBarChart;
+
+},{"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60}],68:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30914,7 +31173,7 @@ function toggleMenu(window, document) {
   window.addEventListener(WINDOW_CHANGE_EVENT, closeMenu);
 }
 
-},{}],68:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

@@ -24,7 +24,7 @@
 }
 #selector {
   background: none;
-  color: var(--tinted-grey);
+  color: var(--white);
   border-radius: 1px;
   border: 1px solid var(--medium-charcoal-grey);
   font-size: 0.8rem;

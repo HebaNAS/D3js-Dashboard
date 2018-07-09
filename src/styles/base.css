@@ -33,6 +33,12 @@ a, a:visited, a:active, a:hover {
 .text-center {
   text-align: center;
 }
+.font-07 {
+  font-size: 0.7rem;
+}
+.font-bold {
+  font-weight: bold;
+}
 
 @media (max-width: 1096px) {
   body, html {
