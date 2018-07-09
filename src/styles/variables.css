@@ -10,6 +10,7 @@
   --charcoal-grey: #202B33;
   --medium-charcoal-grey: #253139;
   --lighter-charcoal-grey: #42505B;
+  --transparent-lighter-charcoal-grey: rgba(66, 80, 91, 0.85);
   --tinted-grey: #72848B;
   --transparent-tinted-grey: rgba(114, 132, 139, 0.2);
   --flourescent-green: #25CD6B;

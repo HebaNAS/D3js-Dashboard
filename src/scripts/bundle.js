@@ -30979,32 +30979,56 @@ function createMap(markers) {
     unloadInvisibleTiles: true
   }).addTo(map);
 
+  // Get map's current zoom level
   var currentZoom = map.getZoom();
 
+  // Loop through given dataset and place markers on the map according to their
+  // latitude and longitude values, also define the circle marker radius based on the
+  // a given criteria (score) so locations with higher score will appear bigger
   markers.forEach(function (marker) {
-    L.circle([marker.value.Lat, marker.value.Lng], {
+    var circle = L.circle([marker.value.Lat, marker.value.Lng], {
       fillOpacity: 0.5,
-      radius: (marker.value.Score + 1) * 20
-    }).addTo(map);
+      radius: (marker.value.Score + 1) * 40
+    });
+
+    // Bind a popup to this circle marker
+    circle.bindPopup('<div>' + '<strong>' + marker.key + '</strong>' + '<br>' + '<span> 4* score: ' + marker.value.Score + '</span>' + '</div>', {
+      'maxWidth': '500',
+      'className': 'popup'
+    });
+
+    // Listen for events on the map, hover in this case to allow for
+    // a popup to appear when hovering over a location, the popup will
+    // contain some information about the location
+    circle.on('mouseover', function (e) {
+      this.openPopup();
+    });
+    circle.on('mouseout', function (e) {
+      this.closePopup();
+    });
+
+    // Add current circle marker with specified options to the map
+    circle.addTo(map);
   });
 
+  // Listen for map zoom interaction and readjust the marker's radius accordingly
+  // so markers won't get too big and fill the screen on consecutive zoom
   map.on('zoomend', function () {
     currentZoom = map.getZoom();
-
+    // Get each marker and set recalculate it's radius
+    // (each marker was added as a new layer on the map)
     map.eachLayer(function (layer) {
-      //let originalRadius = layer._mRadius - 1 / 500 ;
-      //console.log(originalRadius);
       if (layer._mRadius !== undefined) {
-        layer.setRadius(layer._mRadius / currentZoom);
+        layer.setRadius(layer._mRadius / (currentZoom * 0.25));
       }
     });
   });
 } /*****************************************************************************/
 /*               Name: Data Visualization Coursework - F21DV                 */
-/*                     File Description: Create Map                          */
+/*  File Description: Create Map and add markers latlng from provided data   */
 /*                        Author: Heba El-Shimy                              */
 /*                        Email: he12@hw.ac.uk                               */
-/*                        Date: 6 July 2018                                 */
+/*                         Date: 6 July 2018                                 */
 /*****************************************************************************/
 
 // Import Leaflet module for creating maps

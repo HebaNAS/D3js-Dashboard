@@ -3,3 +3,9 @@ path {
   stroke-width: 2;
   fill: var(--flourescent-green);
 }
+.popup .leaflet-popup-tip,
+.popup .leaflet-popup-content-wrapper {
+  text-align: center;
+  background-color: var(--transparent-lighter-charcoal-grey);
+  color: var(--white);
+}
