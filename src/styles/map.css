@@ -1,11 +1,23 @@
 path {
-  stroke: var(--flourescent-green);
-  stroke-width: 2;
+  stroke: var(--transparent-lighter-charcoal-grey);
+  stroke-width: 1;
   fill: var(--flourescent-green);
+  opacity: 0.65;
+}
+.leaflet-marker-icon, .leaflet-marker-shadow, .leaflet-image-layer, .leaflet-pane > svg path, .leaflet-tile-container {
+  pointer-events: visible;
+  cursor: pointer;
+}
+.leaflet-popup {
+  position: absolute;
 }
 .popup .leaflet-popup-tip,
 .popup .leaflet-popup-content-wrapper {
   text-align: center;
   background-color: var(--transparent-lighter-charcoal-grey);
   color: var(--white);
+}
+.leaflet-popup-content-wrapper {
+  width: 200px;
+  height: 70px;
 }

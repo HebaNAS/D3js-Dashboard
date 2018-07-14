@@ -30620,9 +30620,9 @@ var _menuToggle = require('./views/menu-toggle');
 
 var _menuToggle2 = _interopRequireDefault(_menuToggle);
 
-var _createMap = require('./views/createMap');
+var _map = require('./views/map');
 
-var _createMap2 = _interopRequireDefault(_createMap);
+var _map2 = _interopRequireDefault(_map);
 
 var _populateSelections = require('./views/populateSelections');
 
@@ -30655,7 +30655,7 @@ var dataManager = new _data2.default();
 function startApplication() {
 
   // Get current server's url and port to pass them to d3.csv request function
-  var hostUrl = location.href.substring(0, location.href.lastIndexOf("/") + 1);
+  //let hostUrl = location.href.substring(0, location.href.lastIndexOf("/") + 1);
 
   // Start loading our datasets in parallel using D3-queue,
   // then create a callback for the function responsible
@@ -30664,7 +30664,7 @@ function startApplication() {
     // After waiting for datasets to load, do cleaning and pass data for
     // creating the dashboard
     var dataset = dataManager.mergeDatasets(mainData, extraData);
-    //console.log(uoas);
+
     createDashboard(dataset);
   });
 }
@@ -30672,17 +30672,41 @@ function startApplication() {
 // Create a function to start drawing the dashboard and visualizations
 function createDashboard(data) {
 
-  console.log(data);
+  /*
+   * Loading all Units os Assessment and use this for populating
+   * select box which will control the whole layout and all the visualizations
+   * on this page
+   */
   // Load all Unit of Assessment options
   var uoas = dataManager.loadAllUoAs(data);
 
   // Populate the select box with the options
   (0, _populateSelections2.default)(uoas);
 
-  var markers = dataManager.getLocationByUoA(data, 'Law', 'FourStar');
+  // Get the current selection from the select box
+  var selectBox = document.getElementById('selector');
+  var selectedUoa = 'Allied Health Professions, Dentistry, Nursing and Pharmacy';
+
+  /*
+    * Creating the first visualization, which is a map of the UK,
+    * with all the locations of the universities in a selected field (Unit
+    * of Assessment) which is passed on as an argument from the selectbox
+    */
+  var mapMarkers = dataManager.getLocationByUoA(data, selectedUoa, 'FourStar');
 
   // Create the map
-  (0, _createMap2.default)(markers);
+  var map = new _map2.default(mapMarkers);
+  map.createMap();
+  map.render();
+
+  // Listen for changes on the selectbox and get the selected value
+  selectBox.addEventListener('change', function (event) {
+    selectedUoa = selectBox.options[selectBox.selectedIndex].value;
+    console.log(selectedUoa);
+
+    // Reload the map with the new dataset
+    map.reload(dataManager.getLocationByUoA(data, selectedUoa, 'FourStar'));
+  });
 
   // Select DOM Element we will render the bar chart inside
   var uoaCard = document.getElementById('uoa-card');
@@ -30704,7 +30728,7 @@ startApplication();
 // Import Menu Toggle Functionality
 (0, _menuToggle2.default)(window, document);
 
-},{"./models/data":65,"./views/createMap":66,"./views/hBarChart":67,"./views/menu-toggle":68,"./views/populateSelections":69,"d3":60}],65:[function(require,module,exports){
+},{"./models/data":65,"./views/hBarChart":66,"./views/map":67,"./views/menu-toggle":68,"./views/populateSelections":69,"d3":60}],65:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30741,23 +30765,23 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 // Import array join code snippet
 var DataManager = function () {
+
+	// Create a constructor function with variables to work with
 	function DataManager() {
 		(0, _classCallCheck3.default)(this, DataManager);
 
 		this.dataset = [];
 	}
 
+	/*
+  * Function to merge two datasets and return an object with only
+  * specific fields
+  */
+
+
 	(0, _createClass3.default)(DataManager, [{
 		key: 'mergeDatasets',
 		value: function mergeDatasets(mainData, extraData) {
-
-			var groupBy = function groupBy(xs, key) {
-				return xs.reduce(function (rv, x) {
-					(rv[x[key]] = rv[x[key]] || []).push(x);
-					return rv;
-				}, {});
-			};
-			//console.log(groupBy(mainData, 'Profile'));
 
 			// Define the schema of the final shape we need our dataset to look like after the merge
 			var select = function select(mainData, extraData) {
@@ -30774,25 +30798,29 @@ var DataManager = function () {
 							'FourStar': mainData.Profile === 'Overall' ? mainData['4*'] : 0,
 							'ThreeStar': mainData.Profile === 'Overall' ? mainData['3*'] : 0,
 							'TwoStar': mainData.Profile === 'Overall' ? mainData['2*'] : 0,
-							'OneStar': mainData.Profile === 'Overall' ? mainData['1*'] : 0
+							'OneStar': mainData.Profile === 'Overall' ? mainData['1*'] : 0,
+							'Unclassified': mainData.Profile === 'Overall' ? mainData.unclassified : 0
 						},
 						'Outputs': {
 							'FourStar': mainData.Profile === 'Outputs' ? mainData['4*'] : 0,
 							'ThreeStar': mainData.Profile === 'Outputs' ? mainData['3*'] : 0,
 							'TwoStar': mainData.Profile === 'Outputs' ? mainData['2*'] : 0,
-							'OneStar': mainData.Profile === 'Outputs' ? mainData['1*'] : 0
+							'OneStar': mainData.Profile === 'Outputs' ? mainData['1*'] : 0,
+							'Unclassified': mainData.Profile === 'Outputs' ? mainData.unclassified : 0
 						},
 						'Environment': {
 							'FourStar': mainData.Profile === 'Environment' ? mainData['4*'] : 0,
 							'ThreeStar': mainData.Profile === 'Environment' ? mainData['3*'] : 0,
 							'TwoStar': mainData.Profile === 'Environment' ? mainData['2*'] : 0,
-							'OneStar': mainData.Profile === 'Environment' ? mainData['1*'] : 0
+							'OneStar': mainData.Profile === 'Environment' ? mainData['1*'] : 0,
+							'Unclassified': mainData.Profile === 'Environment' ? mainData.unclassified : 0
 						},
 						'Impact': {
 							'FourStar': mainData.Profile === 'Impact' ? mainData['4*'] : 0,
 							'ThreeStar': mainData.Profile === 'Impact' ? mainData['3*'] : 0,
 							'TwoStar': mainData.Profile === 'Impact' ? mainData['2*'] : 0,
-							'OneStar': mainData.Profile === 'Impact' ? mainData['1*'] : 0
+							'OneStar': mainData.Profile === 'Impact' ? mainData['1*'] : 0,
+							'Unclassified': mainData.Profile === 'Impact' ? mainData.unclassified : 0
 						},
 						'FTEA_Submitted': mainData['FTE Category A staff submitted'],
 						'Building': extraData.BUILDING_NAME_NUMBER,
@@ -30820,25 +30848,29 @@ var DataManager = function () {
 							'FourStar': mainData.Profile === 'Overall' ? mainData['4*'] : 0,
 							'ThreeStar': mainData.Profile === 'Overall' ? mainData['3*'] : 0,
 							'TwoStar': mainData.Profile === 'Overall' ? mainData['2*'] : 0,
-							'OneStar': mainData.Profile === 'Overall' ? mainData['1*'] : 0
+							'OneStar': mainData.Profile === 'Overall' ? mainData['1*'] : 0,
+							'Unclassified': mainData.Profile === 'Overall' ? mainData.unclassified : 0
 						},
 						'Outputs': {
 							'FourStar': mainData.Profile === 'Outputs' ? mainData['4*'] : 0,
 							'ThreeStar': mainData.Profile === 'Outputs' ? mainData['3*'] : 0,
 							'TwoStar': mainData.Profile === 'Outputs' ? mainData['2*'] : 0,
-							'OneStar': mainData.Profile === 'Outputs' ? mainData['1*'] : 0
+							'OneStar': mainData.Profile === 'Outputs' ? mainData['1*'] : 0,
+							'Unclassified': mainData.Profile === 'Outputs' ? mainData.unclassified : 0
 						},
 						'Environment': {
 							'FourStar': mainData.Profile === 'Environment' ? mainData['4*'] : 0,
 							'ThreeStar': mainData.Profile === 'Environment' ? mainData['3*'] : 0,
 							'TwoStar': mainData.Profile === 'Environment' ? mainData['2*'] : 0,
-							'OneStar': mainData.Profile === 'Environment' ? mainData['1*'] : 0
+							'OneStar': mainData.Profile === 'Environment' ? mainData['1*'] : 0,
+							'Unclassified': mainData.Profile === 'Environment' ? mainData.unclassified : 0
 						},
 						'Impact': {
 							'FourStar': mainData.Profile === 'Impact' ? mainData['4*'] : 0,
 							'ThreeStar': mainData.Profile === 'Impact' ? mainData['3*'] : 0,
 							'TwoStar': mainData.Profile === 'Impact' ? mainData['2*'] : 0,
-							'OneStar': mainData.Profile === 'Impact' ? mainData['1*'] : 0
+							'OneStar': mainData.Profile === 'Impact' ? mainData['1*'] : 0,
+							'Unclassified': mainData.Profile === 'Impact' ? mainData.unclassified : 0
 						},
 						'FTEA_Submitted': mainData['FTE Category A staff submitted'],
 						'Building': '',
@@ -30863,9 +30895,16 @@ var DataManager = function () {
 
 			return this.dataset;
 		}
+
+		/*
+   * Function to extract all Units of assessment from a given dataset
+   */
+
 	}, {
 		key: 'loadAllUoAs',
 		value: function loadAllUoAs(data) {
+
+			// Create a variable to hold the filtered data which will only contain the uoa
 			var filtered = [];
 
 			// Loopt through the dataset to get all UoAs
@@ -30876,16 +30915,34 @@ var DataManager = function () {
 			// Filter only unique values and remove duplicates
 			filtered = [].concat((0, _toConsumableArray3.default)(new Set(filtered)));
 			console.log('UoA count: ', filtered.length);
+
 			return filtered;
 		}
+
+		/*
+   * Function to extract all Universities and their scores given a specific
+   * unit of assessment
+   */
+
 	}, {
 		key: 'getOverallScoreByUoA',
 		value: function getOverallScoreByUoA(data) {
-			var nestedData = d3.nest().key(function (d) {
+
+			// Create a variable to hold the data and use d3 nest method to extract the data
+			// and return it in the form of key, value pairs
+			var nestedData = d3.nest()
+			// Define our key as the Unit of Assessment name
+			.key(function (d) {
 				return d.UOA_Name;
-			}).key(function (d) {
+			})
+			// Define another key, University Name to be, nested as a second level
+			.key(function (d) {
 				return d.InstitutionName;
-			}).rollup(function (values) {
+			})
+			// Calculate the results of the previous extraction operations and return
+			// data as an object of the five tiers of scores available in the dataset (4* - unclassified)
+			// using d3 sum to loop over extracted array of values and doing a summation operation
+			.rollup(function (values) {
 				return {
 					OneStar: d3.sum(values, function (item) {
 						return item.Overall.OneStar;
@@ -30898,6 +30955,9 @@ var DataManager = function () {
 					}),
 					FourStar: d3.sum(values, function (item) {
 						return item.Overall.FourStar;
+					}),
+					Unclassified: d3.sum(values, function (item) {
+						return item.Overall.Unclassified;
 					})
 				};
 			}).entries(data);
@@ -30905,16 +30965,33 @@ var DataManager = function () {
 			//return nestedData;
 			console.log(nestedData);
 		}
+
+		/*
+   * Function to get locations of institutions given a specific Unit of Assessment
+   * and selecting a tier of score
+   */
+
 	}, {
 		key: 'getLocationByUoA',
 		value: function getLocationByUoA(data, uoa, stars) {
+
+			// Create a variable to hold filtered data which will contain only universities
+			// that provide research in the selected area (Unit of Assessment)
 			var filtered = data.filter(function (item) {
 				return item.UOA_Name === uoa;
 			});
 
-			var nestedData = d3.nest().key(function (d) {
+			// Create a variable to hold the array return from the extraction operation,
+			// using d3 nest to reshape our data into key, value pairs and return only
+			// the university (institution) name, Location coordinates (Lat, Lng) and 
+			// score fields
+			var nestedData = d3.nest()
+			// Set our key to the university name
+			.key(function (d) {
 				return d.InstitutionName;
-			}).rollup(function (values) {
+			})
+			// Perform a calculation on the returned values
+			.rollup(function (values) {
 				return {
 					Lat: d3.mean(values, function (d) {
 						return d.Lat;
@@ -30929,20 +31006,19 @@ var DataManager = function () {
 			}).entries(filtered);
 
 			return nestedData;
-			//console.log(nestedData);
 		}
 	}]);
 	return DataManager;
 }(); /***********************************************************************************/
 /*                   Name: Data Visualization Coursework - F21DV                   */
-/*   File Description: Module to compare, filter and combine different datasets    */
+/*  File Description: Class to manage all functionality for extracting needed data */
 /*                              Author: Heba El-Shimy                              */
 /*                             Email: he12@hw.ac.uk                                */
 /*                              Date: 28 June 2018                                 */
 /*              References: LearnJSData.com - Combining Data                       */
 /*                     http://learnjsdata.com/combine_data.html                    */
-/*                         Student contribution: 70%                               */
-/*                          External Resources: 30%                                */
+/*                         Student contribution: 90%                               */
+/*                          External Resources: 10%                                */
 /***********************************************************************************/
 
 // Import D3js library
@@ -30951,89 +31027,6 @@ var DataManager = function () {
 exports.default = DataManager;
 
 },{"../helpers/getUnique":62,"../helpers/join":63,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"babel-runtime/helpers/toConsumableArray":5,"d3":60}],66:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = createMap;
-
-var _leaflet = require('leaflet');
-
-var L = _interopRequireWildcard(_leaflet);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function createMap(markers) {
-  // Create the map and set geographical bounds to UK's latlng as well as set the zoom level
-  var map = L.map('map', {
-    zoomControl: false
-  }).setView([54.505, -3.5], 5);
-
-  // Add a new tile layer with the actual map features, set the options
-  L.tileLayer('https://api.mapbox.com/styles/v1/hebaelshimy/cjjb2m2ss5cj62so6remsqx4s/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaGViYWVsc2hpbXkiLCJhIjoiY2o4YjdzZWF4MGtxMDJxczB2dDA4ZXNsOSJ9.hUkmJ7j6KuQyVMZPN9Xxpg', {
-    minZoom: 5,
-    maxZoom: 15,
-    detectRetina: true,
-    reuseTiles: true,
-    unloadInvisibleTiles: true
-  }).addTo(map);
-
-  // Get map's current zoom level
-  var currentZoom = map.getZoom();
-
-  // Loop through given dataset and place markers on the map according to their
-  // latitude and longitude values, also define the circle marker radius based on the
-  // a given criteria (score) so locations with higher score will appear bigger
-  markers.forEach(function (marker) {
-    var circle = L.circle([marker.value.Lat, marker.value.Lng], {
-      fillOpacity: 0.5,
-      radius: (marker.value.Score + 1) * 40
-    });
-
-    // Bind a popup to this circle marker
-    circle.bindPopup('<div>' + '<strong>' + marker.key + '</strong>' + '<br>' + '<span> 4* score: ' + marker.value.Score + '</span>' + '</div>', {
-      'maxWidth': '500',
-      'className': 'popup'
-    });
-
-    // Listen for events on the map, hover in this case to allow for
-    // a popup to appear when hovering over a location, the popup will
-    // contain some information about the location
-    circle.on('mouseover', function (e) {
-      this.openPopup();
-    });
-    circle.on('mouseout', function (e) {
-      this.closePopup();
-    });
-
-    // Add current circle marker with specified options to the map
-    circle.addTo(map);
-  });
-
-  // Listen for map zoom interaction and readjust the marker's radius accordingly
-  // so markers won't get too big and fill the screen on consecutive zoom
-  map.on('zoomend', function () {
-    currentZoom = map.getZoom();
-    // Get each marker and set recalculate it's radius
-    // (each marker was added as a new layer on the map)
-    map.eachLayer(function (layer) {
-      if (layer._mRadius !== undefined) {
-        layer.setRadius(layer._mRadius / (currentZoom * 0.25));
-      }
-    });
-  });
-} /*****************************************************************************/
-/*               Name: Data Visualization Coursework - F21DV                 */
-/*  File Description: Create Map and add markers latlng from provided data   */
-/*                        Author: Heba El-Shimy                              */
-/*                        Email: he12@hw.ac.uk                               */
-/*                         Date: 6 July 2018                                 */
-/*****************************************************************************/
-
-// Import Leaflet module for creating maps
-
-},{"leaflet":61}],67:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31136,7 +31129,220 @@ var HBarChart = function () {
 
 exports.default = HBarChart;
 
-},{"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60}],68:[function(require,module,exports){
+},{"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60}],67:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _d = require('d3');
+
+var d3 = _interopRequireWildcard(_d);
+
+var _leaflet = require('leaflet');
+
+var L = _interopRequireWildcard(_leaflet);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/*****************************************************************************/
+/*               Name: Data Visualization Coursework - F21DV                 */
+/*  File Description: Create Map and add markers latlng from provided data   */
+/*                        Author: Heba El-Shimy                              */
+/*                        Email: he12@hw.ac.uk                               */
+/*                         Date: 6 July 2018                                 */
+/*****************************************************************************/
+
+// Import D3js library
+var Map = function () {
+
+  // Create the constructor function
+  function Map(mapData) {
+    (0, _classCallCheck3.default)(this, Map);
+
+    this.mapData = mapData;
+    this.map = {};
+  }
+
+  /*
+   * Function that draws a map inside the specified element in the DOM
+   * and takes in data and uses that to draw markers for locations on the map
+   */
+
+
+  (0, _createClass3.default)(Map, [{
+    key: 'createMap',
+    value: function createMap() {
+      // Create the map and set geographical bounds to UK's latlng as well as set the zoom level
+      this.map = L.map('map', {
+        zoomControl: false,
+        watch: true
+      }).setView([54.505, -3.5], 5);
+
+      // Add a new tile layer with the actual map features, set the options
+      L.tileLayer('https://api.mapbox.com/styles/v1/hebaelshimy/cjjb2m2ss5cj62so6remsqx4s/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaGViYWVsc2hpbXkiLCJhIjoiY2o4YjdzZWF4MGtxMDJxczB2dDA4ZXNsOSJ9.hUkmJ7j6KuQyVMZPN9Xxpg', {
+        minZoom: 5,
+        maxZoom: 15,
+        detectRetina: true,
+        reuseTiles: true,
+        unloadInvisibleTiles: true
+      }).addTo(this.map);
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this = this;
+
+      /*
+       * Canvas cleanup and data massaging
+       */
+      // Reformat our data into a form that could be understood by
+      // d3's geoPath method
+      this.mapData.forEach(function (d) {
+        if (d.type === undefined) {
+          d.type = 'Feature';
+          d.geometry = {};
+          d.properties = {};
+          d.properties.cartisan = {};
+          d.properties.name = d.key;
+          d.properties.score = d.value.Score;
+          d.properties.cartisan.x = _this.map.latLngToLayerPoint(new L.LatLng(d.value.Lat, d.value.Lng)).x;
+          d.properties.cartisan.y = _this.map.latLngToLayerPoint(new L.LatLng(d.value.Lat, d.value.Lng)).y;
+          d.geometry.type = 'Point';
+          d.geometry.coordinates = [d.value.Lat, d.value.Lng];
+          delete d.key;
+          delete d.value;
+        }
+      });
+
+      // Clear marker points from the map
+      d3.select('#map .leaflet-overlay-pane').html(null);
+
+      /*------------------------------------------------------*/
+
+      /*
+       * Variables
+       */
+
+      // Get parent element (map conatiner)
+      var svgDOM = document.getElementById('map');
+
+      // Append svg to the leaflet map and specify width and height as the same
+      // for the parent DOM element, then append a group to hold all markers
+      var svg = d3.select(this.map.getPanes().markerPane).append('svg').attr('width', svgDOM.offsetWidth).attr('height', svgDOM.offsetHeight);
+      var g = svg.append('g');
+
+      // Create a projection to transform points locations from latitude and longitude
+      // to x and y coordinates to represent on the screen
+      var map = this.map,
+          transform = d3.geoTransform({ point: projectPoint }),
+          path = d3.geoPath().projection(transform);
+
+      var markers = g.selectAll('path');
+
+      /*------------------------------------------------------*/
+
+      /*
+       * General Update Pattern (GUP)
+       */
+      // Exit
+      markers.exit().transition().duration(250).remove();
+
+      // Create markers to represent locations of data points, bind the data,
+      // enter the general update pattern
+      markers.data(this.mapData).enter().append('path').attr('d', path.pointRadius(function (d) {
+        return parseInt(d.properties.score / 5 + 1);
+      })).attr('pointer-events', 'visible').classed('leaflet-marker-icon', true).classed('leaflet-zoom-animated', true).classed('leaflet-clickable', true).on('mouseover', handleMouseOver).on('mouseout', handleMouseOut);
+
+      // Update
+      markers.transition().duration(250).attr('d', path);
+
+      // Listen for map movements and zoom and trigger the update function
+      this.map.on('moveend', update);
+      update();
+
+      /*------------------------------------------------------*/
+
+      /*
+       * Private helper functions
+       */
+      // Create a custom geometric transformation to adapt the different
+      // geometries of Leaflet and D3js
+      function projectPoint(x, y) {
+        var point = map.latLngToLayerPoint(new L.LatLng(x, y));
+        this.stream.point(point.x, point.y);
+      }
+
+      // Redraw and scale points according to map movement and zoom
+      function update() {
+        console.log('Map moved, Redrawing markers');
+
+        // Using the GUP
+        g.selectAll('path').exit().transition().duration(100).remove();
+
+        g.selectAll('path').transition().duration(250).attr('d', path);
+      }
+
+      // Handle mouse over interactions
+      function handleMouseOver(d, i) {
+        d3.select(this).style('opacity', 0.85);
+
+        var self = this;
+        var data = d;
+        var popup = d3.select(map.getPanes().popupPane).append('div').classed('leaflet-popup', true).style('top', d3.mouse(self)[1] - 90 + 'px').style('left', d3.mouse(self)[0] - 110 + 'px');
+        popup.classed('popup', true);
+        popup.append('a').classed('leaflet-popup-close-button', true).attr('href', '#close').text('x');
+
+        var tip = popup.append('div').classed('leaflet-popup-tip-container', true).style('top', 71 + 'px');
+        tip.append('div').classed('leaflet-popup-tip', true);
+
+        var wrapper = popup.append('div').classed('leaflet-popup-content-wrapper', true);
+        wrapper.append('div').classed('leaflet-popup-content', true).html('<strong>' + data.properties.name + '</strong><br>' + '<span>4* Score: ' + data.properties.score + '</span>');
+      }
+
+      // Handle mouse out interactions
+      function handleMouseOut(d, i) {
+        d3.select(this).style('opacity', 0.65);
+        d3.select(map.getPanes().popupPane).html(null);
+      }
+
+      /*------------------------------------------------------*/
+
+      return this.map;
+    }
+
+    /*
+     * Function to reload the map with new dataset
+     */
+
+  }, {
+    key: 'reload',
+    value: function reload(newData) {
+      this.mapData = newData;
+      console.log('New Dataset: ', this.mapData);
+      console.log('Reloading the map using a new dataset');
+      this.render();
+    }
+  }]);
+  return Map;
+}();
+// Import Leaflet module for creating maps
+
+
+exports.default = Map;
+
+},{"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60,"leaflet":61}],68:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

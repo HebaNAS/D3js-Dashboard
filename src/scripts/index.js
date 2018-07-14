@@ -12,7 +12,7 @@ import * as d3 from 'd3';
 // Import this application's modules
 import DataManager from './models/data';
 import toggleMenu from './views/menu-toggle';
-import createMap from './views/createMap';
+import Map from './views/map';
 import populateSelections from './views/populateSelections';
 import HBarChart from './views/hBarChart';
 
@@ -23,8 +23,8 @@ const dataManager = new DataManager();
 function startApplication() {
 
   // Get current server's url and port to pass them to d3.csv request function
-  let hostUrl = location.href.substring(0, location.href.lastIndexOf("/") + 1);
-    
+  //let hostUrl = location.href.substring(0, location.href.lastIndexOf("/") + 1);
+
   // Start loading our datasets in parallel using D3-queue,
   // then create a callback for the function responsible
   // for building the dashboard
@@ -35,7 +35,7 @@ function startApplication() {
     // After waiting for datasets to load, do cleaning and pass data for
     // creating the dashboard
     let dataset = dataManager.mergeDatasets(mainData, extraData);
-    //console.log(uoas);
+    
     createDashboard(dataset);
   });
 }
@@ -43,17 +43,41 @@ function startApplication() {
 // Create a function to start drawing the dashboard and visualizations
 function createDashboard(data) {
   
-  console.log(data);
+  /*
+   * Loading all Units os Assessment and use this for populating
+   * select box which will control the whole layout and all the visualizations
+   * on this page
+   */
   // Load all Unit of Assessment options
   let uoas = dataManager.loadAllUoAs(data);
 
   // Populate the select box with the options
   populateSelections(uoas);
 
-  let markers = dataManager.getLocationByUoA(data, 'Law', 'FourStar');
-  
-  // Create the map
-  createMap(markers);
+  // Get the current selection from the select box
+  let selectBox = document.getElementById('selector');
+  let selectedUoa = 'Allied Health Professions, Dentistry, Nursing and Pharmacy';
+
+  /*
+    * Creating the first visualization, which is a map of the UK,
+    * with all the locations of the universities in a selected field (Unit
+    * of Assessment) which is passed on as an argument from the selectbox
+    */ 
+   let mapMarkers = dataManager.getLocationByUoA(data, selectedUoa, 'FourStar');
+    
+   // Create the map
+   const map = new Map(mapMarkers);
+   map.createMap();
+   map.render();
+
+  // Listen for changes on the selectbox and get the selected value
+  selectBox.addEventListener('change', (event) => {
+    selectedUoa = selectBox.options[selectBox.selectedIndex].value;
+    console.log(selectedUoa);
+
+    // Reload the map with the new dataset
+    map.reload(dataManager.getLocationByUoA(data, selectedUoa, 'FourStar'));
+  });
 
   // Select DOM Element we will render the bar chart inside
   let uoaCard = document.getElementById('uoa-card');

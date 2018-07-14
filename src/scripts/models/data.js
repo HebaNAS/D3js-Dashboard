@@ -1,13 +1,13 @@
 /***********************************************************************************/
 /*                   Name: Data Visualization Coursework - F21DV                   */
-/*   File Description: Module to compare, filter and combine different datasets    */
+/*  File Description: Class to manage all functionality for extracting needed data */
 /*                              Author: Heba El-Shimy                              */
 /*                             Email: he12@hw.ac.uk                                */
 /*                              Date: 28 June 2018                                 */
 /*              References: LearnJSData.com - Combining Data                       */
 /*                     http://learnjsdata.com/combine_data.html                    */
-/*                         Student contribution: 70%                               */
-/*                          External Resources: 30%                                */
+/*                         Student contribution: 90%                               */
+/*                          External Resources: 10%                                */
 /***********************************************************************************/
 
 // Import D3js library
@@ -19,19 +19,16 @@ import onlyUnique from '../helpers/getUnique';
 
 export default class DataManager {
 
+	// Create a constructor function with variables to work with
 	constructor() {
 		this.dataset = [];
 	}
 
+	/*
+	 * Function to merge two datasets and return an object with only
+	 * specific fields
+	 */
 	mergeDatasets(mainData, extraData) {
-
-		var groupBy = function(xs, key) {
-			return xs.reduce(function(rv, x) {
-				(rv[x[key]] = rv[x[key]] || []).push(x);
-				return rv;
-			}, {});
-		};
-		//console.log(groupBy(mainData, 'Profile'));
 
 		// Define the schema of the final shape we need our dataset to look like after the merge
 		const select = ((mainData, extraData) => {
@@ -49,24 +46,28 @@ export default class DataManager {
 						'ThreeStar': mainData.Profile === 'Overall' ? mainData['3*'] : 0,
 						'TwoStar': mainData.Profile === 'Overall' ? mainData['2*'] : 0,
 						'OneStar': mainData.Profile === 'Overall' ? mainData['1*'] : 0,
+						'Unclassified': mainData.Profile === 'Overall' ? mainData.unclassified : 0
 					},
 					'Outputs': {
 						'FourStar': mainData.Profile === 'Outputs' ? mainData['4*'] : 0,
 						'ThreeStar': mainData.Profile === 'Outputs' ? mainData['3*'] : 0,
 						'TwoStar': mainData.Profile === 'Outputs' ? mainData['2*'] : 0,
 						'OneStar': mainData.Profile === 'Outputs' ? mainData['1*'] : 0,
+						'Unclassified': mainData.Profile === 'Outputs' ? mainData.unclassified : 0
 					},
 					'Environment': {
 						'FourStar': mainData.Profile === 'Environment' ? mainData['4*'] : 0,
 						'ThreeStar': mainData.Profile === 'Environment' ? mainData['3*'] : 0,
 						'TwoStar': mainData.Profile === 'Environment' ? mainData['2*'] : 0,
 						'OneStar': mainData.Profile === 'Environment' ? mainData['1*'] : 0,
+						'Unclassified': mainData.Profile === 'Environment' ? mainData.unclassified : 0
 					},
 					'Impact': {
 						'FourStar': mainData.Profile === 'Impact' ? mainData['4*'] : 0,
 						'ThreeStar': mainData.Profile === 'Impact' ? mainData['3*'] : 0,
 						'TwoStar': mainData.Profile === 'Impact' ? mainData['2*'] : 0,
 						'OneStar': mainData.Profile === 'Impact' ? mainData['1*'] : 0,
+						'Unclassified': mainData.Profile === 'Impact' ? mainData.unclassified : 0
 					},
 					'FTEA_Submitted': mainData['FTE Category A staff submitted'],
 					'Building': extraData.BUILDING_NAME_NUMBER,
@@ -95,24 +96,28 @@ export default class DataManager {
 						'ThreeStar': mainData.Profile === 'Overall' ? mainData['3*'] : 0,
 						'TwoStar': mainData.Profile === 'Overall' ? mainData['2*'] : 0,
 						'OneStar': mainData.Profile === 'Overall' ? mainData['1*'] : 0,
+						'Unclassified': mainData.Profile === 'Overall' ? mainData.unclassified : 0
 					},
 					'Outputs': {
 						'FourStar': mainData.Profile === 'Outputs' ? mainData['4*'] : 0,
 						'ThreeStar': mainData.Profile === 'Outputs' ? mainData['3*'] : 0,
 						'TwoStar': mainData.Profile === 'Outputs' ? mainData['2*'] : 0,
 						'OneStar': mainData.Profile === 'Outputs' ? mainData['1*'] : 0,
+						'Unclassified': mainData.Profile === 'Outputs' ? mainData.unclassified : 0
 					},
 					'Environment': {
 						'FourStar': mainData.Profile === 'Environment' ? mainData['4*'] : 0,
 						'ThreeStar': mainData.Profile === 'Environment' ? mainData['3*'] : 0,
 						'TwoStar': mainData.Profile === 'Environment' ? mainData['2*'] : 0,
 						'OneStar': mainData.Profile === 'Environment' ? mainData['1*'] : 0,
+						'Unclassified': mainData.Profile === 'Environment' ? mainData.unclassified : 0
 					},
 					'Impact': {
 						'FourStar': mainData.Profile === 'Impact' ? mainData['4*'] : 0,
 						'ThreeStar': mainData.Profile === 'Impact' ? mainData['3*'] : 0,
 						'TwoStar': mainData.Profile === 'Impact' ? mainData['2*'] : 0,
 						'OneStar': mainData.Profile === 'Impact' ? mainData['1*'] : 0,
+						'Unclassified': mainData.Profile === 'Impact' ? mainData.unclassified : 0
 					},
 					'FTEA_Submitted': mainData['FTE Category A staff submitted'],
 					'Building': '',
@@ -138,7 +143,12 @@ export default class DataManager {
 		return this.dataset;
 	}
 
+	/*
+	 * Function to extract all Units of assessment from a given dataset
+	 */
 	loadAllUoAs(data) {
+
+		// Create a variable to hold the filtered data which will only contain the uoa
 		let filtered = [];
 		
 		// Loopt through the dataset to get all UoAs
@@ -149,23 +159,37 @@ export default class DataManager {
 		// Filter only unique values and remove duplicates
 		filtered = [...new Set(filtered)]; 
 		console.log('UoA count: ', filtered.length);
+
 		return filtered;
 	}
 
+	/*
+	 * Function to extract all Universities and their scores given a specific
+	 * unit of assessment
+	 */
 	getOverallScoreByUoA(data) {
+		
+		// Create a variable to hold the data and use d3 nest method to extract the data
+		// and return it in the form of key, value pairs
 		let nestedData = d3.nest()
+			// Define our key as the Unit of Assessment name
 			.key((d) => {
 				return d.UOA_Name;
 			})
+			// Define another key, University Name to be, nested as a second level
 			.key((d) => {
 				return d.InstitutionName;
 			})
+			// Calculate the results of the previous extraction operations and return
+			// data as an object of the five tiers of scores available in the dataset (4* - unclassified)
+			// using d3 sum to loop over extracted array of values and doing a summation operation
 			.rollup((values) => {
 				return {
 					OneStar: d3.sum(values, (item) => { return item.Overall.OneStar; }),
 					TwoStar: d3.sum(values, (item) => { return item.Overall.TwoStar; }),
 					ThreeStar: d3.sum(values, (item) => { return item.Overall.ThreeStar; }),
-					FourStar: d3.sum(values, (item) => { return item.Overall.FourStar; })
+					FourStar: d3.sum(values, (item) => { return item.Overall.FourStar; }),
+					Unclassified: d3.sum(values, (item) => { return item.Overall.Unclassified; }),
 				};
 			})
 			.entries(data);
@@ -174,15 +198,28 @@ export default class DataManager {
 		console.log(nestedData);
 	}
 
+	/*
+	 * Function to get locations of institutions given a specific Unit of Assessment
+	 * and selecting a tier of score
+	 */
 	getLocationByUoA(data, uoa, stars) {
+		
+		// Create a variable to hold filtered data which will contain only universities
+		// that provide research in the selected area (Unit of Assessment)
 		let filtered = data.filter((item) => {
 			return item.UOA_Name === uoa;
 		});
 
+		// Create a variable to hold the array return from the extraction operation,
+		// using d3 nest to reshape our data into key, value pairs and return only
+		// the university (institution) name, Location coordinates (Lat, Lng) and 
+		// score fields
 		let nestedData = d3.nest()
+			// Set our key to the university name
 			.key((d) => {
 				return d.InstitutionName;
 			})
+			// Perform a calculation on the returned values
 			.rollup((values) => {
 				return {
 					Lat: d3.mean(values, (d) => { return d.Lat; }),
@@ -193,8 +230,6 @@ export default class DataManager {
 			.entries(filtered);
 
 		return nestedData;
-		//console.log(nestedData);
-
 	}
 
 }
