@@ -31207,6 +31207,10 @@ var Map = function () {
       /*
        * Canvas cleanup and data massaging
        */
+
+      // Clear marker points from the map
+      d3.select('#map .leaflet-marker-pane').html(null);
+
       // Reformat our data into a form that could be understood by
       // d3's geoPath method
       this.mapData.forEach(function (d) {
@@ -31225,9 +31229,6 @@ var Map = function () {
           delete d.value;
         }
       });
-
-      // Clear marker points from the map
-      d3.select('#map .leaflet-overlay-pane').html(null);
 
       /*------------------------------------------------------*/
 

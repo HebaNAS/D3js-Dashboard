@@ -45,6 +45,10 @@ export default class Map {
     /*
      * Canvas cleanup and data massaging
      */
+
+    // Clear marker points from the map
+    d3.select('#map .leaflet-marker-pane').html(null);
+    
     // Reformat our data into a form that could be understood by
     // d3's geoPath method
     this.mapData.forEach((d) => {
@@ -65,9 +69,6 @@ export default class Map {
         delete d.value;
       }
     });
-
-    // Clear marker points from the map
-    d3.select('#map .leaflet-overlay-pane').html(null);
 
     /*------------------------------------------------------*/
 
