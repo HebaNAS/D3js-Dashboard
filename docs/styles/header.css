@@ -40,6 +40,7 @@
 .header__nav-item:last-of-type::before {
   display: block;
   position: absolute;
+  z-index: -20;
   content: '';
   height: 70px;
   width: 186px;
@@ -49,7 +50,7 @@
   border-bottom: 2px solid var(--white);
   color: var(--white);
 }
-.header__nav-item:hover > a {
+.header__nav-item:hover > a, .header__nav-item.active > a {
   color: var(--white);
 }
 
@@ -116,7 +117,7 @@
     position: absolute;
     width: 100%;
     top: 70px;
-    z-index: 10;
+    z-index: 1000;
     background-color: var(--lighter-charcoal-grey);
     box-shadow: inset 0 -1px 4px rgba(0, 0, 0, 0.1);
     -webkit-transition: all 0.5s ease-in-out;

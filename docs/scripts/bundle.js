@@ -30616,6 +30616,12 @@ var _data = require('./models/data');
 
 var _data2 = _interopRequireDefault(_data);
 
+var _ecaPhd = require('./templates/eca-phd');
+
+var _universityManagement = require('./templates/university-management');
+
+var _industryResearch = require('./templates/industry-research');
+
 var _menuToggle = require('./views/menu-toggle');
 
 var _menuToggle2 = _interopRequireDefault(_menuToggle);
@@ -30637,6 +30643,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 // Instantiate a new Data Manager Class
+
+
+// Import this application's modules
+var dataManager = new _data2.default();
+
+// Create a function where we call all other modules and start the application
 /*****************************************************************************/
 /*               Name: Data Visualization Coursework - F21DV                 */
 /*       File Description: Import all modules and start the application      */
@@ -30646,16 +30658,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 /*****************************************************************************/
 
 // Import d3 library from node_modules
-var dataManager = new _data2.default();
-
-// Create a function where we call all other modules and start the application
-
-
-// Import this application's modules
 function startApplication() {
-
-  // Get current server's url and port to pass them to d3.csv request function
-  //let hostUrl = location.href.substring(0, location.href.lastIndexOf("/") + 1);
 
   // Start loading our datasets in parallel using D3-queue,
   // then create a callback for the function responsible
@@ -30665,12 +30668,75 @@ function startApplication() {
     // creating the dashboard
     var dataset = dataManager.mergeDatasets(mainData, extraData);
 
-    createDashboard(dataset);
+    // Router, shows dashboard content relevant to category selected from navigation
+    // Get nav elements from the DOM
+    var ecaPhd = document.getElementsByClassName('header__nav-item')[0].childNodes[1],
+        universityMgmt = document.getElementsByClassName('header__nav-item')[1].childNodes[1],
+        industryResrch = document.getElementsByClassName('header__nav-item')[2].childNodes[1];
+
+    var navArr = [ecaPhd, universityMgmt, industryResrch];
+
+    // Show Early career academics and PhDs by default as the landing page
+    var main = _ecaPhd.mainEca;
+    var mainDOM = document.querySelector('main');
+    mainDOM.innerHTML = main;
+    mainDOM.setAttribute('id', 'eca-phd');
+
+    // Create relevant dashboard
+    createDashboardEca(dataset);
+
+    // Highlight active nav item
+    navArr.forEach(function (navItem) {
+
+      // Listen for click event on navigation items
+      navItem.addEventListener('click', function (event) {
+        // Prevent link default action
+        event.preventDefault();
+
+        // Get the route of the clicked navigation item
+        var href = navItem.href.split('/');
+        var dashboard = href[href.length - 1];
+        var elements = navItem.parentElement.parentElement.children;
+
+        // Highlight the selected category by adding an active class on the
+        // corresponding navigation item 
+        for (var i = 0; i <= 2; i++) {
+          if (elements[i].classList.contains('active')) {
+            elements[i].classList.remove('active');
+          }
+        }
+        navItem.parentElement.classList.add('active');
+
+        // Main routing functionality
+        // Early Career Academics & PhDs Dashboard
+        if (dashboard === 'eca-phd') {
+          main = _ecaPhd.mainEca;
+          mainDOM.innerHTML = main;
+          mainDOM.setAttribute('id', 'eca-phd');
+          createDashboardEca(dataset);
+        }
+        // University Management Dashboard
+        else if (dashboard === 'university-management') {
+            main = _universityManagement.universityManagement;
+            mainDOM.innerHTML = main;
+            mainDOM.setAttribute('id', 'um');
+            createDashboardUm(dataset);
+          }
+          // Industry Collaborators and Research Strategists Dashboard
+          else if (dashboard === 'industry-research') {
+              main = _industryResearch.industryResearch;
+              mainDOM.innerHTML = main;
+              mainDOM.setAttribute('id', 'ir');
+              createDashboardEca(dataset);
+            }
+      });
+    });
   });
 }
 
 // Create a function to start drawing the dashboard and visualizations
-function createDashboard(data) {
+// for Early Career Academics & PhDs
+function createDashboardEca(data) {
 
   /*
    * Loading all Units os Assessment and use this for populating
@@ -30722,13 +30788,54 @@ function createDashboard(data) {
   //hBarChart.render(scores);
 }
 
-// Call the function that starts all scripts
+// Create a function to start drawing the dashboard and visualizations
+// for Early Career Academics & PhDs
+function createDashboardUm(data) {
+
+  /*
+   * Loading all Units os Assessment and use this for populating
+   * select box which will control the whole layout and all the visualizations
+   * on this page
+   */
+  // Load all Unit of Assessment options
+  var uoas = dataManager.loadAllUoAs(data);
+
+  // Populate the select box with the options
+  (0, _populateSelections2.default)(uoas);
+
+  // Get the current selection from the select box
+  var selectBox = document.getElementById('selector');
+  var selectedUoa = 'Allied Health Professions, Dentistry, Nursing and Pharmacy';
+
+  /*
+    * Creating the first visualization, which is a map of the UK,
+    * with all the locations of the universities in a selected field (Unit
+    * of Assessment) which is passed on as an argument from the selectbox
+    */
+  var mapMarkers = dataManager.getLocationByUoA(data, selectedUoa, 'FourStar');
+
+  // Create the map
+  var map = new _map2.default(mapMarkers);
+  map.createMap();
+  map.render();
+
+  // Listen for changes on the selectbox and get the selected value
+  selectBox.addEventListener('change', function (event) {
+    selectedUoa = selectBox.options[selectBox.selectedIndex].value;
+    console.log(selectedUoa);
+
+    // Reload the map with the new dataset
+    map.reload(dataManager.getLocationByUoA(data, selectedUoa, 'FourStar'));
+  });
+}
+
+// Start the application
 startApplication();
 
 // Import Menu Toggle Functionality
 (0, _menuToggle2.default)(window, document);
 
-},{"./models/data":65,"./views/hBarChart":66,"./views/map":67,"./views/menu-toggle":68,"./views/populateSelections":69,"d3":60}],65:[function(require,module,exports){
+},{"./models/data":65,"./templates/eca-phd":66,"./templates/industry-research":67,"./templates/university-management":68,"./views/hBarChart":69,"./views/map":70,"./views/menu-toggle":71,"./views/populateSelections":72,"d3":60}],65:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31027,6 +31134,54 @@ var DataManager = function () {
 exports.default = DataManager;
 
 },{"../helpers/getUnique":62,"../helpers/join":63,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"babel-runtime/helpers/toConsumableArray":5,"d3":60}],66:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/*****************************************************************************/
+/*               Name: Data Visualization Coursework - F21DV                 */
+/*  File Description: Dom constructing dashboard for early career academics  */
+/*                        Author: Heba El-Shimy                              */
+/*                        Email: he12@hw.ac.uk                               */
+/*                        Date: 15 July 2018                                 */
+/*****************************************************************************/
+
+var mainEca = exports.mainEca = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\"></div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">Unit of Assessment</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
+
+},{}],67:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/*****************************************************************************/
+/*               Name: Data Visualization Coursework - F21DV                 */
+/*  File Description: Dom constructing dashboard for industry collaborators  */
+/*                        Author: Heba El-Shimy                              */
+/*                        Email: he12@hw.ac.uk                               */
+/*                        Date: 15 July 2018                                 */
+/*****************************************************************************/
+
+var industryResearch = exports.industryResearch = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"\"></div>\n    <div class=\"card-style\"></div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">Unit of Assessment</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
+
+},{}],68:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/*****************************************************************************/
+/*               Name: Data Visualization Coursework - F21DV                 */
+/*  File Description: Dom constructing dashboard for university management   */
+/*                        Author: Heba El-Shimy                              */
+/*                        Email: he12@hw.ac.uk                               */
+/*                        Date: 15 July 2018                                 */
+/*****************************************************************************/
+
+var universityManagement = exports.universityManagement = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"\"></div>\n    <div class=\"card-style\"></div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">Unit of Assessment</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
+
+},{}],69:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31129,7 +31284,7 @@ var HBarChart = function () {
 
 exports.default = HBarChart;
 
-},{"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60}],67:[function(require,module,exports){
+},{"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60}],70:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31343,7 +31498,7 @@ var Map = function () {
 
 exports.default = Map;
 
-},{"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60,"leaflet":61}],68:[function(require,module,exports){
+},{"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60,"leaflet":61}],71:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31404,7 +31559,7 @@ function toggleMenu(window, document) {
   window.addEventListener(WINDOW_CHANGE_EVENT, closeMenu);
 }
 
-},{}],69:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
