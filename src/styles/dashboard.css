@@ -22,7 +22,7 @@
 .card-style:last-of-type {
   margin: 0 0 0 1.5vw;
 }
-#selector {
+#selector, #selector-city {
   background: none;
   color: var(--white);
   border-radius: 1px;
@@ -30,7 +30,8 @@
   font-size: 0.8rem;
   width: 100%;
   text-overflow: ellipsis;
+  text-transform: capitalize;
 }
-#selector:focus {
+#selector:focus, #selector-city:focus {
   outline-color: var(--light-charcoal-grey);
 }

@@ -164,6 +164,28 @@ export default class DataManager {
 	}
 
 	/*
+	 * Function to extract all Universities from a given dataset
+	 */
+	loadAllCities(data) {
+
+		// Create a variable to hold the filtered data which will only contain the uoa
+		let filtered = [];
+		
+		// Loopt through the dataset to get all UoAs
+		data.forEach((entry) => {
+			if (entry.Town !== '') {
+				filtered.push(entry.Town.toLowerCase());
+			}
+		});
+
+		// Filter only unique values and remove duplicates
+		filtered = [...new Set(filtered.sort())]; 
+		console.log('City count: ', filtered.length);
+
+		return filtered;
+	}
+
+	/*
 	 * Function to extract all Universities and their scores given a specific
 	 * unit of assessment
 	 */
@@ -228,6 +250,41 @@ export default class DataManager {
 				};
 			})
 			.entries(filtered);
+
+		return nestedData;
+	}
+
+	/*
+	 * Function to get locations of institutions given a specific Unit of Assessment and a City
+	 */
+	getLocationByCity(data, city, uoa) {
+		
+		// Create a variable to hold filtered data which will contain only universities
+		// that provide research in the selected area (Unit of Assessment) in the selected city
+		let filtered = data.filter((item) => {
+			return item.Town.toLowerCase() === city.toLowerCase() && item.UOA_Name === uoa;
+		});
+
+		// Create a variable to hold the array return from the extraction operation,
+		// using d3 nest to reshape our data into key, value pairs and return only
+		// the university (institution) name, Location coordinates (Lat, Lng) and 
+		// score fields
+		let nestedData = d3.nest()
+			// Set our key to the university name
+			.key((d) => {
+				return d.InstitutionName;
+			})
+			// Perform a calculation on the returned values
+			.rollup((values) => {
+				return {
+					Lat: d3.mean(values, (d) => { return d.Lat; }),
+					Lng: d3.mean(values, (d) => { return d.Lng; }),
+					Score: d3.max(values, (d) => { return d.Overall.FourStar; })
+				};
+			})
+			.entries(filtered);
+		
+		console.log(nestedData);
 
 		return nestedData;
 	}

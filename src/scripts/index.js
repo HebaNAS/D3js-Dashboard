@@ -17,6 +17,7 @@ import { industryResearch } from './templates/industry-research';
 import toggleMenu from './views/menu-toggle';
 import Map from './views/map';
 import populateSelections from './views/populateSelections';
+import populateCities from './views/populateCities';
 import HBarChart from './views/hBarChart';
 
 // Instantiate a new Data Manager Class
@@ -88,14 +89,14 @@ function startApplication() {
           main = universityManagement;
           mainDOM.innerHTML = main;
           mainDOM.setAttribute('id', 'um');
-          createDashboardUm(dataset);
+          createDashboardEca(dataset);
         }
         // Industry Collaborators and Research Strategists Dashboard
         else if (dashboard === 'industry-research') {
           main = industryResearch;
           mainDOM.innerHTML = main;
           mainDOM.setAttribute('id', 'ir');
-          createDashboardEca(dataset);
+          createDashboardIr(dataset);
         }
       });
     });
@@ -113,7 +114,7 @@ function createDashboardEca(data) {
    */
   // Load all Unit of Assessment options
   let uoas = dataManager.loadAllUoAs(data);
-
+  
   // Populate the select box with the options
   populateSelections(uoas);
 
@@ -157,8 +158,8 @@ function createDashboardEca(data) {
 }
 
 // Create a function to start drawing the dashboard and visualizations
-// for Early Career Academics & PhDs
-function createDashboardUm(data) {
+// for Industry Collaborators and Research Strategists
+function createDashboardIr(data) {
   
   /*
    * Loading all Units os Assessment and use this for populating
@@ -168,19 +169,27 @@ function createDashboardUm(data) {
   // Load all Unit of Assessment options
   let uoas = dataManager.loadAllUoAs(data);
 
-  // Populate the select box with the options
+  // Load all City options
+  let cities = dataManager.loadAllCities(data);
+
+  // Populate the select boxes with the options
   populateSelections(uoas);
+  populateCities(cities);
 
   // Get the current selection from the select box
   let selectBox = document.getElementById('selector');
   let selectedUoa = 'Allied Health Professions, Dentistry, Nursing and Pharmacy';
 
+  // Get the current city from the select box
+  let selectBoxCity = document.getElementById('selector-city');
+  let selectedCity = 'Aberdeen';
+
   /*
     * Creating the first visualization, which is a map of the UK,
-    * with all the locations of the universities in a selected field (Unit
-    * of Assessment) which is passed on as an argument from the selectbox
+    * with the universities of the selected city and a selected field (Unit
+    * of Assessment) which are passed on as an argument from the selectbox
     */ 
-   let mapMarkers = dataManager.getLocationByUoA(data, selectedUoa, 'FourStar');
+   let mapMarkers = dataManager.getLocationByCity(data, selectedCity, selectedUoa);
     
    // Create the map
    const map = new Map(mapMarkers);
@@ -193,7 +202,16 @@ function createDashboardUm(data) {
     console.log(selectedUoa);
 
     // Reload the map with the new dataset
-    map.reload(dataManager.getLocationByUoA(data, selectedUoa, 'FourStar'));
+    map.reload(dataManager.getLocationByCity(data, selectedCity, selectedUoa));
+  });
+
+  // Listen for changes on the City selectbox and get the selected value
+  selectBoxCity.addEventListener('change', (event) => {
+    selectedCity = selectBoxCity.options[selectBoxCity.selectedIndex].value;
+    console.log(selectedCity);
+
+    // Reload the map with the new dataset
+    map.reload(dataManager.getLocationByCity(data, selectedCity, selectedUoa));
   });
 
 }

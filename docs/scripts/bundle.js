@@ -30634,6 +30634,10 @@ var _populateSelections = require('./views/populateSelections');
 
 var _populateSelections2 = _interopRequireDefault(_populateSelections);
 
+var _populateCities = require('./views/populateCities');
+
+var _populateCities2 = _interopRequireDefault(_populateCities);
+
 var _hBarChart = require('./views/hBarChart');
 
 var _hBarChart2 = _interopRequireDefault(_hBarChart);
@@ -30643,12 +30647,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 // Instantiate a new Data Manager Class
-
-
-// Import this application's modules
-var dataManager = new _data2.default();
-
-// Create a function where we call all other modules and start the application
 /*****************************************************************************/
 /*               Name: Data Visualization Coursework - F21DV                 */
 /*       File Description: Import all modules and start the application      */
@@ -30658,6 +30656,12 @@ var dataManager = new _data2.default();
 /*****************************************************************************/
 
 // Import d3 library from node_modules
+var dataManager = new _data2.default();
+
+// Create a function where we call all other modules and start the application
+
+
+// Import this application's modules
 function startApplication() {
 
   // Start loading our datasets in parallel using D3-queue,
@@ -30720,14 +30724,14 @@ function startApplication() {
             main = _universityManagement.universityManagement;
             mainDOM.innerHTML = main;
             mainDOM.setAttribute('id', 'um');
-            createDashboardUm(dataset);
+            createDashboardEca(dataset);
           }
           // Industry Collaborators and Research Strategists Dashboard
           else if (dashboard === 'industry-research') {
               main = _industryResearch.industryResearch;
               mainDOM.innerHTML = main;
               mainDOM.setAttribute('id', 'ir');
-              createDashboardEca(dataset);
+              createDashboardIr(dataset);
             }
       });
     });
@@ -30789,8 +30793,8 @@ function createDashboardEca(data) {
 }
 
 // Create a function to start drawing the dashboard and visualizations
-// for Early Career Academics & PhDs
-function createDashboardUm(data) {
+// for Industry Collaborators and Research Strategists
+function createDashboardIr(data) {
 
   /*
    * Loading all Units os Assessment and use this for populating
@@ -30800,19 +30804,27 @@ function createDashboardUm(data) {
   // Load all Unit of Assessment options
   var uoas = dataManager.loadAllUoAs(data);
 
-  // Populate the select box with the options
+  // Load all City options
+  var cities = dataManager.loadAllCities(data);
+
+  // Populate the select boxes with the options
   (0, _populateSelections2.default)(uoas);
+  (0, _populateCities2.default)(cities);
 
   // Get the current selection from the select box
   var selectBox = document.getElementById('selector');
   var selectedUoa = 'Allied Health Professions, Dentistry, Nursing and Pharmacy';
 
+  // Get the current city from the select box
+  var selectBoxCity = document.getElementById('selector-city');
+  var selectedCity = 'Aberdeen';
+
   /*
     * Creating the first visualization, which is a map of the UK,
-    * with all the locations of the universities in a selected field (Unit
-    * of Assessment) which is passed on as an argument from the selectbox
+    * with the universities of the selected city and a selected field (Unit
+    * of Assessment) which are passed on as an argument from the selectbox
     */
-  var mapMarkers = dataManager.getLocationByUoA(data, selectedUoa, 'FourStar');
+  var mapMarkers = dataManager.getLocationByCity(data, selectedCity, selectedUoa);
 
   // Create the map
   var map = new _map2.default(mapMarkers);
@@ -30825,7 +30837,16 @@ function createDashboardUm(data) {
     console.log(selectedUoa);
 
     // Reload the map with the new dataset
-    map.reload(dataManager.getLocationByUoA(data, selectedUoa, 'FourStar'));
+    map.reload(dataManager.getLocationByCity(data, selectedCity, selectedUoa));
+  });
+
+  // Listen for changes on the City selectbox and get the selected value
+  selectBoxCity.addEventListener('change', function (event) {
+    selectedCity = selectBoxCity.options[selectBoxCity.selectedIndex].value;
+    console.log(selectedCity);
+
+    // Reload the map with the new dataset
+    map.reload(dataManager.getLocationByCity(data, selectedCity, selectedUoa));
   });
 }
 
@@ -30835,7 +30856,7 @@ startApplication();
 // Import Menu Toggle Functionality
 (0, _menuToggle2.default)(window, document);
 
-},{"./models/data":65,"./templates/eca-phd":66,"./templates/industry-research":67,"./templates/university-management":68,"./views/hBarChart":69,"./views/map":70,"./views/menu-toggle":71,"./views/populateSelections":72,"d3":60}],65:[function(require,module,exports){
+},{"./models/data":65,"./templates/eca-phd":66,"./templates/industry-research":67,"./templates/university-management":68,"./views/hBarChart":69,"./views/map":70,"./views/menu-toggle":71,"./views/populateCities":72,"./views/populateSelections":73,"d3":60}],65:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31027,6 +31048,31 @@ var DataManager = function () {
 		}
 
 		/*
+   * Function to extract all Universities from a given dataset
+   */
+
+	}, {
+		key: 'loadAllCities',
+		value: function loadAllCities(data) {
+
+			// Create a variable to hold the filtered data which will only contain the uoa
+			var filtered = [];
+
+			// Loopt through the dataset to get all UoAs
+			data.forEach(function (entry) {
+				if (entry.Town !== '') {
+					filtered.push(entry.Town.toLowerCase());
+				}
+			});
+
+			// Filter only unique values and remove duplicates
+			filtered = [].concat((0, _toConsumableArray3.default)(new Set(filtered.sort())));
+			console.log('City count: ', filtered.length);
+
+			return filtered;
+		}
+
+		/*
    * Function to extract all Universities and their scores given a specific
    * unit of assessment
    */
@@ -31114,6 +31160,49 @@ var DataManager = function () {
 
 			return nestedData;
 		}
+
+		/*
+   * Function to get locations of institutions given a specific Unit of Assessment and a City
+   */
+
+	}, {
+		key: 'getLocationByCity',
+		value: function getLocationByCity(data, city, uoa) {
+
+			// Create a variable to hold filtered data which will contain only universities
+			// that provide research in the selected area (Unit of Assessment) in the selected city
+			var filtered = data.filter(function (item) {
+				return item.Town.toLowerCase() === city.toLowerCase() && item.UOA_Name === uoa;
+			});
+
+			// Create a variable to hold the array return from the extraction operation,
+			// using d3 nest to reshape our data into key, value pairs and return only
+			// the university (institution) name, Location coordinates (Lat, Lng) and 
+			// score fields
+			var nestedData = d3.nest()
+			// Set our key to the university name
+			.key(function (d) {
+				return d.InstitutionName;
+			})
+			// Perform a calculation on the returned values
+			.rollup(function (values) {
+				return {
+					Lat: d3.mean(values, function (d) {
+						return d.Lat;
+					}),
+					Lng: d3.mean(values, function (d) {
+						return d.Lng;
+					}),
+					Score: d3.max(values, function (d) {
+						return d.Overall.FourStar;
+					})
+				};
+			}).entries(filtered);
+
+			console.log(nestedData);
+
+			return nestedData;
+		}
 	}]);
 	return DataManager;
 }(); /***********************************************************************************/
@@ -31163,7 +31252,7 @@ Object.defineProperty(exports, "__esModule", {
 /*                        Date: 15 July 2018                                 */
 /*****************************************************************************/
 
-var industryResearch = exports.industryResearch = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"\"></div>\n    <div class=\"card-style\"></div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">Unit of Assessment</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
+var industryResearch = exports.industryResearch = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"\"></div>\n    <div class=\"card-style\"></div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">Unit of Assessment</label>\n      <select id=\"selector\">\n\n      </select>\n      <label class=\"font-07 font-bold\">University</label>\n      <select id=\"selector-city\">\n\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
 },{}],68:[function(require,module,exports){
 "use strict";
@@ -31560,6 +31649,32 @@ function toggleMenu(window, document) {
 }
 
 },{}],72:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = populateCities;
+/*****************************************************************************/
+/*               Name: Data Visualization Coursework - F21DV                 */
+/*    File Description: Populate Selection with universities from dataset    */
+/*                        Author: Heba El-Shimy                              */
+/*                        Email: he12@hw.ac.uk                               */
+/*                        Date: 15 July 2018                                 */
+/*****************************************************************************/
+
+function populateCities(data) {
+  var selector = document.getElementById('selector-city');
+
+  data.forEach(function (item) {
+    var option = document.createElement('option');
+    option.text = item;
+    option.value = item;
+    selector.appendChild(option);
+  });
+}
+
+},{}],73:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

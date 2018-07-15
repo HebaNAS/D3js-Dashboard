@@ -22,6 +22,11 @@ export const industryResearch =
     <form class="selector text-center">
       <label class="font-07 font-bold">Unit of Assessment</label>
       <select id="selector">
+
+      </select>
+      <label class="font-07 font-bold">University</label>
+      <select id="selector-city">
+
       </select>
     </form>
     <p class=""></p>
