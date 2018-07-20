@@ -224,7 +224,7 @@ export default class DataManager {
 	 * Function to get locations of institutions given a specific Unit of Assessment
 	 * and selecting a tier of score
 	 */
-	getLocationByUoA(data, uoa, stars) {
+	getLocationByUoA(data, uoa) {
 		
 		// Create a variable to hold filtered data which will contain only universities
 		// that provide research in the selected area (Unit of Assessment)
@@ -246,7 +246,26 @@ export default class DataManager {
 				return {
 					Lat: d3.mean(values, (d) => { return d.Lat; }),
 					Lng: d3.mean(values, (d) => { return d.Lng; }),
-					Score: d3.max(values, (d) => { return d.Overall[stars]; })
+					Overall4Score: d3.max(values, (d) => { return d.Overall.FourStar; }),
+					Overall3Score: d3.max(values, (d) => { return d.Overall.ThreeStar; }),
+					Overall2Score: d3.max(values, (d) => { return d.Overall.TwoStar; }),
+					Overall1Score: d3.max(values, (d) => { return d.Overall.OneStar; }),
+					OverallUCScore: d3.max(values, (d) => { return d.Overall.Unclassified; }),
+					Environment4Score: d3.max(values, (d) => { return d.Environment.FourStar; }),
+					Environment3Score: d3.max(values, (d) => { return d.Environment.ThreeStar; }),
+					Environment2Score: d3.max(values, (d) => { return d.Environment.TwoStar; }),
+					Environment1Score: d3.max(values, (d) => { return d.Environment.OneStar; }),
+					EnvironmentUCScore: d3.max(values, (d) => { return d.Environment.Unclassified; }),
+					Impact4Score: d3.max(values, (d) => { return d.Impact.FourStar; }),
+					Impact3Score: d3.max(values, (d) => { return d.Impact.ThreeStar; }),
+					Impact2Score: d3.max(values, (d) => { return d.Impact.TwoStar; }),
+					Impact1Score: d3.max(values, (d) => { return d.Impact.OneStar; }),
+					ImpactUCScore: d3.max(values, (d) => { return d.Impact.Unclassified; }),
+					Outputs4Score: d3.max(values, (d) => { return d.Outputs.FourStar; }),
+					Outputs3Score: d3.max(values, (d) => { return d.Outputs.ThreeStar; }),
+					Outputs2Score: d3.max(values, (d) => { return d.Outputs.TwoStar; }),
+					Outputs1Score: d3.max(values, (d) => { return d.Outputs.OneStar; }),
+					OutputsUCScore: d3.max(values, (d) => { return d.Outputs.Unclassified; })
 				};
 			})
 			.entries(filtered);
@@ -284,7 +303,108 @@ export default class DataManager {
 			})
 			.entries(filtered);
 		
-		console.log(nestedData);
+		return nestedData;
+	}
+
+	/*
+	 * Reformat our data into a form that could be understood by
+   * d3's geoPath method
+	 */
+	reformatDataAsGeoJson(data, map) {
+		data.forEach((d) => {
+      if (d.type === undefined) {
+        d.type = 'Feature';
+        d.geometry = {};
+        d.properties = {};
+        d.properties.cartisan = {};
+        d.properties.name = d.key;
+        d.properties.scores = {};
+        d.properties.scores.overall = {};
+        d.properties.scores.outputs = {};
+        d.properties.scores.environment = {};
+        d.properties.scores.impact = {};
+        d.properties.scores.overall.fourstar = d.value.Overall4Score;
+        d.properties.scores.overall.threestar = d.value.Overall3Score;
+        d.properties.scores.overall.twostar = d.value.Overall2Score;
+        d.properties.scores.overall.onestar = d.value.Overall1Score;
+        d.properties.scores.overall.unclassified = d.value.OverallUCScore;
+        d.properties.scores.environment.fourstar = d.value.Environment4Score;
+        d.properties.scores.environment.threestar = d.value.Environment3Score;
+        d.properties.scores.environment.twostar = d.value.Environment2Score;
+        d.properties.scores.environment.onestar = d.value.Environment1Score;
+        d.properties.scores.environment.unclassified = d.value.EnvironmentUCScore;
+        d.properties.scores.impact.fourstar = d.value.Impact4Score;
+        d.properties.scores.impact.threestar = d.value.Impact3Score;
+        d.properties.scores.impact.twostar = d.value.Impact2Score;
+        d.properties.scores.impact.onestar = d.value.Impact1Score;
+        d.properties.scores.impact.unclassified = d.value.ImpactUCScore;
+        d.properties.scores.outputs.fourstar = d.value.Outputs4Score;
+        d.properties.scores.outputs.threestar = d.value.Outputs3Score;
+        d.properties.scores.outputs.twostar = d.value.Outputs2Score;
+        d.properties.scores.outputs.onestar = d.value.Outputs1Score;
+        d.properties.scores.outputs.unclassified = d.value.OutputsUCScore;
+        d.properties.cartisan.x =
+          map.latLngToLayerPoint(new L.LatLng(d.value.Lat, d.value.Lng)).x;
+        d.properties.cartisan.y =
+          map.latLngToLayerPoint(new L.LatLng(d.value.Lat, d.value.Lng)).y;
+        d.geometry.type = 'Point';
+        d.geometry.coordinates = [d.value.Lat, d.value.Lng];
+        delete d.key;
+        delete d.value;
+      }
+		});
+		
+		return data;
+	}
+
+	/*
+	 * Reformat our data into a form that could be understood by
+   * d3's geoPath method
+	 */
+	reformatData(data) {
+		if (data[0] !== undefined || data !== []) {
+			data[0].values.forEach((item) => {
+				item.values.push({'key': '4*', 'value': parseFloat(item.values[0]['4*'])});
+				item.values.push({'key': '3*', 'value': parseFloat(item.values[0]['3*'])});
+				item.values.push({'key': '2*', 'value': parseFloat(item.values[0]['2*'])});
+				item.values.push({'key': '1*', 'value': parseFloat(item.values[0]['1*'])});
+				item.values.push({'key': 'unclassified', 'value': parseFloat(item.values[0].unclassified)});
+			});
+			data[0].values.forEach((item) => {
+				item.values.shift();
+				if (item.values[0]['Institution name'] !== undefined) {
+					item.values.shift();
+				}
+			});
+		}
+
+		return data;
+	}
+
+	/*
+	 * Function to reconstruct the flat dataset into a JSON like
+	 * structure containing a root of a selected unit of assessments which
+	 * will include all universities having that uoa and nested inside the
+	 * assessment categories and scores
+	 */
+	createUniversitiesPerformanceHierarchy(data, selectedUoa, selectedUni) {
+		// Create an empty array to hold universities filtered out
+		// according to Unit of assessment
+		let universities = [];
+		
+		// Only add universities that have the selected department
+    data.forEach((item) => {
+			if (item['Unit of assessment name'] == selectedUoa &&
+					item['Institution name'] == selectedUni) {
+        universities.push(item);
+      }
+		});
+
+		// Start nesting the data into a hierarchical structure
+		const nestedData = d3.nest()
+			.key((d) => selectedUni)
+			.key((d) => d.Profile)
+			.entries(universities);
 
 		return nestedData;
 	}

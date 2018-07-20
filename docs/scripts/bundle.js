@@ -30642,11 +30642,21 @@ var _hBarChart = require('./views/hBarChart');
 
 var _hBarChart2 = _interopRequireDefault(_hBarChart);
 
+var _hierarchical = require('./views/hierarchical.js');
+
+var _hierarchical2 = _interopRequireDefault(_hierarchical);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 // Instantiate a new Data Manager Class
+
+
+// Import this application's modules
+var dataManager = new _data2.default();
+
+// Create a function where we call all other modules and start the application
 /*****************************************************************************/
 /*               Name: Data Visualization Coursework - F21DV                 */
 /*       File Description: Import all modules and start the application      */
@@ -30656,12 +30666,6 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 /*****************************************************************************/
 
 // Import d3 library from node_modules
-var dataManager = new _data2.default();
-
-// Create a function where we call all other modules and start the application
-
-
-// Import this application's modules
 function startApplication() {
 
   // Start loading our datasets in parallel using D3-queue,
@@ -30671,6 +30675,7 @@ function startApplication() {
     // After waiting for datasets to load, do cleaning and pass data for
     // creating the dashboard
     var dataset = dataManager.mergeDatasets(mainData, extraData);
+    var dataset2 = mainData;
 
     // Router, shows dashboard content relevant to category selected from navigation
     // Get nav elements from the DOM
@@ -30687,7 +30692,7 @@ function startApplication() {
     mainDOM.setAttribute('id', 'eca-phd');
 
     // Create relevant dashboard
-    createDashboardEca(dataset);
+    createDashboardEca(dataset, dataset2);
 
     // Highlight active nav item
     navArr.forEach(function (navItem) {
@@ -30715,6 +30720,7 @@ function startApplication() {
         // Early Career Academics & PhDs Dashboard
         if (dashboard === 'eca-phd') {
           main = _ecaPhd.mainEca;
+          document.title = 'REF2014 Results Dashboard - Early Career Academics & PhDs';
           mainDOM.innerHTML = main;
           mainDOM.setAttribute('id', 'eca-phd');
           createDashboardEca(dataset);
@@ -30722,6 +30728,7 @@ function startApplication() {
         // University Management Dashboard
         else if (dashboard === 'university-management') {
             main = _universityManagement.universityManagement;
+            document.title = 'REF2014 Results Dashboard - University Management';
             mainDOM.innerHTML = main;
             mainDOM.setAttribute('id', 'um');
             createDashboardEca(dataset);
@@ -30729,6 +30736,7 @@ function startApplication() {
           // Industry Collaborators and Research Strategists Dashboard
           else if (dashboard === 'industry-research') {
               main = _industryResearch.industryResearch;
+              document.title = 'REF2014 Results Dashboard - Industry Collaborators & Research Strategists';
               mainDOM.innerHTML = main;
               mainDOM.setAttribute('id', 'ir');
               createDashboardIr(dataset);
@@ -30740,7 +30748,7 @@ function startApplication() {
 
 // Create a function to start drawing the dashboard and visualizations
 // for Early Career Academics & PhDs
-function createDashboardEca(data) {
+function createDashboardEca(data, data2) {
 
   /*
    * Loading all Units os Assessment and use this for populating
@@ -30758,16 +30766,20 @@ function createDashboardEca(data) {
   var selectedUoa = 'Allied Health Professions, Dentistry, Nursing and Pharmacy';
 
   /*
-    * Creating the first visualization, which is a map of the UK,
-    * with all the locations of the universities in a selected field (Unit
-    * of Assessment) which is passed on as an argument from the selectbox
-    */
-  var mapMarkers = dataManager.getLocationByUoA(data, selectedUoa, 'FourStar');
+   * Creating the first visualization, which is a map of the UK,
+   * with all the locations of the universities in a selected field (Unit
+   * of Assessment) which is passed on as an argument from the selectbox
+   */
+  var mapMarkers = dataManager.getLocationByUoA(data, selectedUoa);
+  var hierarchical = new _hierarchical2.default(data2, selectedUoa);
 
   // Create the map
   var map = new _map2.default(mapMarkers);
   map.createMap();
   map.render();
+
+  // Create the hierarchical sunburst chart
+  hierarchical.createChart();
 
   // Listen for changes on the selectbox and get the selected value
   selectBox.addEventListener('change', function (event) {
@@ -30775,21 +30787,8 @@ function createDashboardEca(data) {
     console.log(selectedUoa);
 
     // Reload the map with the new dataset
-    map.reload(dataManager.getLocationByUoA(data, selectedUoa, 'FourStar'));
+    map.reload(dataManager.getLocationByUoA(data, selectedUoa));
   });
-
-  // Select DOM Element we will render the bar chart inside
-  var uoaCard = document.getElementById('uoa-card');
-
-  // Instantiate a new Horizontal Barchart Class with our desired specifications
-  // passed in as parameters
-  var hBarChart = new _hBarChart2.default(data, uoaCard, '100%', '100%');
-
-  //dataManager.getOverallScoreByUoA(data);
-
-  // Create a horizontal bar chart
-  hBarChart.appendSvg();
-  //hBarChart.render(scores);
 }
 
 // Create a function to start drawing the dashboard and visualizations
@@ -30820,10 +30819,10 @@ function createDashboardIr(data) {
   var selectedCity = 'Aberdeen';
 
   /*
-    * Creating the first visualization, which is a map of the UK,
-    * with the universities of the selected city and a selected field (Unit
-    * of Assessment) which are passed on as an argument from the selectbox
-    */
+  * Creating the first visualization, which is a map of the UK,
+  * with the universities of the selected city and a selected field (Unit
+  * of Assessment) which are passed on as an argument from the selectbox
+  */
   var mapMarkers = dataManager.getLocationByCity(data, selectedCity, selectedUoa);
 
   // Create the map
@@ -30856,7 +30855,7 @@ startApplication();
 // Import Menu Toggle Functionality
 (0, _menuToggle2.default)(window, document);
 
-},{"./models/data":65,"./templates/eca-phd":66,"./templates/industry-research":67,"./templates/university-management":68,"./views/hBarChart":69,"./views/map":70,"./views/menu-toggle":71,"./views/populateCities":72,"./views/populateSelections":73,"d3":60}],65:[function(require,module,exports){
+},{"./models/data":65,"./templates/eca-phd":66,"./templates/industry-research":67,"./templates/university-management":68,"./views/hBarChart":69,"./views/hierarchical.js":70,"./views/map":71,"./views/menu-toggle":72,"./views/populateCities":73,"./views/populateSelections":74,"d3":60}],65:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31126,7 +31125,7 @@ var DataManager = function () {
 
 	}, {
 		key: 'getLocationByUoA',
-		value: function getLocationByUoA(data, uoa, stars) {
+		value: function getLocationByUoA(data, uoa) {
 
 			// Create a variable to hold filtered data which will contain only universities
 			// that provide research in the selected area (Unit of Assessment)
@@ -31152,8 +31151,65 @@ var DataManager = function () {
 					Lng: d3.mean(values, function (d) {
 						return d.Lng;
 					}),
-					Score: d3.max(values, function (d) {
-						return d.Overall[stars];
+					Overall4Score: d3.max(values, function (d) {
+						return d.Overall.FourStar;
+					}),
+					Overall3Score: d3.max(values, function (d) {
+						return d.Overall.ThreeStar;
+					}),
+					Overall2Score: d3.max(values, function (d) {
+						return d.Overall.TwoStar;
+					}),
+					Overall1Score: d3.max(values, function (d) {
+						return d.Overall.OneStar;
+					}),
+					OverallUCScore: d3.max(values, function (d) {
+						return d.Overall.Unclassified;
+					}),
+					Environment4Score: d3.max(values, function (d) {
+						return d.Environment.FourStar;
+					}),
+					Environment3Score: d3.max(values, function (d) {
+						return d.Environment.ThreeStar;
+					}),
+					Environment2Score: d3.max(values, function (d) {
+						return d.Environment.TwoStar;
+					}),
+					Environment1Score: d3.max(values, function (d) {
+						return d.Environment.OneStar;
+					}),
+					EnvironmentUCScore: d3.max(values, function (d) {
+						return d.Environment.Unclassified;
+					}),
+					Impact4Score: d3.max(values, function (d) {
+						return d.Impact.FourStar;
+					}),
+					Impact3Score: d3.max(values, function (d) {
+						return d.Impact.ThreeStar;
+					}),
+					Impact2Score: d3.max(values, function (d) {
+						return d.Impact.TwoStar;
+					}),
+					Impact1Score: d3.max(values, function (d) {
+						return d.Impact.OneStar;
+					}),
+					ImpactUCScore: d3.max(values, function (d) {
+						return d.Impact.Unclassified;
+					}),
+					Outputs4Score: d3.max(values, function (d) {
+						return d.Outputs.FourStar;
+					}),
+					Outputs3Score: d3.max(values, function (d) {
+						return d.Outputs.ThreeStar;
+					}),
+					Outputs2Score: d3.max(values, function (d) {
+						return d.Outputs.TwoStar;
+					}),
+					Outputs1Score: d3.max(values, function (d) {
+						return d.Outputs.OneStar;
+					}),
+					OutputsUCScore: d3.max(values, function (d) {
+						return d.Outputs.Unclassified;
 					})
 				};
 			}).entries(filtered);
@@ -31199,7 +31255,115 @@ var DataManager = function () {
 				};
 			}).entries(filtered);
 
-			console.log(nestedData);
+			return nestedData;
+		}
+
+		/*
+   * Reformat our data into a form that could be understood by
+    * d3's geoPath method
+   */
+
+	}, {
+		key: 'reformatDataAsGeoJson',
+		value: function reformatDataAsGeoJson(data, map) {
+			data.forEach(function (d) {
+				if (d.type === undefined) {
+					d.type = 'Feature';
+					d.geometry = {};
+					d.properties = {};
+					d.properties.cartisan = {};
+					d.properties.name = d.key;
+					d.properties.scores = {};
+					d.properties.scores.overall = {};
+					d.properties.scores.outputs = {};
+					d.properties.scores.environment = {};
+					d.properties.scores.impact = {};
+					d.properties.scores.overall.fourstar = d.value.Overall4Score;
+					d.properties.scores.overall.threestar = d.value.Overall3Score;
+					d.properties.scores.overall.twostar = d.value.Overall2Score;
+					d.properties.scores.overall.onestar = d.value.Overall1Score;
+					d.properties.scores.overall.unclassified = d.value.OverallUCScore;
+					d.properties.scores.environment.fourstar = d.value.Environment4Score;
+					d.properties.scores.environment.threestar = d.value.Environment3Score;
+					d.properties.scores.environment.twostar = d.value.Environment2Score;
+					d.properties.scores.environment.onestar = d.value.Environment1Score;
+					d.properties.scores.environment.unclassified = d.value.EnvironmentUCScore;
+					d.properties.scores.impact.fourstar = d.value.Impact4Score;
+					d.properties.scores.impact.threestar = d.value.Impact3Score;
+					d.properties.scores.impact.twostar = d.value.Impact2Score;
+					d.properties.scores.impact.onestar = d.value.Impact1Score;
+					d.properties.scores.impact.unclassified = d.value.ImpactUCScore;
+					d.properties.scores.outputs.fourstar = d.value.Outputs4Score;
+					d.properties.scores.outputs.threestar = d.value.Outputs3Score;
+					d.properties.scores.outputs.twostar = d.value.Outputs2Score;
+					d.properties.scores.outputs.onestar = d.value.Outputs1Score;
+					d.properties.scores.outputs.unclassified = d.value.OutputsUCScore;
+					d.properties.cartisan.x = map.latLngToLayerPoint(new L.LatLng(d.value.Lat, d.value.Lng)).x;
+					d.properties.cartisan.y = map.latLngToLayerPoint(new L.LatLng(d.value.Lat, d.value.Lng)).y;
+					d.geometry.type = 'Point';
+					d.geometry.coordinates = [d.value.Lat, d.value.Lng];
+					delete d.key;
+					delete d.value;
+				}
+			});
+
+			return data;
+		}
+
+		/*
+   * Reformat our data into a form that could be understood by
+    * d3's geoPath method
+   */
+
+	}, {
+		key: 'reformatData',
+		value: function reformatData(data) {
+			if (data[0] !== undefined || data !== []) {
+				data[0].values.forEach(function (item) {
+					item.values.push({ 'key': '4*', 'value': parseFloat(item.values[0]['4*']) });
+					item.values.push({ 'key': '3*', 'value': parseFloat(item.values[0]['3*']) });
+					item.values.push({ 'key': '2*', 'value': parseFloat(item.values[0]['2*']) });
+					item.values.push({ 'key': '1*', 'value': parseFloat(item.values[0]['1*']) });
+					item.values.push({ 'key': 'unclassified', 'value': parseFloat(item.values[0].unclassified) });
+				});
+				data[0].values.forEach(function (item) {
+					item.values.shift();
+					if (item.values[0]['Institution name'] !== undefined) {
+						item.values.shift();
+					}
+				});
+			}
+
+			return data;
+		}
+
+		/*
+   * Function to reconstruct the flat dataset into a JSON like
+   * structure containing a root of a selected unit of assessments which
+   * will include all universities having that uoa and nested inside the
+   * assessment categories and scores
+   */
+
+	}, {
+		key: 'createUniversitiesPerformanceHierarchy',
+		value: function createUniversitiesPerformanceHierarchy(data, selectedUoa, selectedUni) {
+			// Create an empty array to hold universities filtered out
+			// according to Unit of assessment
+			var universities = [];
+
+			// Only add universities that have the selected department
+			data.forEach(function (item) {
+				if (item['Unit of assessment name'] == selectedUoa && item['Institution name'] == selectedUni) {
+					universities.push(item);
+				}
+			});
+
+			// Start nesting the data into a hierarchical structure
+			var nestedData = d3.nest().key(function (d) {
+				return selectedUni;
+			}).key(function (d) {
+				return d.Profile;
+			}).entries(universities);
 
 			return nestedData;
 		}
@@ -31236,7 +31400,7 @@ Object.defineProperty(exports, "__esModule", {
 /*                        Date: 15 July 2018                                 */
 /*****************************************************************************/
 
-var mainEca = exports.mainEca = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\"></div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">Unit of Assessment</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
+var mainEca = exports.mainEca = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div id=\"explanation\" style=\"visibility: visible;\">\n          \n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">Unit of Assessment</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
 },{}],67:[function(require,module,exports){
 "use strict";
@@ -31252,7 +31416,7 @@ Object.defineProperty(exports, "__esModule", {
 /*                        Date: 15 July 2018                                 */
 /*****************************************************************************/
 
-var industryResearch = exports.industryResearch = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"\"></div>\n    <div class=\"card-style\"></div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">Unit of Assessment</label>\n      <select id=\"selector\">\n\n      </select>\n      <label class=\"font-07 font-bold\">University</label>\n      <select id=\"selector-city\">\n\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
+var industryResearch = exports.industryResearch = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"\"></div>\n    <div class=\"card-style\"></div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">City</label>\n      <select id=\"selector-city\">\n\n      </select>\n      <label class=\"font-07 font-bold\">Unit of Assessment</label>\n      <select id=\"selector\">\n\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
 },{}],68:[function(require,module,exports){
 "use strict";
@@ -31392,15 +31556,296 @@ var _d = require('d3');
 
 var d3 = _interopRequireWildcard(_d);
 
-var _leaflet = require('leaflet');
+var _data = require('../models/data');
 
-var L = _interopRequireWildcard(_leaflet);
+var _data2 = _interopRequireDefault(_data);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// Instantiate a new Data Manager Class
 /*****************************************************************************/
+/*               Name: Data Visualization Coursework - F21DV                 */
+/*    File Description: Create a hierarchical chart for a given dataset      */
+/*                        Author: Heba El-Shimy                              */
+/*                        Email: he12@hw.ac.uk                               */
+/*                         Date: 16 July 2018                                */
+/*****************************************************************************/
+
+// Import D3js library
+var dataManager = new _data2.default();
+
+var Hierarchical = function () {
+
+  // Create constructor function
+  function Hierarchical(data, selectedUoa) {
+    (0, _classCallCheck3.default)(this, Hierarchical);
+
+    this.data = data;
+    this.selectedUoa = selectedUoa;
+    this.selectedUni = 'Anglia Ruskin University';
+    this.hierarchicalData = [];
+  }
+
+  (0, _createClass3.default)(Hierarchical, [{
+    key: 'createChart',
+    value: function createChart() {
+      var _this = this;
+
+      // Create hierarchy from our dataset
+      this.hierarchicalData = dataManager.reformatData(dataManager.createUniversitiesPerformanceHierarchy(this.data, this.selectedUoa, this.selectedUni));
+
+      /*------------------------------------------------------*/
+
+      /*
+       * Variables
+       */
+
+      // Get parent element
+      var svgDOM = document.getElementById('compare-uni');
+      var explanation = document.getElementById('explanation');
+      // Get map conatiner
+      var map = document.getElementById('map');
+      // Get the current selection from the select box
+      var selectBox = document.getElementById('selector');
+
+      var selectedUniversity = this.selectedUni;
+      var uoa = this.selectedUoa;
+
+      // Append svg to the leaflet map and specify width and height as the same
+      // for the parent DOM element, then append a group to hold all markers
+      var svg = d3.select('#chart').append('svg').attr('width', svgDOM.offsetWidth).attr('height', svgDOM.offsetHeight);
+      var g = svg.append('g').attr('transform', 'translate(' + svgDOM.offsetWidth / 2 + ',' + svgDOM.offsetHeight / 2.45 + ')').attr('class', 'classNode');
+
+      // Select label class
+      var labels = d3.selectAll('.label');
+
+      // Convert our JSON like structure of the dataset into a hierarchy
+      // with values returned as children at each level
+      var root = d3.hierarchy(this.hierarchicalData[0], function (d) {
+        return d.values;
+      });
+      // Sum all values for child nodes
+      root.sum(function (d) {
+        return d.value;
+      });
+
+      // Define radius of the sunburst layout
+      var radius = Math.min(svgDOM.offsetWidth, svgDOM.offsetHeight) / 2;
+
+      // Define a d3 partition layout
+      var partition = d3.partition().size([2 * Math.PI, radius]);
+      var nodes = partition(root).descendants();
+
+      // Define an arc based on the data
+      var arc = d3.arc().startAngle(function (d) {
+        return d.x0;
+      }).endAngle(function (d) {
+        return d.x1;
+      }).innerRadius(function (d) {
+        return d.y0 / 1.35;
+      }).outerRadius(function (d) {
+        return d.y1 / 1.35;
+      });
+
+      var path = g.datum(root).selectAll('path');
+
+      var color = d3.scaleLinear().domain([0, 150]).range(['#FFBE57', '#FF3D73']);
+
+      /*------------------------------------------------------*/
+
+      /*
+       * General Update Pattern (GUP)
+       */
+
+      // Enter
+      path.data(nodes).enter().append('path').attr('display', function (d) {
+        return d.depth ? null : 'none';
+      }).attr('class', 'node').attr('d', arc).attr('fill-rule', 'evenodd').style('fill', function (d) {
+        return color(d.value);
+      }).style('opacity', 0.65).on('mouseover', handleMouseOver).on('mouseout', handleMouseOut).on('click', function (d) {
+        return console.log(d);
+      });
+
+      // Adding text labels to sunbusrt partitions based
+      // on fed data
+      g.selectAll('.category').data(nodes.filter(function (d) {
+        return d.data.value === undefined;
+      })).enter().append('text').attr('class', 'category').attr('transform', function (d) {
+        return 'translate(' + (arc.centroid(d)[0] + arc.centroid(d)[0] / 5 - 15) + ',' + (arc.centroid(d)[1] + arc.centroid(d)[1] / 100 + 5) + ')';
+      }).text(function (d) {
+        return d.depth === 1 ? d.data.key : '';
+      });
+
+      g.selectAll('.label').data(nodes.filter(function (d) {
+        return d.data.value > 0;
+      })).enter().append('text').attr('class', 'label').attr('transform', function (d) {
+        return 'translate(' + arc.centroid(d) + ') rotate(' + computeTextRotation(d) + ')';
+      }).text(function (d) {
+        return d.parent ? d.data.key : '';
+      });
+
+      /*------------------------------------------------------*/
+
+      /*
+       * Dynamic changes
+       */
+
+      // Position the explanation text circle which contains the selected
+      // university name
+      explanation.style.position = 'absolute';
+      explanation.style.top = svgDOM.offsetHeight / 1.375 + 'px';
+      explanation.style.right = svgDOM.offsetWidth / 2.2 + 'px';
+      explanation.innerText = this.selectedUni;
+
+      // Listen for selected university from map and update
+      // the chart accordingly
+      map.addEventListener('selectNewUni', function (event) {
+        console.log('Selected University Changed');
+        // Update the hierarchical sunburst chart with new data
+        selectedUniversity = event.detail;
+        _this.reload(selectedUniversity, uoa);
+        explanation.innerText = _this.selectedUni;
+        update(_this.hierarchicalData);
+      }, false);
+
+      // Listen for changes on the selectbox and get the selected value
+      // then update the chart accordingly
+      selectBox.addEventListener('change', function (event) {
+        uoa = selectBox.options[selectBox.selectedIndex].value;
+        _this.reload(selectedUniversity, uoa);
+
+        update(_this.hierarchicalData);
+      });
+
+      /*------------------------------------------------------*/
+
+      /*
+       * Private functions
+       */
+
+      // https://bl.ocks.org
+      // Stash the old values for transition.
+      function stash(d) {
+        d.x0 = d.x;
+        d.dx0 = d.dx;
+      }
+
+      // https://bl.ocks.org
+      // Interpolate the arcs in data space.
+      function arcTween(a) {
+        var i = d3.interpolate({ x: a.x0, dx: a.dx0 }, a);
+        return function (t) {
+          var b = i(t);
+          a.x0 = b.x;
+          a.dx0 = b.dx;
+          return arc(b);
+        };
+      }
+
+      // Handle mouse over events
+      function handleMouseOver(d, i) {
+        d3.select(this).style('opacity', 1);
+      }
+
+      // Handle mouse out events
+      function handleMouseOut(d, i) {
+        d3.select(this).style('opacity', 0.65);
+      }
+
+      // Redraw and scale paths according to map selection
+      function update(data) {
+        console.log('New Dataset: ', data);
+
+        // Update node values
+        root = d3.hierarchy(data[0], function (d) {
+          return d.values;
+        });
+        root.sum(function (d) {
+          return d.value;
+        });
+        nodes = partition(root).descendants();
+
+        // Using the GUP to update the chart
+        // Exit and remove unused entries
+        g.selectAll('path').exit().transition().duration(500).remove();
+
+        g.selectAll('.label').exit().transition().duration(500).remove();
+
+        // Update existing nodes with new data
+        g.selectAll('path').data(nodes).transition().duration(500).attrTween('d', arcTween);
+
+        g.selectAll('.label').data(nodes.filter(function (d) {
+          return d.value > 0 && d.depth === 2 && d.data.key !== 'unclassified';
+        })).transition().duration(500).attr('transform', function (d) {
+          return 'translate(' + arc.centroid(d) + ') rotate(' + computeTextRotation(d) + ')';
+        }).text(function (d) {
+          return d.data.key;
+        });
+      }
+
+      // https://bl.ocks.org/denjn5/f059c1f78f9c39d922b1c208815d18af
+      // Calculate text rotation inside arc
+      function computeTextRotation(d) {
+        var angle = (d.x0 + d.x1) / Math.PI * 90;
+        return angle < 180 ? angle - 90 : angle + 90;
+      }
+    }
+
+    /*
+     * Function to reload the map with new dataset
+     */
+
+  }, {
+    key: 'reload',
+    value: function reload(newUni, newUoa) {
+      this.selectedUni = newUni;
+      this.selectedUoa = newUoa;
+      console.log('Reloading the chart using a new dataset');
+      this.hierarchicalData = dataManager.reformatData(dataManager.createUniversitiesPerformanceHierarchy(this.data, this.selectedUoa, this.selectedUni));
+    }
+  }]);
+  return Hierarchical;
+}();
+
+exports.default = Hierarchical;
+
+},{"../models/data":65,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60}],71:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _d = require('d3');
+
+var d3 = _interopRequireWildcard(_d);
+
+var _leaflet = require('leaflet');
+
+var L = _interopRequireWildcard(_leaflet);
+
+var _data = require('../models/data');
+
+var _data2 = _interopRequireDefault(_data);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// Instantiate a new Data Manager Class
+
+// Import Leaflet module for creating maps
+var dataManager = new _data2.default(); /*****************************************************************************/
 /*               Name: Data Visualization Coursework - F21DV                 */
 /*  File Description: Create Map and add markers latlng from provided data   */
 /*                        Author: Heba El-Shimy                              */
@@ -31409,6 +31854,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 /*****************************************************************************/
 
 // Import D3js library
+
 var Map = function () {
 
   // Create the constructor function
@@ -31432,7 +31878,7 @@ var Map = function () {
       this.map = L.map('map', {
         zoomControl: false,
         watch: true
-      }).setView([54.505, -3.5], 5);
+      }).setView([54.805, -3.5], 5);
 
       // Add a new tile layer with the actual map features, set the options
       L.tileLayer('https://api.mapbox.com/styles/v1/hebaelshimy/cjjb2m2ss5cj62so6remsqx4s/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaGViYWVsc2hpbXkiLCJhIjoiY2o4YjdzZWF4MGtxMDJxczB2dDA4ZXNsOSJ9.hUkmJ7j6KuQyVMZPN9Xxpg', {
@@ -31446,7 +31892,6 @@ var Map = function () {
   }, {
     key: 'render',
     value: function render() {
-      var _this = this;
 
       /*
        * Canvas cleanup and data massaging
@@ -31455,24 +31900,8 @@ var Map = function () {
       // Clear marker points from the map
       d3.select('#map .leaflet-marker-pane').html(null);
 
-      // Reformat our data into a form that could be understood by
-      // d3's geoPath method
-      this.mapData.forEach(function (d) {
-        if (d.type === undefined) {
-          d.type = 'Feature';
-          d.geometry = {};
-          d.properties = {};
-          d.properties.cartisan = {};
-          d.properties.name = d.key;
-          d.properties.score = d.value.Score;
-          d.properties.cartisan.x = _this.map.latLngToLayerPoint(new L.LatLng(d.value.Lat, d.value.Lng)).x;
-          d.properties.cartisan.y = _this.map.latLngToLayerPoint(new L.LatLng(d.value.Lat, d.value.Lng)).y;
-          d.geometry.type = 'Point';
-          d.geometry.coordinates = [d.value.Lat, d.value.Lng];
-          delete d.key;
-          delete d.value;
-        }
-      });
+      // Reformat data into geoJson
+      var geoJsonData = dataManager.reformatDataAsGeoJson(this.mapData, this.map);
 
       /*------------------------------------------------------*/
 
@@ -31506,9 +31935,9 @@ var Map = function () {
 
       // Create markers to represent locations of data points, bind the data,
       // enter the general update pattern
-      markers.data(this.mapData).enter().append('path').attr('d', path.pointRadius(function (d) {
-        return parseInt(d.properties.score / 5 + 1);
-      })).attr('pointer-events', 'visible').classed('leaflet-marker-icon', true).classed('leaflet-zoom-animated', true).classed('leaflet-clickable', true).on('mouseover', handleMouseOver).on('mouseout', handleMouseOut);
+      markers.data(geoJsonData).enter().append('path').attr('d', path.pointRadius(function (d) {
+        return parseInt(d.properties.scores.overall.fourstar / 5 + 1);
+      })).attr('pointer-events', 'visible').classed('leaflet-marker-icon', true).classed('leaflet-zoom-animated', true).classed('leaflet-clickable', true).on('mouseover', handleMouseOver).on('mouseout', handleMouseOut).on('click', handleClick);
 
       // Update
       markers.transition().duration(250).attr('d', path);
@@ -31553,13 +31982,20 @@ var Map = function () {
         tip.append('div').classed('leaflet-popup-tip', true);
 
         var wrapper = popup.append('div').classed('leaflet-popup-content-wrapper', true);
-        wrapper.append('div').classed('leaflet-popup-content', true).html('<strong>' + data.properties.name + '</strong><br>' + '<span>4* Score: ' + data.properties.score + '</span>');
+        wrapper.append('div').classed('leaflet-popup-content', true).html('<strong>' + data.properties.name + '</strong><br>' + '<span>4* Score: ' + data.properties.scores.overall.fourstar + '</span>');
       }
 
       // Handle mouse out interactions
       function handleMouseOut(d, i) {
         d3.select(this).style('opacity', 0.65);
         d3.select(map.getPanes().popupPane).html(null);
+      }
+
+      // Handle mouse click events
+      function handleClick(d, i) {
+        // Create a new custom event and listen to it in the main module
+        var selectNewUni = new CustomEvent('selectNewUni', { detail: d.properties.name });
+        svgDOM.dispatchEvent(selectNewUni);
       }
 
       /*------------------------------------------------------*/
@@ -31582,12 +32018,10 @@ var Map = function () {
   }]);
   return Map;
 }();
-// Import Leaflet module for creating maps
-
 
 exports.default = Map;
 
-},{"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60,"leaflet":61}],71:[function(require,module,exports){
+},{"../models/data":65,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60,"leaflet":61}],72:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31648,7 +32082,7 @@ function toggleMenu(window, document) {
   window.addEventListener(WINDOW_CHANGE_EVENT, closeMenu);
 }
 
-},{}],72:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31674,7 +32108,7 @@ function populateCities(data) {
   });
 }
 
-},{}],73:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

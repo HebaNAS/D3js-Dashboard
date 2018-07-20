@@ -1,0 +1,29 @@
+/*****************************************************************************/
+/*               Name: Data Visualization Coursework - F21DV                 */
+/*              File Description: Hierchical Structures Styles               */
+/*                        Author: Heba El-Shimy                              */
+/*                        Email: he12@hw.ac.uk                               */
+/*                         Date: 18 July 2018                                */
+/*****************************************************************************/
+
+path {
+  stroke: var(--transparent-lighter-charcoal-grey);
+  stroke-width: 1;
+}
+text {
+  fill: var(--white);
+  font-size: 0.75rem;
+}
+#explanation {
+  font-size: 0.85rem;
+  color: var(--white);
+  width: 100px;
+  height: 80px;
+  overflow-wrap: break-word;
+  text-align: center;
+  font-weight: bold;
+}
+.category {
+  font-size: 0.5rem;
+  font-weight: bold;
+}

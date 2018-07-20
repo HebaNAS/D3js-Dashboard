@@ -19,6 +19,7 @@ import Map from './views/map';
 import populateSelections from './views/populateSelections';
 import populateCities from './views/populateCities';
 import HBarChart from './views/hBarChart';
+import Hierarchical from './views/hierarchical.js';
 
 // Instantiate a new Data Manager Class
 const dataManager = new DataManager();
@@ -36,6 +37,7 @@ function startApplication() {
     // After waiting for datasets to load, do cleaning and pass data for
     // creating the dashboard
     let dataset = dataManager.mergeDatasets(mainData, extraData);
+    let dataset2 = mainData;
     
     // Router, shows dashboard content relevant to category selected from navigation
     // Get nav elements from the DOM
@@ -52,7 +54,7 @@ function startApplication() {
     mainDOM.setAttribute('id', 'eca-phd');
 
     // Create relevant dashboard
-    createDashboardEca(dataset);
+    createDashboardEca(dataset, dataset2);
 
     // Highlight active nav item
     navArr.forEach((navItem) => {
@@ -80,6 +82,7 @@ function startApplication() {
         // Early Career Academics & PhDs Dashboard
         if (dashboard === 'eca-phd') {
           main = mainEca;
+          document.title = 'REF2014 Results Dashboard - Early Career Academics & PhDs';
           mainDOM.innerHTML = main;
           mainDOM.setAttribute('id', 'eca-phd');
           createDashboardEca(dataset);
@@ -87,6 +90,7 @@ function startApplication() {
         // University Management Dashboard
         else if (dashboard === 'university-management') {
           main = universityManagement;
+          document.title = 'REF2014 Results Dashboard - University Management';
           mainDOM.innerHTML = main;
           mainDOM.setAttribute('id', 'um');
           createDashboardEca(dataset);
@@ -94,6 +98,7 @@ function startApplication() {
         // Industry Collaborators and Research Strategists Dashboard
         else if (dashboard === 'industry-research') {
           main = industryResearch;
+          document.title = 'REF2014 Results Dashboard - Industry Collaborators & Research Strategists';
           mainDOM.innerHTML = main;
           mainDOM.setAttribute('id', 'ir');
           createDashboardIr(dataset);
@@ -105,7 +110,7 @@ function startApplication() {
 
 // Create a function to start drawing the dashboard and visualizations
 // for Early Career Academics & PhDs
-function createDashboardEca(data) {
+function createDashboardEca(data, data2) {
   
   /*
    * Loading all Units os Assessment and use this for populating
@@ -122,17 +127,24 @@ function createDashboardEca(data) {
   let selectBox = document.getElementById('selector');
   let selectedUoa = 'Allied Health Professions, Dentistry, Nursing and Pharmacy';
 
-  /*
-    * Creating the first visualization, which is a map of the UK,
-    * with all the locations of the universities in a selected field (Unit
-    * of Assessment) which is passed on as an argument from the selectbox
-    */ 
-   let mapMarkers = dataManager.getLocationByUoA(data, selectedUoa, 'FourStar');
-    
-   // Create the map
-   const map = new Map(mapMarkers);
-   map.createMap();
-   map.render();
+ /*
+  * Creating the first visualization, which is a map of the UK,
+  * with all the locations of the universities in a selected field (Unit
+  * of Assessment) which is passed on as an argument from the selectbox
+  */ 
+  const mapMarkers = dataManager.getLocationByUoA(data, selectedUoa);
+  const hierarchical = new Hierarchical(
+    data2,
+    selectedUoa
+  );
+  
+  // Create the map
+  const map = new Map(mapMarkers);
+  map.createMap();
+  map.render();
+
+  // Create the hierarchical sunburst chart
+  hierarchical.createChart();
 
   // Listen for changes on the selectbox and get the selected value
   selectBox.addEventListener('change', (event) => {
@@ -140,21 +152,9 @@ function createDashboardEca(data) {
     console.log(selectedUoa);
 
     // Reload the map with the new dataset
-    map.reload(dataManager.getLocationByUoA(data, selectedUoa, 'FourStar'));
+    map.reload(dataManager.getLocationByUoA(data, selectedUoa));
   });
 
-  // Select DOM Element we will render the bar chart inside
-  let uoaCard = document.getElementById('uoa-card');
-
-  // Instantiate a new Horizontal Barchart Class with our desired specifications
-  // passed in as parameters
-  const hBarChart = new HBarChart(data, uoaCard, '100%', '100%');
-
-  //dataManager.getOverallScoreByUoA(data);
-
-  // Create a horizontal bar chart
-  hBarChart.appendSvg();
-  //hBarChart.render(scores);
 }
 
 // Create a function to start drawing the dashboard and visualizations
@@ -185,16 +185,16 @@ function createDashboardIr(data) {
   let selectedCity = 'Aberdeen';
 
   /*
-    * Creating the first visualization, which is a map of the UK,
-    * with the universities of the selected city and a selected field (Unit
-    * of Assessment) which are passed on as an argument from the selectbox
-    */ 
-   let mapMarkers = dataManager.getLocationByCity(data, selectedCity, selectedUoa);
-    
-   // Create the map
-   const map = new Map(mapMarkers);
-   map.createMap();
-   map.render();
+  * Creating the first visualization, which is a map of the UK,
+  * with the universities of the selected city and a selected field (Unit
+  * of Assessment) which are passed on as an argument from the selectbox
+  */ 
+  let mapMarkers = dataManager.getLocationByCity(data, selectedCity, selectedUoa);
+  
+  // Create the map
+  const map = new Map(mapMarkers);
+  map.createMap();
+  map.render();
 
   // Listen for changes on the selectbox and get the selected value
   selectBox.addEventListener('change', (event) => {

@@ -11,6 +11,11 @@ import * as d3 from 'd3';
 // Import Leaflet module for creating maps
 import * as L from 'leaflet';
 
+import DataManager from '../models/data';
+
+// Instantiate a new Data Manager Class
+const dataManager = new DataManager();
+
 export default class Map {
 
   // Create the constructor function
@@ -28,7 +33,7 @@ export default class Map {
     this.map = L.map('map', {
       zoomControl: false,
       watch: true
-    }).setView([54.505, -3.5], 5);
+    }).setView([54.805, -3.5], 5);
 
     // Add a new tile layer with the actual map features, set the options
     L.tileLayer('https://api.mapbox.com/styles/v1/hebaelshimy/cjjb2m2ss5cj62so6remsqx4s/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaGViYWVsc2hpbXkiLCJhIjoiY2o4YjdzZWF4MGtxMDJxczB2dDA4ZXNsOSJ9.hUkmJ7j6KuQyVMZPN9Xxpg', {
@@ -49,26 +54,8 @@ export default class Map {
     // Clear marker points from the map
     d3.select('#map .leaflet-marker-pane').html(null);
     
-    // Reformat our data into a form that could be understood by
-    // d3's geoPath method
-    this.mapData.forEach((d) => {
-      if (d.type === undefined) {
-        d.type = 'Feature';
-        d.geometry = {};
-        d.properties = {};
-        d.properties.cartisan = {};
-        d.properties.name = d.key;
-        d.properties.score = d.value.Score;
-        d.properties.cartisan.x =
-          this.map.latLngToLayerPoint(new L.LatLng(d.value.Lat, d.value.Lng)).x;
-        d.properties.cartisan.y =
-          this.map.latLngToLayerPoint(new L.LatLng(d.value.Lat, d.value.Lng)).y;
-        d.geometry.type = 'Point';
-        d.geometry.coordinates = [d.value.Lat, d.value.Lng];
-        delete d.key;
-        delete d.value;
-      }
-    });
+    // Reformat data into geoJson
+    const geoJsonData = dataManager.reformatDataAsGeoJson(this.mapData, this.map);
 
     /*------------------------------------------------------*/
 
@@ -108,16 +95,17 @@ export default class Map {
 
     // Create markers to represent locations of data points, bind the data,
     // enter the general update pattern
-    markers.data(this.mapData)
+    markers.data(geoJsonData)
       .enter()
       .append('path')
-      .attr('d', path.pointRadius((d) => parseInt(d.properties.score / 5 + 1)))
+      .attr('d', path.pointRadius((d) => parseInt(d.properties.scores.overall.fourstar / 5 + 1)))
       .attr('pointer-events', 'visible')
       .classed('leaflet-marker-icon', true)
       .classed('leaflet-zoom-animated', true)
       .classed('leaflet-clickable', true)
       .on('mouseover', handleMouseOver)
-      .on('mouseout', handleMouseOut);
+      .on('mouseout', handleMouseOut)
+      .on('click', handleClick);
 
     // Update
     markers.transition()
@@ -185,13 +173,20 @@ export default class Map {
       wrapper.append('div')
         .classed('leaflet-popup-content', true)
         .html('<strong>' + data.properties.name + '</strong><br>' +
-              '<span>4* Score: ' + data.properties.score + '</span>');
+              '<span>4* Score: ' + data.properties.scores.overall.fourstar + '</span>');
     }
 
     // Handle mouse out interactions
     function handleMouseOut(d, i) {
       d3.select(this).style('opacity', 0.65);
       d3.select(map.getPanes().popupPane).html(null);
+    }
+
+    // Handle mouse click events
+    function handleClick(d, i) {
+      // Create a new custom event and listen to it in the main module
+      const selectNewUni = new CustomEvent('selectNewUni', { detail: d.properties.name });
+      svgDOM.dispatchEvent(selectNewUni);
     }
 
     /*------------------------------------------------------*/
