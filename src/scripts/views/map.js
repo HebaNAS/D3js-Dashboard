@@ -19,8 +19,9 @@ const dataManager = new DataManager();
 export default class Map {
 
   // Create the constructor function
-  constructor(mapData) {
+  constructor(mapData, scoreCalc) {
     this.mapData = mapData;
+    this.scoreCalc = scoreCalc;
     this.map = {};
   }
 
@@ -77,6 +78,7 @@ export default class Map {
     // Create a projection to transform points locations from latitude and longitude
     // to x and y coordinates to represent on the screen
     const map = this.map,
+      score = this.scoreCalc,
       transform = d3.geoTransform({point: projectPoint }),
       path = d3.geoPath().projection(transform);
 
@@ -98,7 +100,15 @@ export default class Map {
     markers.data(geoJsonData)
       .enter()
       .append('path')
-      .attr('d', path.pointRadius((d) => parseInt(d.properties.scores.overall.fourstar / 5 + 1)))
+      .attr('d', path.pointRadius((d) => {
+        let result = 0;
+        if (score === '4*') {
+          result = parseInt(d.properties.scores.overall.fourstar / 5 + 1);
+        } else if (score === 'mean') {
+          result = parseInt(d.properties.scores.mean / 5);
+        }
+        return result;
+      }))
       .attr('pointer-events', 'visible')
       .classed('leaflet-marker-icon', true)
       .classed('leaflet-zoom-animated', true)
@@ -149,6 +159,16 @@ export default class Map {
     function handleMouseOver(d, i) {
       d3.select(this).style('opacity', 0.85);
 
+      let result = 0;
+      let desc = '';
+      if (score === '4*') {
+        result = parseInt(d.properties.scores.overall.fourstar / 5 + 1);
+        desc = '4* Score: ';
+      } else if (score === 'mean') {
+        result = parseInt(d.properties.scores.mean);
+        desc = 'All UoAs Mean Score: ';
+      }
+
       let self = this;
       let data = d;
       let popup = d3.select(map.getPanes().popupPane)
@@ -173,7 +193,7 @@ export default class Map {
       wrapper.append('div')
         .classed('leaflet-popup-content', true)
         .html('<strong>' + data.properties.name + '</strong><br>' +
-              '<span>4* Score: ' + data.properties.scores.overall.fourstar + '</span>');
+              '<span>' + desc + result + '</span>');
     }
 
     // Handle mouse out interactions
@@ -185,8 +205,11 @@ export default class Map {
     // Handle mouse click events
     function handleClick(d, i) {
       // Create a new custom event and listen to it in the main module
-      const selectNewUni = new CustomEvent('selectNewUni', { detail: d.properties.name });
-      svgDOM.dispatchEvent(selectNewUni);
+      const selectNewMarker = new CustomEvent('selectNewMarker', { detail: {
+          props: () => d.properties
+        }
+      });
+      svgDOM.dispatchEvent(selectNewMarker);
     }
 
     /*------------------------------------------------------*/

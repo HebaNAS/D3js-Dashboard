@@ -137,11 +137,15 @@ function createDashboardEca(data, data2) {
     data2,
     selectedUoa
   );
+  const barChart = new HBarChart(dataManager.getLocationByUoA(data, selectedUoa));
   
   // Create the map
-  const map = new Map(mapMarkers);
+  const map = new Map(mapMarkers, '4*');
   map.createMap();
   map.render();
+
+  // Create a horizontal stacked bar chart
+  barChart.createChart();
 
   // Create the hierarchical sunburst chart
   hierarchical.createChart();
@@ -173,7 +177,6 @@ function createDashboardIr(data) {
   let cities = dataManager.loadAllCities(data);
 
   // Populate the select boxes with the options
-  populateSelections(uoas);
   populateCities(cities);
 
   // Get the current selection from the select box
@@ -189,21 +192,12 @@ function createDashboardIr(data) {
   * with the universities of the selected city and a selected field (Unit
   * of Assessment) which are passed on as an argument from the selectbox
   */ 
-  let mapMarkers = dataManager.getLocationByCity(data, selectedCity, selectedUoa);
+  let mapMarkers = dataManager.getLocationByCity(data, selectedCity);
   
   // Create the map
-  const map = new Map(mapMarkers);
+  const map = new Map(mapMarkers, 'mean');
   map.createMap();
   map.render();
-
-  // Listen for changes on the selectbox and get the selected value
-  selectBox.addEventListener('change', (event) => {
-    selectedUoa = selectBox.options[selectBox.selectedIndex].value;
-    console.log(selectedUoa);
-
-    // Reload the map with the new dataset
-    map.reload(dataManager.getLocationByCity(data, selectedCity, selectedUoa));
-  });
 
   // Listen for changes on the City selectbox and get the selected value
   selectBoxCity.addEventListener('change', (event) => {
@@ -211,7 +205,7 @@ function createDashboardIr(data) {
     console.log(selectedCity);
 
     // Reload the map with the new dataset
-    map.reload(dataManager.getLocationByCity(data, selectedCity, selectedUoa));
+    map.reload(dataManager.getLocationByCity(data, selectedCity));
   });
 
 }

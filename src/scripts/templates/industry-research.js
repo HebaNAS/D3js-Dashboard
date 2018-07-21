@@ -24,10 +24,6 @@ export const industryResearch =
       <select id="selector-city">
 
       </select>
-      <label class="font-07 font-bold">Unit of Assessment</label>
-      <select id="selector">
-
-      </select>
     </form>
     <p class=""></p>
     <p class=""></p>

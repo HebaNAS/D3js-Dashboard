@@ -9,65 +9,55 @@
 // Import d3 library
 import * as d3 from 'd3';
 
+import DataManager from '../models/data';
+
+// Instantiate a new Data Manager Class
+const dataManager = new DataManager();
+
 // Create a function to draw a horizontal barchart giving a dataset and a DOM
 // element as arguments
 export default class HBarChart {
 
   // Create the constructor function and define variables
-  constructor(data, DOMElement, width, height) {
+  constructor(data) {
     this.data = data;
-    this.DOMElement = DOMElement;
-    this.svgWidth = width;
-    this.svgHeight = height;
-    this.svg = {};
-    this.xScale = d3.scaleLinear();
-    this.yScale = d3.scaleOrdinal();
   }
 
   // Append svg to the selected DOM Element and set its width and height
-  appendSvg() {
+  createChart() {
+    //console.log(this.data);
+    /*
+     * Variables
+     */
+
+    // Get parent element
+    const svgDOM = document.getElementById('uoa-card');
+    // Get all universities as keys
+    const universities = dataManager.loadAllUoAs(this.data);
+    // Define margins around the chart
+    const margin = {top: 20, right: 20, bottom: 20, left: 80};
+    // Define horizontal scale
+    const scaleX = d3.scaleBand()
+      .rangeRound([0, svgDOM.offsetWidth])
+      .paddingInner(0.05)
+      .align(0.1);
+    // Define vertical scale
+    const scaleY = d3.scaleLinear()
+        .rangeRound([svgDOM.offsetHeight, 0]);
+    // Define color range
+    const color = d3.scaleLinear()
+        .range(['#25CD6B', '#FFBE57']);
+
+    const results = this.data.sort((a, b) => { return b.Overall4Score - a.Overall4Score; });
+      scaleX.domain(this.data.map((d) => { return d.key; }));
+      scaleY.domain([0, d3.max(this.data, (d) => { return 100; })]).nice();
+      color.domain(universities);
+    //console.log(results);
     
     // Append the svg with the given options
-    d3.select(this.DOMElement).append('svg')
-      .attr('width', this.svgWidth)
-      .attr('height', this.svgHeight);
+    d3.select('#uoa-card').append('svg')
+      .attr('width', svgDOM.offsetWidth)
+      .attr('height', svgDOM.offsetHeight);
   }
 
-  updateScales(data) {
-    console.log('Updating scales...');
-
-    //console.log(this.xScale);
-		this.xScale.domain([0, d3.max(data, (d) => { return d.UOA_Name; })])
-      .range([0, this.svgHeight - 20 * 2]);
-      
-    this.yScale.domain(data.map((d) => { console.log(d3.sum(() => {
-      d.OneStar, d.TwoStar, d.ThreeStar, d.FourStar
-      })); 
-    }))
-			//.paddingInner(0.1)
-			.range([20, this.svgWidth - 20]);
-  }
-
-  render(data) {
-    console.log('Rendering...');
-    console.log(data);
-    // if (this.svg) {
-    //   this.svg.attr("width", this.svgWidth)
-    //           .attr("height", this.svgHeight);
-    // }
-       
-    //this.updateScales(data);
-    this.svg = d3.select(this.DOMElement).selectAll('svg');
-    // GUP
-		let bars = this.svg.selectAll('rect')
-      .data(data, (d) => { return d.key; });
-
-    // enter 
-    bars.enter().append('rect')
-      .attr('x', 0)
-      .attr('width', 50)
-      .attr('height', 10)
-      .attr('y', 0)
-      .attr('height', 100);
-  }
 }

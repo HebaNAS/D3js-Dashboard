@@ -30772,11 +30772,15 @@ function createDashboardEca(data, data2) {
    */
   var mapMarkers = dataManager.getLocationByUoA(data, selectedUoa);
   var hierarchical = new _hierarchical2.default(data2, selectedUoa);
+  var barChart = new _hBarChart2.default(dataManager.getLocationByUoA(data, selectedUoa));
 
   // Create the map
-  var map = new _map2.default(mapMarkers);
+  var map = new _map2.default(mapMarkers, '4*');
   map.createMap();
   map.render();
+
+  // Create a horizontal stacked bar chart
+  barChart.createChart();
 
   // Create the hierarchical sunburst chart
   hierarchical.createChart();
@@ -30807,7 +30811,6 @@ function createDashboardIr(data) {
   var cities = dataManager.loadAllCities(data);
 
   // Populate the select boxes with the options
-  (0, _populateSelections2.default)(uoas);
   (0, _populateCities2.default)(cities);
 
   // Get the current selection from the select box
@@ -30823,21 +30826,12 @@ function createDashboardIr(data) {
   * with the universities of the selected city and a selected field (Unit
   * of Assessment) which are passed on as an argument from the selectbox
   */
-  var mapMarkers = dataManager.getLocationByCity(data, selectedCity, selectedUoa);
+  var mapMarkers = dataManager.getLocationByCity(data, selectedCity);
 
   // Create the map
-  var map = new _map2.default(mapMarkers);
+  var map = new _map2.default(mapMarkers, 'mean');
   map.createMap();
   map.render();
-
-  // Listen for changes on the selectbox and get the selected value
-  selectBox.addEventListener('change', function (event) {
-    selectedUoa = selectBox.options[selectBox.selectedIndex].value;
-    console.log(selectedUoa);
-
-    // Reload the map with the new dataset
-    map.reload(dataManager.getLocationByCity(data, selectedCity, selectedUoa));
-  });
 
   // Listen for changes on the City selectbox and get the selected value
   selectBoxCity.addEventListener('change', function (event) {
@@ -30845,7 +30839,7 @@ function createDashboardIr(data) {
     console.log(selectedCity);
 
     // Reload the map with the new dataset
-    map.reload(dataManager.getLocationByCity(data, selectedCity, selectedUoa));
+    map.reload(dataManager.getLocationByCity(data, selectedCity));
   });
 }
 
@@ -30922,32 +30916,32 @@ var DataManager = function () {
 						'UOA_Name': mainData['Unit of assessment name'],
 						'Profile': mainData.Profile,
 						'Overall': {
-							'FourStar': mainData.Profile === 'Overall' ? mainData['4*'] : 0,
-							'ThreeStar': mainData.Profile === 'Overall' ? mainData['3*'] : 0,
-							'TwoStar': mainData.Profile === 'Overall' ? mainData['2*'] : 0,
-							'OneStar': mainData.Profile === 'Overall' ? mainData['1*'] : 0,
-							'Unclassified': mainData.Profile === 'Overall' ? mainData.unclassified : 0
+							'FourStar': mainData.Profile === 'Overall' ? parseFloat(mainData['4*']) : 0,
+							'ThreeStar': mainData.Profile === 'Overall' ? parseFloat(mainData['3*']) : 0,
+							'TwoStar': mainData.Profile === 'Overall' ? parseFloat(mainData['2*']) : 0,
+							'OneStar': mainData.Profile === 'Overall' ? parseFloat(mainData['1*']) : 0,
+							'Unclassified': mainData.Profile === 'Overall' ? parseFloat(mainData.unclassified) : 0
 						},
 						'Outputs': {
-							'FourStar': mainData.Profile === 'Outputs' ? mainData['4*'] : 0,
-							'ThreeStar': mainData.Profile === 'Outputs' ? mainData['3*'] : 0,
-							'TwoStar': mainData.Profile === 'Outputs' ? mainData['2*'] : 0,
-							'OneStar': mainData.Profile === 'Outputs' ? mainData['1*'] : 0,
-							'Unclassified': mainData.Profile === 'Outputs' ? mainData.unclassified : 0
+							'FourStar': mainData.Profile === 'Outputs' ? parseFloat(mainData['4*']) : 0,
+							'ThreeStar': mainData.Profile === 'Outputs' ? parseFloat(mainData['3*']) : 0,
+							'TwoStar': mainData.Profile === 'Outputs' ? parseFloat(mainData['2*']) : 0,
+							'OneStar': mainData.Profile === 'Outputs' ? parseFloat(mainData['1*']) : 0,
+							'Unclassified': mainData.Profile === 'Outputs' ? parseFloat(mainData.unclassified) : 0
 						},
 						'Environment': {
-							'FourStar': mainData.Profile === 'Environment' ? mainData['4*'] : 0,
-							'ThreeStar': mainData.Profile === 'Environment' ? mainData['3*'] : 0,
-							'TwoStar': mainData.Profile === 'Environment' ? mainData['2*'] : 0,
-							'OneStar': mainData.Profile === 'Environment' ? mainData['1*'] : 0,
-							'Unclassified': mainData.Profile === 'Environment' ? mainData.unclassified : 0
+							'FourStar': mainData.Profile === 'Environment' ? parseFloat(mainData['4*']) : 0,
+							'ThreeStar': mainData.Profile === 'Environment' ? parseFloat(mainData['3*']) : 0,
+							'TwoStar': mainData.Profile === 'Environment' ? parseFloat(mainData['2*']) : 0,
+							'OneStar': mainData.Profile === 'Environment' ? parseFloat(mainData['1*']) : 0,
+							'Unclassified': mainData.Profile === 'Environment' ? parseFloat(mainData.unclassified) : 0
 						},
 						'Impact': {
-							'FourStar': mainData.Profile === 'Impact' ? mainData['4*'] : 0,
-							'ThreeStar': mainData.Profile === 'Impact' ? mainData['3*'] : 0,
-							'TwoStar': mainData.Profile === 'Impact' ? mainData['2*'] : 0,
-							'OneStar': mainData.Profile === 'Impact' ? mainData['1*'] : 0,
-							'Unclassified': mainData.Profile === 'Impact' ? mainData.unclassified : 0
+							'FourStar': mainData.Profile === 'Impact' ? parseFloat(mainData['4*']) : 0,
+							'ThreeStar': mainData.Profile === 'Impact' ? parseFloat(mainData['3*']) : 0,
+							'TwoStar': mainData.Profile === 'Impact' ? parseFloat(mainData['2*']) : 0,
+							'OneStar': mainData.Profile === 'Impact' ? parseFloat(mainData['1*']) : 0,
+							'Unclassified': mainData.Profile === 'Impact' ? parseFloat(mainData.unclassified) : 0
 						},
 						'FTEA_Submitted': mainData['FTE Category A staff submitted'],
 						'Building': extraData.BUILDING_NAME_NUMBER,
@@ -30972,32 +30966,32 @@ var DataManager = function () {
 						'UOA_Name': mainData['Unit of assessment name'],
 						'Profile': mainData.Profile,
 						'Overall': {
-							'FourStar': mainData.Profile === 'Overall' ? mainData['4*'] : 0,
-							'ThreeStar': mainData.Profile === 'Overall' ? mainData['3*'] : 0,
-							'TwoStar': mainData.Profile === 'Overall' ? mainData['2*'] : 0,
-							'OneStar': mainData.Profile === 'Overall' ? mainData['1*'] : 0,
-							'Unclassified': mainData.Profile === 'Overall' ? mainData.unclassified : 0
+							'FourStar': mainData.Profile === 'Overall' ? parseFloat(mainData['4*']) : 0,
+							'ThreeStar': mainData.Profile === 'Overall' ? parseFloat(mainData['3*']) : 0,
+							'TwoStar': mainData.Profile === 'Overall' ? parseFloat(mainData['2*']) : 0,
+							'OneStar': mainData.Profile === 'Overall' ? parseFloat(mainData['1*']) : 0,
+							'Unclassified': mainData.Profile === 'Overall' ? parseFloat(mainData.unclassified) : 0
 						},
 						'Outputs': {
-							'FourStar': mainData.Profile === 'Outputs' ? mainData['4*'] : 0,
-							'ThreeStar': mainData.Profile === 'Outputs' ? mainData['3*'] : 0,
-							'TwoStar': mainData.Profile === 'Outputs' ? mainData['2*'] : 0,
-							'OneStar': mainData.Profile === 'Outputs' ? mainData['1*'] : 0,
-							'Unclassified': mainData.Profile === 'Outputs' ? mainData.unclassified : 0
+							'FourStar': mainData.Profile === 'Outputs' ? parseFloat(mainData['4*']) : 0,
+							'ThreeStar': mainData.Profile === 'Outputs' ? parseFloat(mainData['3*']) : 0,
+							'TwoStar': mainData.Profile === 'Outputs' ? parseFloat(mainData['2*']) : 0,
+							'OneStar': mainData.Profile === 'Outputs' ? parseFloat(mainData['1*']) : 0,
+							'Unclassified': mainData.Profile === 'Outputs' ? parseFloat(mainData.unclassified) : 0
 						},
 						'Environment': {
-							'FourStar': mainData.Profile === 'Environment' ? mainData['4*'] : 0,
-							'ThreeStar': mainData.Profile === 'Environment' ? mainData['3*'] : 0,
-							'TwoStar': mainData.Profile === 'Environment' ? mainData['2*'] : 0,
-							'OneStar': mainData.Profile === 'Environment' ? mainData['1*'] : 0,
-							'Unclassified': mainData.Profile === 'Environment' ? mainData.unclassified : 0
+							'FourStar': mainData.Profile === 'Environment' ? parseFloat(mainData['4*']) : 0,
+							'ThreeStar': mainData.Profile === 'Environment' ? parseFloat(mainData['3*']) : 0,
+							'TwoStar': mainData.Profile === 'Environment' ? parseFloat(mainData['2*']) : 0,
+							'OneStar': mainData.Profile === 'Environment' ? parseFloat(mainData['1*']) : 0,
+							'Unclassified': mainData.Profile === 'Environment' ? parseFloat(mainData.unclassified) : 0
 						},
 						'Impact': {
-							'FourStar': mainData.Profile === 'Impact' ? mainData['4*'] : 0,
-							'ThreeStar': mainData.Profile === 'Impact' ? mainData['3*'] : 0,
-							'TwoStar': mainData.Profile === 'Impact' ? mainData['2*'] : 0,
-							'OneStar': mainData.Profile === 'Impact' ? mainData['1*'] : 0,
-							'Unclassified': mainData.Profile === 'Impact' ? mainData.unclassified : 0
+							'FourStar': mainData.Profile === 'Impact' ? parseFloat(mainData['4*']) : 0,
+							'ThreeStar': mainData.Profile === 'Impact' ? parseFloat(mainData['3*']) : 0,
+							'TwoStar': mainData.Profile === 'Impact' ? parseFloat(mainData['2*']) : 0,
+							'OneStar': mainData.Profile === 'Impact' ? parseFloat(mainData['1*']) : 0,
+							'Unclassified': mainData.Profile === 'Impact' ? parseFloat(mainData.unclassified) : 0
 						},
 						'FTEA_Submitted': mainData['FTE Category A staff submitted'],
 						'Building': '',
@@ -31072,53 +31066,6 @@ var DataManager = function () {
 		}
 
 		/*
-   * Function to extract all Universities and their scores given a specific
-   * unit of assessment
-   */
-
-	}, {
-		key: 'getOverallScoreByUoA',
-		value: function getOverallScoreByUoA(data) {
-
-			// Create a variable to hold the data and use d3 nest method to extract the data
-			// and return it in the form of key, value pairs
-			var nestedData = d3.nest()
-			// Define our key as the Unit of Assessment name
-			.key(function (d) {
-				return d.UOA_Name;
-			})
-			// Define another key, University Name to be, nested as a second level
-			.key(function (d) {
-				return d.InstitutionName;
-			})
-			// Calculate the results of the previous extraction operations and return
-			// data as an object of the five tiers of scores available in the dataset (4* - unclassified)
-			// using d3 sum to loop over extracted array of values and doing a summation operation
-			.rollup(function (values) {
-				return {
-					OneStar: d3.sum(values, function (item) {
-						return item.Overall.OneStar;
-					}),
-					TwoStar: d3.sum(values, function (item) {
-						return item.Overall.TwoStar;
-					}),
-					ThreeStar: d3.sum(values, function (item) {
-						return item.Overall.ThreeStar;
-					}),
-					FourStar: d3.sum(values, function (item) {
-						return item.Overall.FourStar;
-					}),
-					Unclassified: d3.sum(values, function (item) {
-						return item.Overall.Unclassified;
-					})
-				};
-			}).entries(data);
-
-			//return nestedData;
-			console.log(nestedData);
-		}
-
-		/*
    * Function to get locations of institutions given a specific Unit of Assessment
    * and selecting a tier of score
    */
@@ -31151,6 +31098,7 @@ var DataManager = function () {
 					Lng: d3.mean(values, function (d) {
 						return d.Lng;
 					}),
+					Uoa: uoa,
 					Overall4Score: d3.max(values, function (d) {
 						return d.Overall.FourStar;
 					}),
@@ -31223,13 +31171,23 @@ var DataManager = function () {
 
 	}, {
 		key: 'getLocationByCity',
-		value: function getLocationByCity(data, city, uoa) {
+		value: function getLocationByCity(data, city) {
 
 			// Create a variable to hold filtered data which will contain only universities
 			// that provide research in the selected area (Unit of Assessment) in the selected city
 			var filtered = data.filter(function (item) {
-				return item.Town.toLowerCase() === city.toLowerCase() && item.UOA_Name === uoa;
+				return item.Town.toLowerCase() === city.toLowerCase();
 			});
+			//console.log(filtered);
+
+			// Extract all universities in the selected town
+			var universities = [];
+
+			filtered.forEach(function (item) {
+				universities.push(item.InstitutionName);
+			});
+			universities = [].concat((0, _toConsumableArray3.default)(new Set(universities)));
+			//console.log(universities);
 
 			// Create a variable to hold the array return from the extraction operation,
 			// using d3 nest to reshape our data into key, value pairs and return only
@@ -31242,6 +31200,15 @@ var DataManager = function () {
 			})
 			// Perform a calculation on the returned values
 			.rollup(function (values) {
+				//console.log(values);
+				var scores = [];
+				// values.forEach((d) => {
+				// 	//console.log('d: ', d);
+				// 	if (d.Profile === 'Overall') {
+				// 		scores.push(parseFloat(d.Overall.FourStar));
+				// 	}
+				// 	console.log(scores);
+				// });
 				return {
 					Lat: d3.mean(values, function (d) {
 						return d.Lat;
@@ -31249,7 +31216,12 @@ var DataManager = function () {
 					Lng: d3.mean(values, function (d) {
 						return d.Lng;
 					}),
-					Score: d3.max(values, function (d) {
+					MeanScore: d3.mean(values, function (d) {
+						if (d.Profile === 'Overall') {
+							return parseFloat(d.Overall.FourStar);
+						}
+					}),
+					Overall4Score: d3.max(values, function (d) {
 						return d.Overall.FourStar;
 					})
 				};
@@ -31267,37 +31239,18 @@ var DataManager = function () {
 		key: 'reformatDataAsGeoJson',
 		value: function reformatDataAsGeoJson(data, map) {
 			data.forEach(function (d) {
+				//console.log(d);
 				if (d.type === undefined) {
 					d.type = 'Feature';
 					d.geometry = {};
 					d.properties = {};
 					d.properties.cartisan = {};
 					d.properties.name = d.key;
+					d.properties.uoas = {};
 					d.properties.scores = {};
+					d.properties.scores.mean = d.value.MeanScore;
 					d.properties.scores.overall = {};
-					d.properties.scores.outputs = {};
-					d.properties.scores.environment = {};
-					d.properties.scores.impact = {};
 					d.properties.scores.overall.fourstar = d.value.Overall4Score;
-					d.properties.scores.overall.threestar = d.value.Overall3Score;
-					d.properties.scores.overall.twostar = d.value.Overall2Score;
-					d.properties.scores.overall.onestar = d.value.Overall1Score;
-					d.properties.scores.overall.unclassified = d.value.OverallUCScore;
-					d.properties.scores.environment.fourstar = d.value.Environment4Score;
-					d.properties.scores.environment.threestar = d.value.Environment3Score;
-					d.properties.scores.environment.twostar = d.value.Environment2Score;
-					d.properties.scores.environment.onestar = d.value.Environment1Score;
-					d.properties.scores.environment.unclassified = d.value.EnvironmentUCScore;
-					d.properties.scores.impact.fourstar = d.value.Impact4Score;
-					d.properties.scores.impact.threestar = d.value.Impact3Score;
-					d.properties.scores.impact.twostar = d.value.Impact2Score;
-					d.properties.scores.impact.onestar = d.value.Impact1Score;
-					d.properties.scores.impact.unclassified = d.value.ImpactUCScore;
-					d.properties.scores.outputs.fourstar = d.value.Outputs4Score;
-					d.properties.scores.outputs.threestar = d.value.Outputs3Score;
-					d.properties.scores.outputs.twostar = d.value.Outputs2Score;
-					d.properties.scores.outputs.onestar = d.value.Outputs1Score;
-					d.properties.scores.outputs.unclassified = d.value.OutputsUCScore;
 					d.properties.cartisan.x = map.latLngToLayerPoint(new L.LatLng(d.value.Lat, d.value.Lng)).x;
 					d.properties.cartisan.y = map.latLngToLayerPoint(new L.LatLng(d.value.Lat, d.value.Lng)).y;
 					d.geometry.type = 'Point';
@@ -31367,6 +31320,12 @@ var DataManager = function () {
 
 			return nestedData;
 		}
+
+		/*
+   * Reformat our data into a form that could be understood by
+    * d3's stack method
+   */
+
 	}]);
 	return DataManager;
 }(); /***********************************************************************************/
@@ -31416,7 +31375,7 @@ Object.defineProperty(exports, "__esModule", {
 /*                        Date: 15 July 2018                                 */
 /*****************************************************************************/
 
-var industryResearch = exports.industryResearch = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"\"></div>\n    <div class=\"card-style\"></div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">City</label>\n      <select id=\"selector-city\">\n\n      </select>\n      <label class=\"font-07 font-bold\">Unit of Assessment</label>\n      <select id=\"selector\">\n\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
+var industryResearch = exports.industryResearch = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"\"></div>\n    <div class=\"card-style\"></div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">City</label>\n      <select id=\"selector-city\">\n\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
 },{}],68:[function(require,module,exports){
 "use strict";
@@ -31453,78 +31412,16 @@ var _d = require('d3');
 
 var d3 = _interopRequireWildcard(_d);
 
+var _data = require('../models/data');
+
+var _data2 = _interopRequireDefault(_data);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// Create a function to draw a horizontal barchart giving a dataset and a DOM
-// element as arguments
-var HBarChart = function () {
-
-  // Create the constructor function and define variables
-  function HBarChart(data, DOMElement, width, height) {
-    (0, _classCallCheck3.default)(this, HBarChart);
-
-    this.data = data;
-    this.DOMElement = DOMElement;
-    this.svgWidth = width;
-    this.svgHeight = height;
-    this.svg = {};
-    this.xScale = d3.scaleLinear();
-    this.yScale = d3.scaleOrdinal();
-  }
-
-  // Append svg to the selected DOM Element and set its width and height
-
-
-  (0, _createClass3.default)(HBarChart, [{
-    key: 'appendSvg',
-    value: function appendSvg() {
-
-      // Append the svg with the given options
-      d3.select(this.DOMElement).append('svg').attr('width', this.svgWidth).attr('height', this.svgHeight);
-    }
-  }, {
-    key: 'updateScales',
-    value: function updateScales(data) {
-      console.log('Updating scales...');
-
-      //console.log(this.xScale);
-      this.xScale.domain([0, d3.max(data, function (d) {
-        return d.UOA_Name;
-      })]).range([0, this.svgHeight - 20 * 2]);
-
-      this.yScale.domain(data.map(function (d) {
-        console.log(d3.sum(function () {
-          d.OneStar, d.TwoStar, d.ThreeStar, d.FourStar;
-        }));
-      }))
-      //.paddingInner(0.1)
-      .range([20, this.svgWidth - 20]);
-    }
-  }, {
-    key: 'render',
-    value: function render(data) {
-      console.log('Rendering...');
-      console.log(data);
-      // if (this.svg) {
-      //   this.svg.attr("width", this.svgWidth)
-      //           .attr("height", this.svgHeight);
-      // }
-
-      //this.updateScales(data);
-      this.svg = d3.select(this.DOMElement).selectAll('svg');
-      // GUP
-      var bars = this.svg.selectAll('rect').data(data, function (d) {
-        return d.key;
-      });
-
-      // enter 
-      bars.enter().append('rect').attr('x', 0).attr('width', 50).attr('height', 10).attr('y', 0).attr('height', 100);
-    }
-  }]);
-  return HBarChart;
-}(); /*****************************************************************************/
+// Instantiate a new Data Manager Class
+/*****************************************************************************/
 /*               Name: Data Visualization Coursework - F21DV                 */
 /*       File Description: Create a horizontal bar chart given a dataset     */
 /*                        Author: Heba El-Shimy                              */
@@ -31533,11 +31430,66 @@ var HBarChart = function () {
 /*****************************************************************************/
 
 // Import d3 library
+var dataManager = new _data2.default();
 
+// Create a function to draw a horizontal barchart giving a dataset and a DOM
+// element as arguments
+
+var HBarChart = function () {
+
+  // Create the constructor function and define variables
+  function HBarChart(data) {
+    (0, _classCallCheck3.default)(this, HBarChart);
+
+    this.data = data;
+  }
+
+  // Append svg to the selected DOM Element and set its width and height
+
+
+  (0, _createClass3.default)(HBarChart, [{
+    key: 'createChart',
+    value: function createChart() {
+      //console.log(this.data);
+      /*
+       * Variables
+       */
+
+      // Get parent element
+      var svgDOM = document.getElementById('uoa-card');
+      // Get all universities as keys
+      var universities = dataManager.loadAllUoAs(this.data);
+      // Define margins around the chart
+      var margin = { top: 20, right: 20, bottom: 20, left: 80 };
+      // Define horizontal scale
+      var scaleX = d3.scaleBand().rangeRound([0, svgDOM.offsetWidth]).paddingInner(0.05).align(0.1);
+      // Define vertical scale
+      var scaleY = d3.scaleLinear().rangeRound([svgDOM.offsetHeight, 0]);
+      // Define color range
+      var color = d3.scaleLinear().range(['#25CD6B', '#FFBE57']);
+
+      var results = this.data.sort(function (a, b) {
+        return b.Overall4Score - a.Overall4Score;
+      });
+      scaleX.domain(this.data.map(function (d) {
+        return d.key;
+      }));
+      scaleY.domain([0, d3.max(this.data, function (d) {
+        return 100;
+      })]).nice();
+      color.domain(universities);
+      //console.log(results);
+
+      // Append the svg with the given options
+      d3.select('#uoa-card').append('svg').attr('width', svgDOM.offsetWidth).attr('height', svgDOM.offsetHeight);
+    }
+  }]);
+  return HBarChart;
+}();
 
 exports.default = HBarChart;
 
-},{"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60}],70:[function(require,module,exports){
+},{"../models/data":65,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60}],70:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31703,10 +31655,10 @@ var Hierarchical = function () {
 
       // Listen for selected university from map and update
       // the chart accordingly
-      map.addEventListener('selectNewUni', function (event) {
+      map.addEventListener('selectNewMarker', function (event) {
         console.log('Selected University Changed');
         // Update the hierarchical sunburst chart with new data
-        selectedUniversity = event.detail;
+        selectedUniversity = event.detail.props().name;
         _this.reload(selectedUniversity, uoa);
         explanation.innerText = _this.selectedUni;
         update(_this.hierarchicalData);
@@ -31869,10 +31821,11 @@ var dataManager = new _data2.default(); /***************************************
 var Map = function () {
 
   // Create the constructor function
-  function Map(mapData) {
+  function Map(mapData, scoreCalc) {
     (0, _classCallCheck3.default)(this, Map);
 
     this.mapData = mapData;
+    this.scoreCalc = scoreCalc;
     this.map = {};
   }
 
@@ -31931,6 +31884,7 @@ var Map = function () {
       // Create a projection to transform points locations from latitude and longitude
       // to x and y coordinates to represent on the screen
       var map = this.map,
+          score = this.scoreCalc,
           transform = d3.geoTransform({ point: projectPoint }),
           path = d3.geoPath().projection(transform);
 
@@ -31947,7 +31901,13 @@ var Map = function () {
       // Create markers to represent locations of data points, bind the data,
       // enter the general update pattern
       markers.data(geoJsonData).enter().append('path').attr('d', path.pointRadius(function (d) {
-        return parseInt(d.properties.scores.overall.fourstar / 5 + 1);
+        var result = 0;
+        if (score === '4*') {
+          result = parseInt(d.properties.scores.overall.fourstar / 5 + 1);
+        } else if (score === 'mean') {
+          result = parseInt(d.properties.scores.mean / 5);
+        }
+        return result;
       })).attr('pointer-events', 'visible').classed('leaflet-marker-icon', true).classed('leaflet-zoom-animated', true).classed('leaflet-clickable', true).on('mouseover', handleMouseOver).on('mouseout', handleMouseOut).on('click', handleClick);
 
       // Update
@@ -31983,6 +31943,16 @@ var Map = function () {
       function handleMouseOver(d, i) {
         d3.select(this).style('opacity', 0.85);
 
+        var result = 0;
+        var desc = '';
+        if (score === '4*') {
+          result = parseInt(d.properties.scores.overall.fourstar / 5 + 1);
+          desc = '4* Score: ';
+        } else if (score === 'mean') {
+          result = parseInt(d.properties.scores.mean);
+          desc = 'All UoAs Mean Score: ';
+        }
+
         var self = this;
         var data = d;
         var popup = d3.select(map.getPanes().popupPane).append('div').classed('leaflet-popup', true).style('top', d3.mouse(self)[1] - 90 + 'px').style('left', d3.mouse(self)[0] - 110 + 'px');
@@ -31993,7 +31963,7 @@ var Map = function () {
         tip.append('div').classed('leaflet-popup-tip', true);
 
         var wrapper = popup.append('div').classed('leaflet-popup-content-wrapper', true);
-        wrapper.append('div').classed('leaflet-popup-content', true).html('<strong>' + data.properties.name + '</strong><br>' + '<span>4* Score: ' + data.properties.scores.overall.fourstar + '</span>');
+        wrapper.append('div').classed('leaflet-popup-content', true).html('<strong>' + data.properties.name + '</strong><br>' + '<span>' + desc + result + '</span>');
       }
 
       // Handle mouse out interactions
@@ -32005,8 +31975,13 @@ var Map = function () {
       // Handle mouse click events
       function handleClick(d, i) {
         // Create a new custom event and listen to it in the main module
-        var selectNewUni = new CustomEvent('selectNewUni', { detail: d.properties.name });
-        svgDOM.dispatchEvent(selectNewUni);
+        var selectNewMarker = new CustomEvent('selectNewMarker', { detail: {
+            props: function props() {
+              return d.properties;
+            }
+          }
+        });
+        svgDOM.dispatchEvent(selectNewMarker);
       }
 
       /*------------------------------------------------------*/

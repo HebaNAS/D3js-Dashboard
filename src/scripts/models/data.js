@@ -42,32 +42,32 @@ export default class DataManager {
 					'UOA_Name': mainData['Unit of assessment name'],
 					'Profile': mainData.Profile,
 					'Overall': {
-						'FourStar': mainData.Profile === 'Overall' ? mainData['4*'] : 0,
-						'ThreeStar': mainData.Profile === 'Overall' ? mainData['3*'] : 0,
-						'TwoStar': mainData.Profile === 'Overall' ? mainData['2*'] : 0,
-						'OneStar': mainData.Profile === 'Overall' ? mainData['1*'] : 0,
-						'Unclassified': mainData.Profile === 'Overall' ? mainData.unclassified : 0
+						'FourStar': mainData.Profile === 'Overall' ? parseFloat(mainData['4*']) : 0,
+						'ThreeStar': mainData.Profile === 'Overall' ? parseFloat(mainData['3*']) : 0,
+						'TwoStar': mainData.Profile === 'Overall' ? parseFloat(mainData['2*']) : 0,
+						'OneStar': mainData.Profile === 'Overall' ? parseFloat(mainData['1*']) : 0,
+						'Unclassified': mainData.Profile === 'Overall' ? parseFloat(mainData.unclassified) : 0
 					},
 					'Outputs': {
-						'FourStar': mainData.Profile === 'Outputs' ? mainData['4*'] : 0,
-						'ThreeStar': mainData.Profile === 'Outputs' ? mainData['3*'] : 0,
-						'TwoStar': mainData.Profile === 'Outputs' ? mainData['2*'] : 0,
-						'OneStar': mainData.Profile === 'Outputs' ? mainData['1*'] : 0,
-						'Unclassified': mainData.Profile === 'Outputs' ? mainData.unclassified : 0
+						'FourStar': mainData.Profile === 'Outputs' ? parseFloat(mainData['4*']) : 0,
+						'ThreeStar': mainData.Profile === 'Outputs' ? parseFloat(mainData['3*']) : 0,
+						'TwoStar': mainData.Profile === 'Outputs' ? parseFloat(mainData['2*']) : 0,
+						'OneStar': mainData.Profile === 'Outputs' ? parseFloat(mainData['1*']) : 0,
+						'Unclassified': mainData.Profile === 'Outputs' ? parseFloat(mainData.unclassified) : 0
 					},
 					'Environment': {
-						'FourStar': mainData.Profile === 'Environment' ? mainData['4*'] : 0,
-						'ThreeStar': mainData.Profile === 'Environment' ? mainData['3*'] : 0,
-						'TwoStar': mainData.Profile === 'Environment' ? mainData['2*'] : 0,
-						'OneStar': mainData.Profile === 'Environment' ? mainData['1*'] : 0,
-						'Unclassified': mainData.Profile === 'Environment' ? mainData.unclassified : 0
+						'FourStar': mainData.Profile === 'Environment' ? parseFloat(mainData['4*']) : 0,
+						'ThreeStar': mainData.Profile === 'Environment' ? parseFloat(mainData['3*']) : 0,
+						'TwoStar': mainData.Profile === 'Environment' ? parseFloat(mainData['2*']) : 0,
+						'OneStar': mainData.Profile === 'Environment' ? parseFloat(mainData['1*']) : 0,
+						'Unclassified': mainData.Profile === 'Environment' ? parseFloat(mainData.unclassified) : 0
 					},
 					'Impact': {
-						'FourStar': mainData.Profile === 'Impact' ? mainData['4*'] : 0,
-						'ThreeStar': mainData.Profile === 'Impact' ? mainData['3*'] : 0,
-						'TwoStar': mainData.Profile === 'Impact' ? mainData['2*'] : 0,
-						'OneStar': mainData.Profile === 'Impact' ? mainData['1*'] : 0,
-						'Unclassified': mainData.Profile === 'Impact' ? mainData.unclassified : 0
+						'FourStar': mainData.Profile === 'Impact' ? parseFloat(mainData['4*']) : 0,
+						'ThreeStar': mainData.Profile === 'Impact' ? parseFloat(mainData['3*']) : 0,
+						'TwoStar': mainData.Profile === 'Impact' ? parseFloat(mainData['2*']) : 0,
+						'OneStar': mainData.Profile === 'Impact' ? parseFloat(mainData['1*']) : 0,
+						'Unclassified': mainData.Profile === 'Impact' ? parseFloat(mainData.unclassified) : 0
 					},
 					'FTEA_Submitted': mainData['FTE Category A staff submitted'],
 					'Building': extraData.BUILDING_NAME_NUMBER,
@@ -92,32 +92,32 @@ export default class DataManager {
 					'UOA_Name': mainData['Unit of assessment name'],
 					'Profile': mainData.Profile,
 					'Overall': {
-						'FourStar': mainData.Profile === 'Overall' ? mainData['4*'] : 0,
-						'ThreeStar': mainData.Profile === 'Overall' ? mainData['3*'] : 0,
-						'TwoStar': mainData.Profile === 'Overall' ? mainData['2*'] : 0,
-						'OneStar': mainData.Profile === 'Overall' ? mainData['1*'] : 0,
-						'Unclassified': mainData.Profile === 'Overall' ? mainData.unclassified : 0
+						'FourStar': mainData.Profile === 'Overall' ? parseFloat(mainData['4*']) : 0,
+						'ThreeStar': mainData.Profile === 'Overall' ? parseFloat(mainData['3*']) : 0,
+						'TwoStar': mainData.Profile === 'Overall' ? parseFloat(mainData['2*']) : 0,
+						'OneStar': mainData.Profile === 'Overall' ? parseFloat(mainData['1*']) : 0,
+						'Unclassified': mainData.Profile === 'Overall' ? parseFloat(mainData.unclassified) : 0
 					},
 					'Outputs': {
-						'FourStar': mainData.Profile === 'Outputs' ? mainData['4*'] : 0,
-						'ThreeStar': mainData.Profile === 'Outputs' ? mainData['3*'] : 0,
-						'TwoStar': mainData.Profile === 'Outputs' ? mainData['2*'] : 0,
-						'OneStar': mainData.Profile === 'Outputs' ? mainData['1*'] : 0,
-						'Unclassified': mainData.Profile === 'Outputs' ? mainData.unclassified : 0
+						'FourStar': mainData.Profile === 'Outputs' ? parseFloat(mainData['4*']) : 0,
+						'ThreeStar': mainData.Profile === 'Outputs' ? parseFloat(mainData['3*']) : 0,
+						'TwoStar': mainData.Profile === 'Outputs' ? parseFloat(mainData['2*']) : 0,
+						'OneStar': mainData.Profile === 'Outputs' ? parseFloat(mainData['1*']) : 0,
+						'Unclassified': mainData.Profile === 'Outputs' ? parseFloat(mainData.unclassified) : 0
 					},
 					'Environment': {
-						'FourStar': mainData.Profile === 'Environment' ? mainData['4*'] : 0,
-						'ThreeStar': mainData.Profile === 'Environment' ? mainData['3*'] : 0,
-						'TwoStar': mainData.Profile === 'Environment' ? mainData['2*'] : 0,
-						'OneStar': mainData.Profile === 'Environment' ? mainData['1*'] : 0,
-						'Unclassified': mainData.Profile === 'Environment' ? mainData.unclassified : 0
+						'FourStar': mainData.Profile === 'Environment' ? parseFloat(mainData['4*']) : 0,
+						'ThreeStar': mainData.Profile === 'Environment' ? parseFloat(mainData['3*']) : 0,
+						'TwoStar': mainData.Profile === 'Environment' ? parseFloat(mainData['2*']) : 0,
+						'OneStar': mainData.Profile === 'Environment' ? parseFloat(mainData['1*']) : 0,
+						'Unclassified': mainData.Profile === 'Environment' ? parseFloat(mainData.unclassified) : 0
 					},
 					'Impact': {
-						'FourStar': mainData.Profile === 'Impact' ? mainData['4*'] : 0,
-						'ThreeStar': mainData.Profile === 'Impact' ? mainData['3*'] : 0,
-						'TwoStar': mainData.Profile === 'Impact' ? mainData['2*'] : 0,
-						'OneStar': mainData.Profile === 'Impact' ? mainData['1*'] : 0,
-						'Unclassified': mainData.Profile === 'Impact' ? mainData.unclassified : 0
+						'FourStar': mainData.Profile === 'Impact' ? parseFloat(mainData['4*']) : 0,
+						'ThreeStar': mainData.Profile === 'Impact' ? parseFloat(mainData['3*']) : 0,
+						'TwoStar': mainData.Profile === 'Impact' ? parseFloat(mainData['2*']) : 0,
+						'OneStar': mainData.Profile === 'Impact' ? parseFloat(mainData['1*']) : 0,
+						'Unclassified': mainData.Profile === 'Impact' ? parseFloat(mainData.unclassified) : 0
 					},
 					'FTEA_Submitted': mainData['FTE Category A staff submitted'],
 					'Building': '',
@@ -186,41 +186,6 @@ export default class DataManager {
 	}
 
 	/*
-	 * Function to extract all Universities and their scores given a specific
-	 * unit of assessment
-	 */
-	getOverallScoreByUoA(data) {
-		
-		// Create a variable to hold the data and use d3 nest method to extract the data
-		// and return it in the form of key, value pairs
-		let nestedData = d3.nest()
-			// Define our key as the Unit of Assessment name
-			.key((d) => {
-				return d.UOA_Name;
-			})
-			// Define another key, University Name to be, nested as a second level
-			.key((d) => {
-				return d.InstitutionName;
-			})
-			// Calculate the results of the previous extraction operations and return
-			// data as an object of the five tiers of scores available in the dataset (4* - unclassified)
-			// using d3 sum to loop over extracted array of values and doing a summation operation
-			.rollup((values) => {
-				return {
-					OneStar: d3.sum(values, (item) => { return item.Overall.OneStar; }),
-					TwoStar: d3.sum(values, (item) => { return item.Overall.TwoStar; }),
-					ThreeStar: d3.sum(values, (item) => { return item.Overall.ThreeStar; }),
-					FourStar: d3.sum(values, (item) => { return item.Overall.FourStar; }),
-					Unclassified: d3.sum(values, (item) => { return item.Overall.Unclassified; }),
-				};
-			})
-			.entries(data);
-
-		//return nestedData;
-		console.log(nestedData);
-	}
-
-	/*
 	 * Function to get locations of institutions given a specific Unit of Assessment
 	 * and selecting a tier of score
 	 */
@@ -246,6 +211,7 @@ export default class DataManager {
 				return {
 					Lat: d3.mean(values, (d) => { return d.Lat; }),
 					Lng: d3.mean(values, (d) => { return d.Lng; }),
+					Uoa: uoa,
 					Overall4Score: d3.max(values, (d) => { return d.Overall.FourStar; }),
 					Overall3Score: d3.max(values, (d) => { return d.Overall.ThreeStar; }),
 					Overall2Score: d3.max(values, (d) => { return d.Overall.TwoStar; }),
@@ -276,13 +242,23 @@ export default class DataManager {
 	/*
 	 * Function to get locations of institutions given a specific Unit of Assessment and a City
 	 */
-	getLocationByCity(data, city, uoa) {
+	getLocationByCity(data, city) {
 		
 		// Create a variable to hold filtered data which will contain only universities
 		// that provide research in the selected area (Unit of Assessment) in the selected city
 		let filtered = data.filter((item) => {
-			return item.Town.toLowerCase() === city.toLowerCase() && item.UOA_Name === uoa;
+			return item.Town.toLowerCase() === city.toLowerCase();
 		});
+		//console.log(filtered);
+		
+		// Extract all universities in the selected town
+		let universities = [];
+		
+		filtered.forEach((item) => {
+			universities.push(item.InstitutionName);
+		});
+		universities = [...new Set(universities)];
+		//console.log(universities);
 
 		// Create a variable to hold the array return from the extraction operation,
 		// using d3 nest to reshape our data into key, value pairs and return only
@@ -295,10 +271,24 @@ export default class DataManager {
 			})
 			// Perform a calculation on the returned values
 			.rollup((values) => {
+				//console.log(values);
+				let scores = [];
+				// values.forEach((d) => {
+				// 	//console.log('d: ', d);
+				// 	if (d.Profile === 'Overall') {
+				// 		scores.push(parseFloat(d.Overall.FourStar));
+				// 	}
+				// 	console.log(scores);
+				// });
 				return {
 					Lat: d3.mean(values, (d) => { return d.Lat; }),
 					Lng: d3.mean(values, (d) => { return d.Lng; }),
-					Score: d3.max(values, (d) => { return d.Overall.FourStar; })
+					MeanScore: d3.mean(values, (d) => {
+						if (d.Profile === 'Overall') {
+							return parseFloat(d.Overall.FourStar);
+						}
+					}),
+					Overall4Score: d3.max(values, (d) => { return d.Overall.FourStar; })
 				};
 			})
 			.entries(filtered);
@@ -312,37 +302,18 @@ export default class DataManager {
 	 */
 	reformatDataAsGeoJson(data, map) {
 		data.forEach((d) => {
+			//console.log(d);
       if (d.type === undefined) {
         d.type = 'Feature';
         d.geometry = {};
         d.properties = {};
         d.properties.cartisan = {};
-        d.properties.name = d.key;
-        d.properties.scores = {};
+				d.properties.name = d.key;
+				d.properties.uoas = {};
+				d.properties.scores = {};
+				d.properties.scores.mean = d.value.MeanScore;
         d.properties.scores.overall = {};
-        d.properties.scores.outputs = {};
-        d.properties.scores.environment = {};
-        d.properties.scores.impact = {};
         d.properties.scores.overall.fourstar = d.value.Overall4Score;
-        d.properties.scores.overall.threestar = d.value.Overall3Score;
-        d.properties.scores.overall.twostar = d.value.Overall2Score;
-        d.properties.scores.overall.onestar = d.value.Overall1Score;
-        d.properties.scores.overall.unclassified = d.value.OverallUCScore;
-        d.properties.scores.environment.fourstar = d.value.Environment4Score;
-        d.properties.scores.environment.threestar = d.value.Environment3Score;
-        d.properties.scores.environment.twostar = d.value.Environment2Score;
-        d.properties.scores.environment.onestar = d.value.Environment1Score;
-        d.properties.scores.environment.unclassified = d.value.EnvironmentUCScore;
-        d.properties.scores.impact.fourstar = d.value.Impact4Score;
-        d.properties.scores.impact.threestar = d.value.Impact3Score;
-        d.properties.scores.impact.twostar = d.value.Impact2Score;
-        d.properties.scores.impact.onestar = d.value.Impact1Score;
-        d.properties.scores.impact.unclassified = d.value.ImpactUCScore;
-        d.properties.scores.outputs.fourstar = d.value.Outputs4Score;
-        d.properties.scores.outputs.threestar = d.value.Outputs3Score;
-        d.properties.scores.outputs.twostar = d.value.Outputs2Score;
-        d.properties.scores.outputs.onestar = d.value.Outputs1Score;
-        d.properties.scores.outputs.unclassified = d.value.OutputsUCScore;
         d.properties.cartisan.x =
           map.latLngToLayerPoint(new L.LatLng(d.value.Lat, d.value.Lng)).x;
         d.properties.cartisan.y =
@@ -408,5 +379,10 @@ export default class DataManager {
 
 		return nestedData;
 	}
+
+	/*
+	 * Reformat our data into a form that could be understood by
+   * d3's stack method
+	 */
 
 }

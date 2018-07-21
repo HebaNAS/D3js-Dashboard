@@ -150,10 +150,10 @@ export default class Hierarchical {
     
     // Listen for selected university from map and update
     // the chart accordingly
-    map.addEventListener('selectNewUni', (event) => { 
+    map.addEventListener('selectNewMarker', (event) => { 
       console.log('Selected University Changed');
       // Update the hierarchical sunburst chart with new data
-      selectedUniversity = event.detail;
+      selectedUniversity = event.detail.props().name;
       this.reload(selectedUniversity, uoa);
       explanation.innerText = this.selectedUni;
       update(this.hierarchicalData);
