@@ -15,8 +15,14 @@ export const industryResearch =
     <p class=""></p>
     <p class=""></p>
     <div class="card-style" id="map"></div>
-    <div class="card-style" id=""></div>
-    <div class="card-style"></div>
+    <div class="card-style" id="uoa-card"></div>
+    <div class="card-style" id="compare-uni">
+      <div id="chart">
+        <div class="tooltip"></div>
+        <div id="explanation" style="visibility: visible;">
+        </div>
+      </div>
+    </div>
     <p class=""></p>
     <p class=""></p>
     <form class="selector text-center">

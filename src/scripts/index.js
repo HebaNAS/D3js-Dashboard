@@ -85,7 +85,7 @@ function startApplication() {
           document.title = 'REF2014 Results Dashboard - Early Career Academics & PhDs';
           mainDOM.innerHTML = main;
           mainDOM.setAttribute('id', 'eca-phd');
-          createDashboardEca(dataset);
+          createDashboardEca(dataset, dataset2);
         } 
         // University Management Dashboard
         else if (dashboard === 'university-management') {
@@ -93,7 +93,7 @@ function startApplication() {
           document.title = 'REF2014 Results Dashboard - University Management';
           mainDOM.innerHTML = main;
           mainDOM.setAttribute('id', 'um');
-          createDashboardEca(dataset);
+          //createDashboardUm(dataset);
         }
         // Industry Collaborators and Research Strategists Dashboard
         else if (dashboard === 'industry-research') {
@@ -101,7 +101,7 @@ function startApplication() {
           document.title = 'REF2014 Results Dashboard - Industry Collaborators & Research Strategists';
           mainDOM.innerHTML = main;
           mainDOM.setAttribute('id', 'ir');
-          createDashboardIr(dataset);
+          createDashboardIr(dataset, dataset2);
         }
       });
     });
@@ -125,7 +125,9 @@ function createDashboardEca(data, data2) {
 
   // Get the current selection from the select box
   let selectBox = document.getElementById('selector');
-  let selectedUoa = 'Allied Health Professions, Dentistry, Nursing and Pharmacy';
+  selectBox.selectedIndex = 6;
+  let selectedUoa = 'Business and Management Studies';
+  let selectedUni = 'Anglia Ruskin University';
 
  /*
   * Creating the first visualization, which is a map of the UK,
@@ -135,7 +137,9 @@ function createDashboardEca(data, data2) {
   const mapMarkers = dataManager.getLocationByUoA(data, selectedUoa);
   const hierarchical = new Hierarchical(
     data2,
-    selectedUoa
+    data,
+    selectedUoa,
+    selectedUni
   );
   const barChart = new HBarChart(dataManager.getLocationByUoA(data, selectedUoa));
   
@@ -163,7 +167,7 @@ function createDashboardEca(data, data2) {
 
 // Create a function to start drawing the dashboard and visualizations
 // for Industry Collaborators and Research Strategists
-function createDashboardIr(data) {
+function createDashboardIr(data, data2) {
   
   /*
    * Loading all Units os Assessment and use this for populating
@@ -179,13 +183,14 @@ function createDashboardIr(data) {
   // Populate the select boxes with the options
   populateCities(cities);
 
-  // Get the current selection from the select box
-  let selectBox = document.getElementById('selector');
-  let selectedUoa = 'Allied Health Professions, Dentistry, Nursing and Pharmacy';
-
   // Get the current city from the select box
   let selectBoxCity = document.getElementById('selector-city');
   let selectedCity = 'Aberdeen';
+  let selectedUoa = 'Business and Management Studies';
+
+  // Load all universities
+  let universities = dataManager.loadAllUniversitiesInCity(data, selectedCity);
+  let selectedUni = universities[0];
 
   /*
   * Creating the first visualization, which is a map of the UK,
@@ -193,11 +198,20 @@ function createDashboardIr(data) {
   * of Assessment) which are passed on as an argument from the selectbox
   */ 
   let mapMarkers = dataManager.getLocationByCity(data, selectedCity);
-  
+  const hierarchical = new Hierarchical(
+    data2,
+    data,
+    selectedUoa,
+    selectedUni
+  );
+
   // Create the map
   const map = new Map(mapMarkers, 'mean');
   map.createMap();
   map.render();
+
+  // Create the hierarchical sunburst chart
+  hierarchical.createChart();
 
   // Listen for changes on the City selectbox and get the selected value
   selectBoxCity.addEventListener('change', (event) => {

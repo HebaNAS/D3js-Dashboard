@@ -17,10 +17,11 @@ const dataManager = new DataManager();
 export default class Hierarchical {
 
   // Create constructor function
-  constructor(data, selectedUoa) {
+  constructor(data, cityData, selectedUoa, selectedUni) {
     this.data = data;
+    this.cityData = cityData;
     this.selectedUoa = selectedUoa;
-    this.selectedUni = 'Anglia Ruskin University';
+    this.selectedUni = selectedUni;
     this.hierarchicalData = [];
   }
 
@@ -35,7 +36,7 @@ export default class Hierarchical {
       );
 
     /*------------------------------------------------------*/
-
+    
     /*
      * Variables
      */
@@ -47,9 +48,12 @@ export default class Hierarchical {
     const map = document.getElementById('map');
     // Get the current selection from the select box
     const selectBox = document.getElementById('selector');
+    const selectBoxCity = document.getElementById('selector-city');
 
     let selectedUniversity = this.selectedUni;
     let uoa = this.selectedUoa;
+    let cityData = this.cityData;
+    //console.log(cityData);
 
     // Append svg to the leaflet map and specify width and height as the same
     // for the parent DOM element, then append a group to hold all markers
@@ -126,7 +130,7 @@ export default class Hierarchical {
       .text((d) => { return d.depth === 1 ? d.data.key : ''; });
 
     g.selectAll('.label')
-      .data(nodes.filter((d) => { return d.data.value > 0; }))
+      .data(nodes.filter((d) => { return d.data.value > 0 && d.data.key !== 'unclassified'; }))
       .enter().append('text')
       .attr('class', 'label')
       .attr('transform', (d) => {
@@ -161,12 +165,24 @@ export default class Hierarchical {
 
     // Listen for changes on the selectbox and get the selected value
     // then update the chart accordingly
-    selectBox.addEventListener('change', (event) => {
-      uoa = selectBox.options[selectBox.selectedIndex].value;
-      this.reload(selectedUniversity, uoa);
+    if (selectBox !== null) {
+      selectBox.addEventListener('change', (event) => {
+        uoa = selectBox.options[selectBox.selectedIndex].value;
+        this.reload(selectedUniversity, uoa);
 
-      update(this.hierarchicalData);
-    });
+        update(this.hierarchicalData);
+      });
+    }
+    if (selectBoxCity !== null) {
+      selectBoxCity.addEventListener('change', (event) => {
+        let city = selectBoxCity.options[selectBoxCity.selectedIndex].value;
+        selectedUniversity = dataManager.loadAllUniversitiesInCity(cityData, city)[0];
+        this.reload(selectedUniversity, uoa);
+        explanation.innerText = this.selectedUni;
+
+        update(this.hierarchicalData);
+      });
+    }
 
     /*------------------------------------------------------*/
 

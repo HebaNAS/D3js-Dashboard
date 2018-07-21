@@ -166,6 +166,28 @@ export default class DataManager {
 	/*
 	 * Function to extract all Universities from a given dataset
 	 */
+	loadAllUniversitiesInCity(data, city) {
+
+		// Create a variable to hold the filtered data which will only contain the uoa
+		let filtered = [];
+		
+		// Loopt through the dataset to get all UoAs
+		data.forEach((entry) => {
+			if (entry.Town.toLowerCase() === city.toLowerCase()) {
+				filtered.push(entry.InstitutionName);
+			}
+		});
+
+		// Filter only unique values and remove duplicates
+		filtered = [...new Set(filtered)]; 
+		console.log('University count: ', filtered.length);
+
+		return filtered;
+	}
+
+	/*
+	 * Function to extract all Universities from a given dataset
+	 */
 	loadAllCities(data) {
 
 		// Create a variable to hold the filtered data which will only contain the uoa
@@ -291,30 +313,28 @@ export default class DataManager {
    * d3's geoPath method
 	 */
 	reformatDataAsGeoJson(data, map) {
-		console.log(data);
 		data.forEach((d) => {
-			//console.log(d);
-      if (d.type === undefined) {
-        d.type = 'Feature';
-        d.geometry = {};
-        d.properties = {};
-        d.properties.cartisan = {};
+			if (d.type === undefined) {
+				d.type = 'Feature';
+				d.geometry = {};
+				d.properties = {};
+				d.properties.cartisan = {};
 				d.properties.name = d.key;
 				d.properties.city = d.value.City;
 				d.properties.uoas = d.value.Uoa();
 				d.properties.scores = {};
 				d.properties.scores.mean = d.value.MeanScore;
-        d.properties.scores.overall = {};
-        d.properties.scores.overall.fourstar = d.value.Overall4Score;
-        d.properties.cartisan.x =
-          map.latLngToLayerPoint(new L.LatLng(d.value.Lat, d.value.Lng)).x;
-        d.properties.cartisan.y =
-          map.latLngToLayerPoint(new L.LatLng(d.value.Lat, d.value.Lng)).y;
-        d.geometry.type = 'Point';
-        d.geometry.coordinates = [d.value.Lat, d.value.Lng];
-        delete d.key;
-        delete d.value;
-      }
+				d.properties.scores.overall = {};
+				d.properties.scores.overall.fourstar = d.value.Overall4Score;
+				d.properties.cartisan.x =
+					map.latLngToLayerPoint(new L.LatLng(d.value.Lat, d.value.Lng)).x;
+				d.properties.cartisan.y =
+					map.latLngToLayerPoint(new L.LatLng(d.value.Lat, d.value.Lng)).y;
+				d.geometry.type = 'Point';
+				d.geometry.coordinates = [d.value.Lat, d.value.Lng];
+				delete d.key;
+				delete d.value;
+			}
 		});
 		
 		return data;
@@ -326,19 +346,24 @@ export default class DataManager {
 	 */
 	reformatData(data) {
 		if (data[0] !== undefined || data !== []) {
-			data[0].values.forEach((item) => {
-				item.values.push({'key': '4*', 'value': parseFloat(item.values[0]['4*'])});
-				item.values.push({'key': '3*', 'value': parseFloat(item.values[0]['3*'])});
-				item.values.push({'key': '2*', 'value': parseFloat(item.values[0]['2*'])});
-				item.values.push({'key': '1*', 'value': parseFloat(item.values[0]['1*'])});
-				item.values.push({'key': 'unclassified', 'value': parseFloat(item.values[0].unclassified)});
-			});
-			data[0].values.forEach((item) => {
-				item.values.shift();
-				if (item.values[0]['Institution name'] !== undefined) {
+			try {
+				data[0].values.forEach((item) => {
+					item.values.push({'key': '4*', 'value': parseFloat(item.values[0]['4*'])});
+					item.values.push({'key': '3*', 'value': parseFloat(item.values[0]['3*'])});
+					item.values.push({'key': '2*', 'value': parseFloat(item.values[0]['2*'])});
+					item.values.push({'key': '1*', 'value': parseFloat(item.values[0]['1*'])});
+					item.values.push({'key': 'unclassified', 'value': parseFloat(item.values[0].unclassified)});
+				});
+				data[0].values.forEach((item) => {
 					item.values.shift();
-				}
-			});
+					if (item.values[0]['Institution name'] !== undefined) {
+						item.values.shift();
+					}
+				});
+			}
+			catch(err) {
+				console.log('Please try another selection');
+			}
 		}
 
 		return data;
@@ -357,11 +382,13 @@ export default class DataManager {
 		
 		// Only add universities that have the selected department
     data.forEach((item) => {
-			if (item['Unit of assessment name'] == selectedUoa &&
-					item['Institution name'] == selectedUni) {
+			if (item['Unit of assessment name'] === selectedUoa &&
+					item['Institution name'] === selectedUni) {
         universities.push(item);
       }
 		});
+
+		console.log('Universities: ', universities);
 
 		// Start nesting the data into a hierarchical structure
 		const nestedData = d3.nest()

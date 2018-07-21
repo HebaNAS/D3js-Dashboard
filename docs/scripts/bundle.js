@@ -30723,7 +30723,7 @@ function startApplication() {
           document.title = 'REF2014 Results Dashboard - Early Career Academics & PhDs';
           mainDOM.innerHTML = main;
           mainDOM.setAttribute('id', 'eca-phd');
-          createDashboardEca(dataset);
+          createDashboardEca(dataset, dataset2);
         }
         // University Management Dashboard
         else if (dashboard === 'university-management') {
@@ -30731,7 +30731,7 @@ function startApplication() {
             document.title = 'REF2014 Results Dashboard - University Management';
             mainDOM.innerHTML = main;
             mainDOM.setAttribute('id', 'um');
-            createDashboardEca(dataset);
+            //createDashboardUm(dataset);
           }
           // Industry Collaborators and Research Strategists Dashboard
           else if (dashboard === 'industry-research') {
@@ -30739,7 +30739,7 @@ function startApplication() {
               document.title = 'REF2014 Results Dashboard - Industry Collaborators & Research Strategists';
               mainDOM.innerHTML = main;
               mainDOM.setAttribute('id', 'ir');
-              createDashboardIr(dataset);
+              createDashboardIr(dataset, dataset2);
             }
       });
     });
@@ -30763,7 +30763,9 @@ function createDashboardEca(data, data2) {
 
   // Get the current selection from the select box
   var selectBox = document.getElementById('selector');
-  var selectedUoa = 'Allied Health Professions, Dentistry, Nursing and Pharmacy';
+  selectBox.selectedIndex = 6;
+  var selectedUoa = 'Business and Management Studies';
+  var selectedUni = 'Anglia Ruskin University';
 
   /*
    * Creating the first visualization, which is a map of the UK,
@@ -30771,7 +30773,7 @@ function createDashboardEca(data, data2) {
    * of Assessment) which is passed on as an argument from the selectbox
    */
   var mapMarkers = dataManager.getLocationByUoA(data, selectedUoa);
-  var hierarchical = new _hierarchical2.default(data2, selectedUoa);
+  var hierarchical = new _hierarchical2.default(data2, data, selectedUoa, selectedUni);
   var barChart = new _hBarChart2.default(dataManager.getLocationByUoA(data, selectedUoa));
 
   // Create the map
@@ -30797,7 +30799,7 @@ function createDashboardEca(data, data2) {
 
 // Create a function to start drawing the dashboard and visualizations
 // for Industry Collaborators and Research Strategists
-function createDashboardIr(data) {
+function createDashboardIr(data, data2) {
 
   /*
    * Loading all Units os Assessment and use this for populating
@@ -30813,13 +30815,14 @@ function createDashboardIr(data) {
   // Populate the select boxes with the options
   (0, _populateCities2.default)(cities);
 
-  // Get the current selection from the select box
-  var selectBox = document.getElementById('selector');
-  var selectedUoa = 'Allied Health Professions, Dentistry, Nursing and Pharmacy';
-
   // Get the current city from the select box
   var selectBoxCity = document.getElementById('selector-city');
   var selectedCity = 'Aberdeen';
+  var selectedUoa = 'Business and Management Studies';
+
+  // Load all universities
+  var universities = dataManager.loadAllUniversitiesInCity(data, selectedCity);
+  var selectedUni = universities[0];
 
   /*
   * Creating the first visualization, which is a map of the UK,
@@ -30827,11 +30830,15 @@ function createDashboardIr(data) {
   * of Assessment) which are passed on as an argument from the selectbox
   */
   var mapMarkers = dataManager.getLocationByCity(data, selectedCity);
+  var hierarchical = new _hierarchical2.default(data2, data, selectedUoa, selectedUni);
 
   // Create the map
   var map = new _map2.default(mapMarkers, 'mean');
   map.createMap();
   map.render();
+
+  // Create the hierarchical sunburst chart
+  hierarchical.createChart();
 
   // Listen for changes on the City selectbox and get the selected value
   selectBoxCity.addEventListener('change', function (event) {
@@ -31045,6 +31052,31 @@ var DataManager = function () {
    */
 
 	}, {
+		key: 'loadAllUniversitiesInCity',
+		value: function loadAllUniversitiesInCity(data, city) {
+
+			// Create a variable to hold the filtered data which will only contain the uoa
+			var filtered = [];
+
+			// Loopt through the dataset to get all UoAs
+			data.forEach(function (entry) {
+				if (entry.Town.toLowerCase() === city.toLowerCase()) {
+					filtered.push(entry.InstitutionName);
+				}
+			});
+
+			// Filter only unique values and remove duplicates
+			filtered = [].concat((0, _toConsumableArray3.default)(new Set(filtered)));
+			console.log('University count: ', filtered.length);
+
+			return filtered;
+		}
+
+		/*
+   * Function to extract all Universities from a given dataset
+   */
+
+	}, {
 		key: 'loadAllCities',
 		value: function loadAllCities(data) {
 
@@ -31232,9 +31264,7 @@ var DataManager = function () {
 	}, {
 		key: 'reformatDataAsGeoJson',
 		value: function reformatDataAsGeoJson(data, map) {
-			console.log(data);
 			data.forEach(function (d) {
-				//console.log(d);
 				if (d.type === undefined) {
 					d.type = 'Feature';
 					d.geometry = {};
@@ -31268,19 +31298,23 @@ var DataManager = function () {
 		key: 'reformatData',
 		value: function reformatData(data) {
 			if (data[0] !== undefined || data !== []) {
-				data[0].values.forEach(function (item) {
-					item.values.push({ 'key': '4*', 'value': parseFloat(item.values[0]['4*']) });
-					item.values.push({ 'key': '3*', 'value': parseFloat(item.values[0]['3*']) });
-					item.values.push({ 'key': '2*', 'value': parseFloat(item.values[0]['2*']) });
-					item.values.push({ 'key': '1*', 'value': parseFloat(item.values[0]['1*']) });
-					item.values.push({ 'key': 'unclassified', 'value': parseFloat(item.values[0].unclassified) });
-				});
-				data[0].values.forEach(function (item) {
-					item.values.shift();
-					if (item.values[0]['Institution name'] !== undefined) {
+				try {
+					data[0].values.forEach(function (item) {
+						item.values.push({ 'key': '4*', 'value': parseFloat(item.values[0]['4*']) });
+						item.values.push({ 'key': '3*', 'value': parseFloat(item.values[0]['3*']) });
+						item.values.push({ 'key': '2*', 'value': parseFloat(item.values[0]['2*']) });
+						item.values.push({ 'key': '1*', 'value': parseFloat(item.values[0]['1*']) });
+						item.values.push({ 'key': 'unclassified', 'value': parseFloat(item.values[0].unclassified) });
+					});
+					data[0].values.forEach(function (item) {
 						item.values.shift();
-					}
-				});
+						if (item.values[0]['Institution name'] !== undefined) {
+							item.values.shift();
+						}
+					});
+				} catch (err) {
+					console.log('Please try another selection');
+				}
 			}
 
 			return data;
@@ -31302,10 +31336,12 @@ var DataManager = function () {
 
 			// Only add universities that have the selected department
 			data.forEach(function (item) {
-				if (item['Unit of assessment name'] == selectedUoa && item['Institution name'] == selectedUni) {
+				if (item['Unit of assessment name'] === selectedUoa && item['Institution name'] === selectedUni) {
 					universities.push(item);
 				}
 			});
+
+			console.log('Universities: ', universities);
 
 			// Start nesting the data into a hierarchical structure
 			var nestedData = d3.nest().key(function (d) {
@@ -31371,7 +31407,7 @@ Object.defineProperty(exports, "__esModule", {
 /*                        Date: 15 July 2018                                 */
 /*****************************************************************************/
 
-var industryResearch = exports.industryResearch = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"\"></div>\n    <div class=\"card-style\"></div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">City</label>\n      <select id=\"selector-city\">\n\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
+var industryResearch = exports.industryResearch = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">City</label>\n      <select id=\"selector-city\">\n\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
 },{}],68:[function(require,module,exports){
 "use strict";
@@ -31527,12 +31563,13 @@ var dataManager = new _data2.default();
 var Hierarchical = function () {
 
   // Create constructor function
-  function Hierarchical(data, selectedUoa) {
+  function Hierarchical(data, cityData, selectedUoa, selectedUni) {
     (0, _classCallCheck3.default)(this, Hierarchical);
 
     this.data = data;
+    this.cityData = cityData;
     this.selectedUoa = selectedUoa;
-    this.selectedUni = 'Anglia Ruskin University';
+    this.selectedUni = selectedUni;
     this.hierarchicalData = [];
   }
 
@@ -31557,9 +31594,12 @@ var Hierarchical = function () {
       var map = document.getElementById('map');
       // Get the current selection from the select box
       var selectBox = document.getElementById('selector');
+      var selectBoxCity = document.getElementById('selector-city');
 
       var selectedUniversity = this.selectedUni;
       var uoa = this.selectedUoa;
+      var cityData = this.cityData;
+      //console.log(cityData);
 
       // Append svg to the leaflet map and specify width and height as the same
       // for the parent DOM element, then append a group to hold all markers
@@ -31629,7 +31669,7 @@ var Hierarchical = function () {
       });
 
       g.selectAll('.label').data(nodes.filter(function (d) {
-        return d.data.value > 0;
+        return d.data.value > 0 && d.data.key !== 'unclassified';
       })).enter().append('text').attr('class', 'label').attr('transform', function (d) {
         return 'translate(' + arc.centroid(d) + ') rotate(' + computeTextRotation(d) + ')';
       }).text(function (d) {
@@ -31662,12 +31702,24 @@ var Hierarchical = function () {
 
       // Listen for changes on the selectbox and get the selected value
       // then update the chart accordingly
-      selectBox.addEventListener('change', function (event) {
-        uoa = selectBox.options[selectBox.selectedIndex].value;
-        _this.reload(selectedUniversity, uoa);
+      if (selectBox !== null) {
+        selectBox.addEventListener('change', function (event) {
+          uoa = selectBox.options[selectBox.selectedIndex].value;
+          _this.reload(selectedUniversity, uoa);
 
-        update(_this.hierarchicalData);
-      });
+          update(_this.hierarchicalData);
+        });
+      }
+      if (selectBoxCity !== null) {
+        selectBoxCity.addEventListener('change', function (event) {
+          var city = selectBoxCity.options[selectBoxCity.selectedIndex].value;
+          selectedUniversity = dataManager.loadAllUniversitiesInCity(cityData, city)[0];
+          _this.reload(selectedUniversity, uoa);
+          explanation.innerText = _this.selectedUni;
+
+          update(_this.hierarchicalData);
+        });
+      }
 
       /*------------------------------------------------------*/
 
