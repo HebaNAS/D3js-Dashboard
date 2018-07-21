@@ -64,6 +64,8 @@ export default class Hierarchical {
 
     // Select label class
     const labels = d3.selectAll('.label');
+    // Append tooltip
+    const tooltip = d3.select('.tooltip');
 
     // Convert our JSON like structure of the dataset into a hierarchy
     // with values returned as children at each level
@@ -194,11 +196,23 @@ export default class Hierarchical {
     // Handle mouse over events
     function handleMouseOver(d, i) {
       d3.select(this).style('opacity', 1);
+      let x = event.clientX;
+      let y = event.clientY; 
+
+      // Display tooltip div containing the score
+      // and position it according to mouse coordinates
+      if (d.data.value !== undefined) {
+        tooltip.style('display', 'block')
+          .style('top', (y - 80) + 'px')
+          .style('left', (x - 80) + 'px')
+          .html('<strong>Score<br>' + d.data.value + '</strong>');
+      }
     }
 
     // Handle mouse out events
     function handleMouseOut(d, i) {
       d3.select(this).style('opacity', 0.65);
+      tooltip.style('display', 'none');
     }
 
     // Redraw and scale paths according to map selection

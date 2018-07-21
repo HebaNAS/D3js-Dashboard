@@ -31400,7 +31400,7 @@ Object.defineProperty(exports, "__esModule", {
 /*                        Date: 15 July 2018                                 */
 /*****************************************************************************/
 
-var mainEca = exports.mainEca = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div id=\"explanation\" style=\"visibility: visible;\">\n          \n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">Unit of Assessment</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
+var mainEca = exports.mainEca = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">Unit of Assessment</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
 },{}],67:[function(require,module,exports){
 "use strict";
@@ -31620,6 +31620,8 @@ var Hierarchical = function () {
 
       // Select label class
       var labels = d3.selectAll('.label');
+      // Append tooltip
+      var tooltip = d3.select('.tooltip');
 
       // Convert our JSON like structure of the dataset into a hierarchy
       // with values returned as children at each level
@@ -31747,11 +31749,20 @@ var Hierarchical = function () {
       // Handle mouse over events
       function handleMouseOver(d, i) {
         d3.select(this).style('opacity', 1);
+        var x = event.clientX;
+        var y = event.clientY;
+
+        // Display tooltip div containing the score
+        // and position it according to mouse coordinates
+        if (d.data.value !== undefined) {
+          tooltip.style('display', 'block').style('top', y - 80 + 'px').style('left', x - 80 + 'px').html('<strong>Score<br>' + d.data.value + '</strong>');
+        }
       }
 
       // Handle mouse out events
       function handleMouseOut(d, i) {
         d3.select(this).style('opacity', 0.65);
+        tooltip.style('display', 'none');
       }
 
       // Redraw and scale paths according to map selection

@@ -18,8 +18,8 @@ export const mainEca =
     <div class="card-style" id="uoa-card"></div>
     <div class="card-style" id="compare-uni">
       <div id="chart">
+        <div class="tooltip"></div>
         <div id="explanation" style="visibility: visible;">
-          
         </div>
       </div>
     </div>
