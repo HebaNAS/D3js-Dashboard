@@ -31098,7 +31098,12 @@ var DataManager = function () {
 					Lng: d3.mean(values, function (d) {
 						return d.Lng;
 					}),
-					Uoa: uoa,
+					Uoa: function Uoa() {
+						return uoa;
+					},
+					City: (values, function (d) {
+						return d.Town;
+					}),
 					Overall4Score: d3.max(values, function (d) {
 						return d.Overall.FourStar;
 					}),
@@ -31178,16 +31183,6 @@ var DataManager = function () {
 			var filtered = data.filter(function (item) {
 				return item.Town.toLowerCase() === city.toLowerCase();
 			});
-			//console.log(filtered);
-
-			// Extract all universities in the selected town
-			var universities = [];
-
-			filtered.forEach(function (item) {
-				universities.push(item.InstitutionName);
-			});
-			universities = [].concat((0, _toConsumableArray3.default)(new Set(universities)));
-			//console.log(universities);
 
 			// Create a variable to hold the array return from the extraction operation,
 			// using d3 nest to reshape our data into key, value pairs and return only
@@ -31200,15 +31195,6 @@ var DataManager = function () {
 			})
 			// Perform a calculation on the returned values
 			.rollup(function (values) {
-				//console.log(values);
-				var scores = [];
-				// values.forEach((d) => {
-				// 	//console.log('d: ', d);
-				// 	if (d.Profile === 'Overall') {
-				// 		scores.push(parseFloat(d.Overall.FourStar));
-				// 	}
-				// 	console.log(scores);
-				// });
 				return {
 					Lat: d3.mean(values, function (d) {
 						return d.Lat;
@@ -31223,7 +31209,15 @@ var DataManager = function () {
 					}),
 					Overall4Score: d3.max(values, function (d) {
 						return d.Overall.FourStar;
-					})
+					}),
+					Uoa: function Uoa() {
+						var uoas = [];
+						values.filter(function (d) {
+							uoas.push(d.UOA_Name);
+						});
+						return [].concat((0, _toConsumableArray3.default)(new Set(uoas)));
+					},
+					City: city
 				};
 			}).entries(filtered);
 
@@ -31238,6 +31232,7 @@ var DataManager = function () {
 	}, {
 		key: 'reformatDataAsGeoJson',
 		value: function reformatDataAsGeoJson(data, map) {
+			console.log(data);
 			data.forEach(function (d) {
 				//console.log(d);
 				if (d.type === undefined) {
@@ -31246,7 +31241,8 @@ var DataManager = function () {
 					d.properties = {};
 					d.properties.cartisan = {};
 					d.properties.name = d.key;
-					d.properties.uoas = {};
+					d.properties.city = d.value.City;
+					d.properties.uoas = d.value.Uoa();
 					d.properties.scores = {};
 					d.properties.scores.mean = d.value.MeanScore;
 					d.properties.scores.overall = {};
@@ -31905,7 +31901,7 @@ var Map = function () {
         if (score === '4*') {
           result = parseInt(d.properties.scores.overall.fourstar / 5 + 1);
         } else if (score === 'mean') {
-          result = parseInt(d.properties.scores.mean / 5);
+          result = parseInt(d.properties.scores.mean / 2);
         }
         return result;
       })).attr('pointer-events', 'visible').classed('leaflet-marker-icon', true).classed('leaflet-zoom-animated', true).classed('leaflet-clickable', true).on('mouseover', handleMouseOver).on('mouseout', handleMouseOut).on('click', handleClick);

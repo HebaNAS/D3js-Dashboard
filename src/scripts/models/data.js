@@ -211,7 +211,8 @@ export default class DataManager {
 				return {
 					Lat: d3.mean(values, (d) => { return d.Lat; }),
 					Lng: d3.mean(values, (d) => { return d.Lng; }),
-					Uoa: uoa,
+					Uoa: () => { return uoa; },
+					City: (values, (d) => { return d.Town; }),
 					Overall4Score: d3.max(values, (d) => { return d.Overall.FourStar; }),
 					Overall3Score: d3.max(values, (d) => { return d.Overall.ThreeStar; }),
 					Overall2Score: d3.max(values, (d) => { return d.Overall.TwoStar; }),
@@ -249,16 +250,6 @@ export default class DataManager {
 		let filtered = data.filter((item) => {
 			return item.Town.toLowerCase() === city.toLowerCase();
 		});
-		//console.log(filtered);
-		
-		// Extract all universities in the selected town
-		let universities = [];
-		
-		filtered.forEach((item) => {
-			universities.push(item.InstitutionName);
-		});
-		universities = [...new Set(universities)];
-		//console.log(universities);
 
 		// Create a variable to hold the array return from the extraction operation,
 		// using d3 nest to reshape our data into key, value pairs and return only
@@ -271,15 +262,6 @@ export default class DataManager {
 			})
 			// Perform a calculation on the returned values
 			.rollup((values) => {
-				//console.log(values);
-				let scores = [];
-				// values.forEach((d) => {
-				// 	//console.log('d: ', d);
-				// 	if (d.Profile === 'Overall') {
-				// 		scores.push(parseFloat(d.Overall.FourStar));
-				// 	}
-				// 	console.log(scores);
-				// });
 				return {
 					Lat: d3.mean(values, (d) => { return d.Lat; }),
 					Lng: d3.mean(values, (d) => { return d.Lng; }),
@@ -288,7 +270,15 @@ export default class DataManager {
 							return parseFloat(d.Overall.FourStar);
 						}
 					}),
-					Overall4Score: d3.max(values, (d) => { return d.Overall.FourStar; })
+					Overall4Score: d3.max(values, (d) => { return d.Overall.FourStar; }),
+					Uoa: () => {
+						let uoas = [];
+						values.filter((d) => { 
+							uoas.push(d.UOA_Name);
+						});
+						return [...new Set(uoas)];
+					},
+					City: city,
 				};
 			})
 			.entries(filtered);
@@ -301,6 +291,7 @@ export default class DataManager {
    * d3's geoPath method
 	 */
 	reformatDataAsGeoJson(data, map) {
+		console.log(data);
 		data.forEach((d) => {
 			//console.log(d);
       if (d.type === undefined) {
@@ -309,7 +300,8 @@ export default class DataManager {
         d.properties = {};
         d.properties.cartisan = {};
 				d.properties.name = d.key;
-				d.properties.uoas = {};
+				d.properties.city = d.value.City;
+				d.properties.uoas = d.value.Uoa();
 				d.properties.scores = {};
 				d.properties.scores.mean = d.value.MeanScore;
         d.properties.scores.overall = {};

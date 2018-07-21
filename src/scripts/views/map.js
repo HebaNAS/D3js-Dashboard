@@ -105,7 +105,7 @@ export default class Map {
         if (score === '4*') {
           result = parseInt(d.properties.scores.overall.fourstar / 5 + 1);
         } else if (score === 'mean') {
-          result = parseInt(d.properties.scores.mean / 5);
+          result = parseInt(d.properties.scores.mean / 2);
         }
         return result;
       }))
