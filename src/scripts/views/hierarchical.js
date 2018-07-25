@@ -53,7 +53,6 @@ export default class Hierarchical {
     let selectedUniversity = this.selectedUni;
     let uoa = this.selectedUoa;
     let cityData = this.cityData;
-    //console.log(cityData);
 
     // Append svg to the leaflet map and specify width and height as the same
     // for the parent DOM element, then append a group to hold all markers
@@ -148,7 +147,7 @@ export default class Hierarchical {
     // Position the explanation text circle which contains the selected
     // university name
     explanation.style.position = 'absolute';
-    explanation.style.top = svgDOM.offsetHeight / 1.375 + 'px';
+    explanation.style.top = svgDOM.offsetHeight / 1.6 + 'px';
     explanation.style.right = svgDOM.offsetWidth / 2.2 + 'px';
     explanation.innerText = this.selectedUni;
     
@@ -221,7 +220,7 @@ export default class Hierarchical {
         tooltip.style('display', 'block')
           .style('top', (y - 80) + 'px')
           .style('left', (x - 80) + 'px')
-          .html('<strong>Score<br>' + d.data.value + '</strong>');
+          .html('<strong>Score<br>' + d.data.value + ' %</strong>');
       }
     }
 

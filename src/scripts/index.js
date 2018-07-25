@@ -141,7 +141,7 @@ function createDashboardEca(data, data2) {
     selectedUoa,
     selectedUni
   );
-  const barChart = new HBarChart(dataManager.getLocationByUoA(data, selectedUoa));
+  const barChart = new HBarChart(dataManager.getLocationByUoA(data, selectedUoa), selectedUoa);
   
   // Create the map
   const map = new Map(mapMarkers, '4*');
@@ -161,6 +161,7 @@ function createDashboardEca(data, data2) {
 
     // Reload the map with the new dataset
     map.reload(dataManager.getLocationByUoA(data, selectedUoa));
+    barChart.reload(selectedUni, selectedUoa, dataManager.getLocationByUoA(data, selectedUoa));
   });
 
 }

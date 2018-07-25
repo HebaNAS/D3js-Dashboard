@@ -30774,7 +30774,7 @@ function createDashboardEca(data, data2) {
    */
   var mapMarkers = dataManager.getLocationByUoA(data, selectedUoa);
   var hierarchical = new _hierarchical2.default(data2, data, selectedUoa, selectedUni);
-  var barChart = new _hBarChart2.default(dataManager.getLocationByUoA(data, selectedUoa));
+  var barChart = new _hBarChart2.default(dataManager.getLocationByUoA(data, selectedUoa), selectedUoa);
 
   // Create the map
   var map = new _map2.default(mapMarkers, '4*');
@@ -30794,6 +30794,7 @@ function createDashboardEca(data, data2) {
 
     // Reload the map with the new dataset
     map.reload(dataManager.getLocationByUoA(data, selectedUoa));
+    barChart.reload(selectedUni, selectedUoa, dataManager.getLocationByUoA(data, selectedUoa));
   });
 }
 
@@ -31136,6 +31137,9 @@ var DataManager = function () {
 					City: (values, function (d) {
 						return d.Town;
 					}),
+					Name: d3.max(values, function (d) {
+						return d.InstitutionName;
+					}),
 					Overall4Score: d3.max(values, function (d) {
 						return d.Overall.FourStar;
 					}),
@@ -31265,7 +31269,7 @@ var DataManager = function () {
 		key: 'reformatDataAsGeoJson',
 		value: function reformatDataAsGeoJson(data, map) {
 			data.forEach(function (d) {
-				if (d.type === undefined) {
+				if (d.type === undefined && map !== null && map !== undefined) {
 					d.type = 'Feature';
 					d.geometry = {};
 					d.properties = {};
@@ -31277,8 +31281,32 @@ var DataManager = function () {
 					d.properties.scores.mean = d.value.MeanScore;
 					d.properties.scores.overall = {};
 					d.properties.scores.overall.fourstar = d.value.Overall4Score;
+					d.properties.scores.overall.threestar = d.value.Overall3Score;
+					d.properties.scores.overall.twostar = d.value.Overall2Score;
+					d.properties.scores.overall.onestar = d.value.Overall1Score;
+					d.properties.scores.overall.unclassified = d.value.OverallUCScore;
 					d.properties.cartisan.x = map.latLngToLayerPoint(new L.LatLng(d.value.Lat, d.value.Lng)).x;
 					d.properties.cartisan.y = map.latLngToLayerPoint(new L.LatLng(d.value.Lat, d.value.Lng)).y;
+					d.geometry.type = 'Point';
+					d.geometry.coordinates = [d.value.Lat, d.value.Lng];
+					delete d.key;
+					delete d.value;
+				} else {
+					d.type = 'Feature';
+					d.geometry = {};
+					d.properties = {};
+					d.properties.cartisan = {};
+					d.properties.name = d.key;
+					d.properties.city = d.value.City;
+					d.properties.uoas = d.value.Uoa();
+					d.properties.scores = {};
+					d.properties.scores.mean = d.value.MeanScore;
+					d.properties.scores.overall = {};
+					d.properties.scores.overall.fourstar = d.value.Overall4Score;
+					d.properties.scores.overall.threestar = d.value.Overall3Score;
+					d.properties.scores.overall.twostar = d.value.Overall2Score;
+					d.properties.scores.overall.onestar = d.value.Overall1Score;
+					d.properties.scores.overall.unclassified = d.value.OverallUCScore;
 					d.geometry.type = 'Point';
 					d.geometry.coordinates = [d.value.Lat, d.value.Lng];
 					delete d.key;
@@ -31470,10 +31498,12 @@ var dataManager = new _data2.default();
 var HBarChart = function () {
 
   // Create the constructor function and define variables
-  function HBarChart(data) {
+  function HBarChart(data, selectedUoa) {
     (0, _classCallCheck3.default)(this, HBarChart);
 
     this.data = data;
+    this.selectedUoa = selectedUoa;
+    this.selectedUni = '';
   }
 
   // Append svg to the selected DOM Element and set its width and height
@@ -31482,38 +31512,137 @@ var HBarChart = function () {
   (0, _createClass3.default)(HBarChart, [{
     key: 'createChart',
     value: function createChart() {
-      //console.log(this.data);
+
       /*
        * Variables
        */
 
       // Get parent element
       var svgDOM = document.getElementById('uoa-card');
-      // Get all universities as keys
-      var universities = dataManager.loadAllUoAs(this.data);
-      // Define margins around the chart
-      var margin = { top: 20, right: 20, bottom: 20, left: 80 };
+      // Get map conatiner
+      var map = document.getElementById('map');
+      // Get the current selection from the select box
+      var selectBox = document.getElementById('selector');
+      // Rearrange the dataset
+      var newData = this.data.map(function (d) {
+        return d.value;
+      });
+      // Define keys for stacking our data
+      var keys = ['OverallUCScore', 'Overall1Score', 'Overall2Score', 'Overall3Score', 'Overall4Score'];
       // Define horizontal scale
-      var scaleX = d3.scaleBand().rangeRound([0, svgDOM.offsetWidth]).paddingInner(0.05).align(0.1);
+      var scaleX = d3.scaleLinear().rangeRound([svgDOM.offsetHeight - svgDOM.offsetHeight / 1.8, 0]);
       // Define vertical scale
-      var scaleY = d3.scaleLinear().rangeRound([svgDOM.offsetHeight, 0]);
+      var scaleY = d3.scaleBand().rangeRound([0, svgDOM.offsetWidth / 0.86]);
       // Define color range
-      var color = d3.scaleLinear().range(['#25CD6B', '#FFBE57']);
+      var color = d3.scaleOrdinal().range(['rgb(255, 190, 87)', 'rgb(255, 238, 87)', 'rgb(245, 255, 87)', 'rgba(219, 255, 87)', 'rgb(37, 205, 107)']);
 
-      var results = this.data.sort(function (a, b) {
+      var selectedUniversity = this.selectedUni;
+      var uoa = this.selectedUoa;
+
+      // Sort the dataset based on universities 4* score
+      newData.sort(function (a, b) {
         return b.Overall4Score - a.Overall4Score;
       });
-      scaleX.domain(this.data.map(function (d) {
-        return d.key;
-      }));
-      scaleY.domain([0, d3.max(this.data, function (d) {
-        return 100;
-      })]).nice();
-      color.domain(universities);
-      //console.log(results);
+
+      // Clear the current svg
+      d3.select('#uoa-card').html(null);
+
+      // Define the stack structure
+      var stack = d3.stack().offset(d3.stackOffsetExpand);
 
       // Append the svg with the given options
-      d3.select('#uoa-card').append('svg').attr('width', svgDOM.offsetWidth).attr('height', svgDOM.offsetHeight);
+      var svg = d3.select('#uoa-card').append('svg').attr('width', svgDOM.offsetWidth).attr('height', svgDOM.offsetHeight);
+      var g = svg.append('g').attr('width', svgDOM.offsetWidth).attr('height', svgDOM.offsetHeight);
+
+      /*------------------------------------------------------*/
+
+      /*
+       * Dynamic changes
+       */
+
+      // Define the domains for the scale functions
+      scaleY.domain(newData.map(function (d) {
+        return d.Name;
+      }));
+      color.domain(keys);
+
+      var serie = g.selectAll('.serie').data(stack.keys(keys)(newData)).enter().append('g').attr('class', 'serie').attr('fill', function (d) {
+        return color(d.key);
+      }).style('opacity', 0.95).attr('transform', 'translate(' + svgDOM.offsetWidth / 3.25 + ',' + (15 - svgDOM.offsetHeight / 100) + ')');
+
+      // Using the GUP to update the chart
+      serie.selectAll('rect').data(function (d) {
+        return d;
+      }).enter().append('rect').attr('stroke', 'white').attr('stroke-width', '0.5').attr('x', function (d) {
+        return scaleX(d[1]);
+      }).attr('y', function (d) {
+        return scaleY(d.data.Name);
+      }).attr('height', scaleY.bandwidth()).attr('width', function (d) {
+        return scaleX(d[0]) - scaleX(d[1]);
+      });
+
+      // https://bl.ocks.org
+      g.append('g').attr('class', 'axis axis--y').attr('transform', 'translate(' + svgDOM.offsetWidth / 3.25 + ',' + (15 - svgDOM.offsetHeight / 100) + ')').call(d3.axisLeft(scaleY));
+
+      //https://bl.ocks.org
+      var legend = serie.append('g').attr('class', 'legend').attr('transform', function (d, i) {
+        return 'translate(' + scaleY.bandwidth() + ',' + 60 * (i + 1) + ')';
+      });
+
+      // Legend color key
+      legend.append('rect').attr('x', svgDOM.offsetWidth - 190).attr('width', 19).attr('height', 19).attr('fill', color);
+
+      // Legend text
+      legend.append('text').attr('x', svgDOM.offsetWidth - 200).attr('y', 25.5).attr('dy', '0.32em').text(function (d) {
+        var output = '';
+        if (d.key === 'Overall4Score') {
+          output = '4* score';
+        } else if (d.key === 'Overall3Score') {
+          output = '3* score';
+        } else if (d.key === 'Overall2Score') {
+          output = '2* score';
+        } else if (d.key === 'Overall1Score') {
+          output = '1* score';
+        } else if (d.key === 'OverallUCScore') {
+          output = 'unclassified';
+        }
+        return output;
+      });
+
+      // Listen for selected university from map and update
+      // the chart accordingly
+      map.addEventListener('selectNewMarker', function (event) {
+        console.log('Selected University Changed');
+        // Update the hierarchical sunburst chart with new data
+        selectedUniversity = event.detail.props().name;
+        newData.forEach(function (item) {
+          d3.selectAll('.tick text')._groups[0].forEach(function (el) {
+            if (el.innerHTML === selectedUniversity) {
+              // Highlight selected university name
+              d3.selectAll('.tick text').attr('transform', 'scale(1)').style('opacity', 0.25);
+              d3.select(el).attr('transform', 'scale(2)').style('opacity', 1).style('transition', 'all 0.5s');
+            }
+          });
+        });
+      }, false);
+
+      /*------------------------------------------------------*/
+    }
+
+    /*
+     * Function to reload the map with new dataset
+     */
+
+  }, {
+    key: 'reload',
+    value: function reload(newUni, newUoa, data) {
+      this.selectedUni = newUni;
+      this.selectedUoa = newUoa;
+      console.log('Reloading the chart using a new dataset');
+
+      // Rearrange the dataset
+      this.data = data;
+      this.createChart();
     }
   }]);
   return HBarChart;
@@ -31599,7 +31728,6 @@ var Hierarchical = function () {
       var selectedUniversity = this.selectedUni;
       var uoa = this.selectedUoa;
       var cityData = this.cityData;
-      //console.log(cityData);
 
       // Append svg to the leaflet map and specify width and height as the same
       // for the parent DOM element, then append a group to hold all markers
@@ -31685,7 +31813,7 @@ var Hierarchical = function () {
       // Position the explanation text circle which contains the selected
       // university name
       explanation.style.position = 'absolute';
-      explanation.style.top = svgDOM.offsetHeight / 1.375 + 'px';
+      explanation.style.top = svgDOM.offsetHeight / 1.6 + 'px';
       explanation.style.right = svgDOM.offsetWidth / 2.2 + 'px';
       explanation.innerText = this.selectedUni;
 
@@ -31755,7 +31883,7 @@ var Hierarchical = function () {
         // Display tooltip div containing the score
         // and position it according to mouse coordinates
         if (d.data.value !== undefined) {
-          tooltip.style('display', 'block').style('top', y - 80 + 'px').style('left', x - 80 + 'px').html('<strong>Score<br>' + d.data.value + '</strong>');
+          tooltip.style('display', 'block').style('top', y - 80 + 'px').style('left', x - 80 + 'px').html('<strong>Score<br>' + d.data.value + ' %</strong>');
         }
       }
 
@@ -32003,7 +32131,7 @@ var Map = function () {
 
         var self = this;
         var data = d;
-        var popup = d3.select(map.getPanes().popupPane).append('div').classed('leaflet-popup', true).style('top', d3.mouse(self)[1] - 90 + 'px').style('left', d3.mouse(self)[0] - 110 + 'px');
+        var popup = d3.select(map.getPanes().popupPane).append('div').classed('leaflet-popup', true).style('top', d3.mouse(self)[1] - 90 + 'px').style('left', d3.mouse(self)[0] - 102 + 'px');
         popup.classed('popup', true);
         popup.append('a').classed('leaflet-popup-close-button', true).attr('href', '#close').text('x');
 

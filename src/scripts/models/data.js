@@ -235,6 +235,7 @@ export default class DataManager {
 					Lng: d3.mean(values, (d) => { return d.Lng; }),
 					Uoa: () => { return uoa; },
 					City: (values, (d) => { return d.Town; }),
+					Name: d3.max(values, (d) => { return d.InstitutionName; }),
 					Overall4Score: d3.max(values, (d) => { return d.Overall.FourStar; }),
 					Overall3Score: d3.max(values, (d) => { return d.Overall.ThreeStar; }),
 					Overall2Score: d3.max(values, (d) => { return d.Overall.TwoStar; }),
@@ -314,7 +315,7 @@ export default class DataManager {
 	 */
 	reformatDataAsGeoJson(data, map) {
 		data.forEach((d) => {
-			if (d.type === undefined) {
+			if (d.type === undefined && map !== null && map !== undefined) {
 				d.type = 'Feature';
 				d.geometry = {};
 				d.properties = {};
@@ -326,10 +327,34 @@ export default class DataManager {
 				d.properties.scores.mean = d.value.MeanScore;
 				d.properties.scores.overall = {};
 				d.properties.scores.overall.fourstar = d.value.Overall4Score;
+				d.properties.scores.overall.threestar = d.value.Overall3Score;
+				d.properties.scores.overall.twostar = d.value.Overall2Score;
+				d.properties.scores.overall.onestar = d.value.Overall1Score;
+				d.properties.scores.overall.unclassified = d.value.OverallUCScore;
 				d.properties.cartisan.x =
 					map.latLngToLayerPoint(new L.LatLng(d.value.Lat, d.value.Lng)).x;
 				d.properties.cartisan.y =
 					map.latLngToLayerPoint(new L.LatLng(d.value.Lat, d.value.Lng)).y;
+				d.geometry.type = 'Point';
+				d.geometry.coordinates = [d.value.Lat, d.value.Lng];
+				delete d.key;
+				delete d.value;
+			} else {
+				d.type = 'Feature';
+				d.geometry = {};
+				d.properties = {};
+				d.properties.cartisan = {};
+				d.properties.name = d.key;
+				d.properties.city = d.value.City;
+				d.properties.uoas = d.value.Uoa();
+				d.properties.scores = {};
+				d.properties.scores.mean = d.value.MeanScore;
+				d.properties.scores.overall = {};
+				d.properties.scores.overall.fourstar = d.value.Overall4Score;
+				d.properties.scores.overall.threestar = d.value.Overall3Score;
+				d.properties.scores.overall.twostar = d.value.Overall2Score;
+				d.properties.scores.overall.onestar = d.value.Overall1Score;
+				d.properties.scores.overall.unclassified = d.value.OverallUCScore;
 				d.geometry.type = 'Point';
 				d.geometry.coordinates = [d.value.Lat, d.value.Lng];
 				delete d.key;

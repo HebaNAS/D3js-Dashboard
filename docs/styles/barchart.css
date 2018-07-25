@@ -5,3 +5,19 @@
 /*                        Email: he12@hw.ac.uk                               */
 /*                         Date: 20 July 2018                                */
 /*****************************************************************************/
+
+#uoa-card text {
+  font-size: 0.325rem;
+}
+.legend {
+  position: absolute;
+}
+#uoa-card .axis--y path {
+  display: none;
+}
+#uoa-card .tick line {
+  stroke: var(--white);
+}
+#uoa-card .legend text {
+  font-size: 0.5rem;
+}

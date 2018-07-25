@@ -175,7 +175,7 @@ export default class Map {
         .append('div')
         .classed('leaflet-popup', true)
         .style('top', d3.mouse(self)[1] - 90 + 'px')
-        .style('left', d3.mouse(self)[0] - 110 + 'px');
+        .style('left', d3.mouse(self)[0] - 102 + 'px');
       popup.classed('popup', true);
       popup.append('a')
         .classed('leaflet-popup-close-button', true)
