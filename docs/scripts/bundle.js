@@ -1,8 +1,8 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/array/from"), __esModule: true };
-},{"core-js/library/fn/array/from":6}],2:[function(require,module,exports){
+},{"core-js/library/fn/array/from":7}],2:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/define-property"), __esModule: true };
-},{"core-js/library/fn/object/define-property":7}],3:[function(require,module,exports){
+},{"core-js/library/fn/object/define-property":8}],3:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -63,31 +63,33 @@ exports.default = function (arr) {
   }
 };
 },{"../core-js/array/from":1}],6:[function(require,module,exports){
+
+},{}],7:[function(require,module,exports){
 require('../../modules/es6.string.iterator');
 require('../../modules/es6.array.from');
 module.exports = require('../../modules/_core').Array.from;
 
-},{"../../modules/_core":13,"../../modules/es6.array.from":57,"../../modules/es6.string.iterator":59}],7:[function(require,module,exports){
+},{"../../modules/_core":14,"../../modules/es6.array.from":58,"../../modules/es6.string.iterator":60}],8:[function(require,module,exports){
 require('../../modules/es6.object.define-property');
 var $Object = require('../../modules/_core').Object;
 module.exports = function defineProperty(it, key, desc) {
   return $Object.defineProperty(it, key, desc);
 };
 
-},{"../../modules/_core":13,"../../modules/es6.object.define-property":58}],8:[function(require,module,exports){
+},{"../../modules/_core":14,"../../modules/es6.object.define-property":59}],9:[function(require,module,exports){
 module.exports = function (it) {
   if (typeof it != 'function') throw TypeError(it + ' is not a function!');
   return it;
 };
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var isObject = require('./_is-object');
 module.exports = function (it) {
   if (!isObject(it)) throw TypeError(it + ' is not an object!');
   return it;
 };
 
-},{"./_is-object":29}],10:[function(require,module,exports){
+},{"./_is-object":30}],11:[function(require,module,exports){
 // false -> Array#indexOf
 // true  -> Array#includes
 var toIObject = require('./_to-iobject');
@@ -112,7 +114,7 @@ module.exports = function (IS_INCLUDES) {
   };
 };
 
-},{"./_to-absolute-index":48,"./_to-iobject":50,"./_to-length":51}],11:[function(require,module,exports){
+},{"./_to-absolute-index":49,"./_to-iobject":51,"./_to-length":52}],12:[function(require,module,exports){
 // getting tag from 19.1.3.6 Object.prototype.toString()
 var cof = require('./_cof');
 var TAG = require('./_wks')('toStringTag');
@@ -137,18 +139,18 @@ module.exports = function (it) {
     : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
 };
 
-},{"./_cof":12,"./_wks":55}],12:[function(require,module,exports){
+},{"./_cof":13,"./_wks":56}],13:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = function (it) {
   return toString.call(it).slice(8, -1);
 };
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 var core = module.exports = { version: '2.5.7' };
 if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 var $defineProperty = require('./_object-dp');
 var createDesc = require('./_property-desc');
@@ -158,7 +160,7 @@ module.exports = function (object, index, value) {
   else object[index] = value;
 };
 
-},{"./_object-dp":37,"./_property-desc":42}],15:[function(require,module,exports){
+},{"./_object-dp":38,"./_property-desc":43}],16:[function(require,module,exports){
 // optional / simple context binding
 var aFunction = require('./_a-function');
 module.exports = function (fn, that, length) {
@@ -180,20 +182,20 @@ module.exports = function (fn, that, length) {
   };
 };
 
-},{"./_a-function":8}],16:[function(require,module,exports){
+},{"./_a-function":9}],17:[function(require,module,exports){
 // 7.2.1 RequireObjectCoercible(argument)
 module.exports = function (it) {
   if (it == undefined) throw TypeError("Can't call method on  " + it);
   return it;
 };
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 // Thank's IE8 for his funny defineProperty
 module.exports = !require('./_fails')(function () {
   return Object.defineProperty({}, 'a', { get: function () { return 7; } }).a != 7;
 });
 
-},{"./_fails":21}],18:[function(require,module,exports){
+},{"./_fails":22}],19:[function(require,module,exports){
 var isObject = require('./_is-object');
 var document = require('./_global').document;
 // typeof document.createElement is 'object' in old IE
@@ -202,13 +204,13 @@ module.exports = function (it) {
   return is ? document.createElement(it) : {};
 };
 
-},{"./_global":22,"./_is-object":29}],19:[function(require,module,exports){
+},{"./_global":23,"./_is-object":30}],20:[function(require,module,exports){
 // IE 8- don't enum bug keys
 module.exports = (
   'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
 ).split(',');
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 var global = require('./_global');
 var core = require('./_core');
 var ctx = require('./_ctx');
@@ -272,7 +274,7 @@ $export.U = 64;  // safe
 $export.R = 128; // real proto method for `library`
 module.exports = $export;
 
-},{"./_core":13,"./_ctx":15,"./_global":22,"./_has":23,"./_hide":24}],21:[function(require,module,exports){
+},{"./_core":14,"./_ctx":16,"./_global":23,"./_has":24,"./_hide":25}],22:[function(require,module,exports){
 module.exports = function (exec) {
   try {
     return !!exec();
@@ -281,7 +283,7 @@ module.exports = function (exec) {
   }
 };
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 var global = module.exports = typeof window != 'undefined' && window.Math == Math
   ? window : typeof self != 'undefined' && self.Math == Math ? self
@@ -289,13 +291,13 @@ var global = module.exports = typeof window != 'undefined' && window.Math == Mat
   : Function('return this')();
 if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 var hasOwnProperty = {}.hasOwnProperty;
 module.exports = function (it, key) {
   return hasOwnProperty.call(it, key);
 };
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 var dP = require('./_object-dp');
 var createDesc = require('./_property-desc');
 module.exports = require('./_descriptors') ? function (object, key, value) {
@@ -305,16 +307,16 @@ module.exports = require('./_descriptors') ? function (object, key, value) {
   return object;
 };
 
-},{"./_descriptors":17,"./_object-dp":37,"./_property-desc":42}],25:[function(require,module,exports){
+},{"./_descriptors":18,"./_object-dp":38,"./_property-desc":43}],26:[function(require,module,exports){
 var document = require('./_global').document;
 module.exports = document && document.documentElement;
 
-},{"./_global":22}],26:[function(require,module,exports){
+},{"./_global":23}],27:[function(require,module,exports){
 module.exports = !require('./_descriptors') && !require('./_fails')(function () {
   return Object.defineProperty(require('./_dom-create')('div'), 'a', { get: function () { return 7; } }).a != 7;
 });
 
-},{"./_descriptors":17,"./_dom-create":18,"./_fails":21}],27:[function(require,module,exports){
+},{"./_descriptors":18,"./_dom-create":19,"./_fails":22}],28:[function(require,module,exports){
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
 var cof = require('./_cof');
 // eslint-disable-next-line no-prototype-builtins
@@ -322,7 +324,7 @@ module.exports = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
   return cof(it) == 'String' ? it.split('') : Object(it);
 };
 
-},{"./_cof":12}],28:[function(require,module,exports){
+},{"./_cof":13}],29:[function(require,module,exports){
 // check on default Array iterator
 var Iterators = require('./_iterators');
 var ITERATOR = require('./_wks')('iterator');
@@ -332,12 +334,12 @@ module.exports = function (it) {
   return it !== undefined && (Iterators.Array === it || ArrayProto[ITERATOR] === it);
 };
 
-},{"./_iterators":34,"./_wks":55}],29:[function(require,module,exports){
+},{"./_iterators":35,"./_wks":56}],30:[function(require,module,exports){
 module.exports = function (it) {
   return typeof it === 'object' ? it !== null : typeof it === 'function';
 };
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 // call something on iterator step with safe closing on error
 var anObject = require('./_an-object');
 module.exports = function (iterator, fn, value, entries) {
@@ -351,7 +353,7 @@ module.exports = function (iterator, fn, value, entries) {
   }
 };
 
-},{"./_an-object":9}],31:[function(require,module,exports){
+},{"./_an-object":10}],32:[function(require,module,exports){
 'use strict';
 var create = require('./_object-create');
 var descriptor = require('./_property-desc');
@@ -366,7 +368,7 @@ module.exports = function (Constructor, NAME, next) {
   setToStringTag(Constructor, NAME + ' Iterator');
 };
 
-},{"./_hide":24,"./_object-create":36,"./_property-desc":42,"./_set-to-string-tag":44,"./_wks":55}],32:[function(require,module,exports){
+},{"./_hide":25,"./_object-create":37,"./_property-desc":43,"./_set-to-string-tag":45,"./_wks":56}],33:[function(require,module,exports){
 'use strict';
 var LIBRARY = require('./_library');
 var $export = require('./_export');
@@ -437,7 +439,7 @@ module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
   return methods;
 };
 
-},{"./_export":20,"./_hide":24,"./_iter-create":31,"./_iterators":34,"./_library":35,"./_object-gpo":39,"./_redefine":43,"./_set-to-string-tag":44,"./_wks":55}],33:[function(require,module,exports){
+},{"./_export":21,"./_hide":25,"./_iter-create":32,"./_iterators":35,"./_library":36,"./_object-gpo":40,"./_redefine":44,"./_set-to-string-tag":45,"./_wks":56}],34:[function(require,module,exports){
 var ITERATOR = require('./_wks')('iterator');
 var SAFE_CLOSING = false;
 
@@ -461,13 +463,13 @@ module.exports = function (exec, skipClosing) {
   return safe;
 };
 
-},{"./_wks":55}],34:[function(require,module,exports){
+},{"./_wks":56}],35:[function(require,module,exports){
 module.exports = {};
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 module.exports = true;
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
 var anObject = require('./_an-object');
 var dPs = require('./_object-dps');
@@ -510,7 +512,7 @@ module.exports = Object.create || function create(O, Properties) {
   return Properties === undefined ? result : dPs(result, Properties);
 };
 
-},{"./_an-object":9,"./_dom-create":18,"./_enum-bug-keys":19,"./_html":25,"./_object-dps":38,"./_shared-key":45}],37:[function(require,module,exports){
+},{"./_an-object":10,"./_dom-create":19,"./_enum-bug-keys":20,"./_html":26,"./_object-dps":39,"./_shared-key":46}],38:[function(require,module,exports){
 var anObject = require('./_an-object');
 var IE8_DOM_DEFINE = require('./_ie8-dom-define');
 var toPrimitive = require('./_to-primitive');
@@ -528,7 +530,7 @@ exports.f = require('./_descriptors') ? Object.defineProperty : function defineP
   return O;
 };
 
-},{"./_an-object":9,"./_descriptors":17,"./_ie8-dom-define":26,"./_to-primitive":53}],38:[function(require,module,exports){
+},{"./_an-object":10,"./_descriptors":18,"./_ie8-dom-define":27,"./_to-primitive":54}],39:[function(require,module,exports){
 var dP = require('./_object-dp');
 var anObject = require('./_an-object');
 var getKeys = require('./_object-keys');
@@ -543,7 +545,7 @@ module.exports = require('./_descriptors') ? Object.defineProperties : function 
   return O;
 };
 
-},{"./_an-object":9,"./_descriptors":17,"./_object-dp":37,"./_object-keys":41}],39:[function(require,module,exports){
+},{"./_an-object":10,"./_descriptors":18,"./_object-dp":38,"./_object-keys":42}],40:[function(require,module,exports){
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
 var has = require('./_has');
 var toObject = require('./_to-object');
@@ -558,7 +560,7 @@ module.exports = Object.getPrototypeOf || function (O) {
   } return O instanceof Object ? ObjectProto : null;
 };
 
-},{"./_has":23,"./_shared-key":45,"./_to-object":52}],40:[function(require,module,exports){
+},{"./_has":24,"./_shared-key":46,"./_to-object":53}],41:[function(require,module,exports){
 var has = require('./_has');
 var toIObject = require('./_to-iobject');
 var arrayIndexOf = require('./_array-includes')(false);
@@ -577,7 +579,7 @@ module.exports = function (object, names) {
   return result;
 };
 
-},{"./_array-includes":10,"./_has":23,"./_shared-key":45,"./_to-iobject":50}],41:[function(require,module,exports){
+},{"./_array-includes":11,"./_has":24,"./_shared-key":46,"./_to-iobject":51}],42:[function(require,module,exports){
 // 19.1.2.14 / 15.2.3.14 Object.keys(O)
 var $keys = require('./_object-keys-internal');
 var enumBugKeys = require('./_enum-bug-keys');
@@ -586,7 +588,7 @@ module.exports = Object.keys || function keys(O) {
   return $keys(O, enumBugKeys);
 };
 
-},{"./_enum-bug-keys":19,"./_object-keys-internal":40}],42:[function(require,module,exports){
+},{"./_enum-bug-keys":20,"./_object-keys-internal":41}],43:[function(require,module,exports){
 module.exports = function (bitmap, value) {
   return {
     enumerable: !(bitmap & 1),
@@ -596,10 +598,10 @@ module.exports = function (bitmap, value) {
   };
 };
 
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 module.exports = require('./_hide');
 
-},{"./_hide":24}],44:[function(require,module,exports){
+},{"./_hide":25}],45:[function(require,module,exports){
 var def = require('./_object-dp').f;
 var has = require('./_has');
 var TAG = require('./_wks')('toStringTag');
@@ -608,14 +610,14 @@ module.exports = function (it, tag, stat) {
   if (it && !has(it = stat ? it : it.prototype, TAG)) def(it, TAG, { configurable: true, value: tag });
 };
 
-},{"./_has":23,"./_object-dp":37,"./_wks":55}],45:[function(require,module,exports){
+},{"./_has":24,"./_object-dp":38,"./_wks":56}],46:[function(require,module,exports){
 var shared = require('./_shared')('keys');
 var uid = require('./_uid');
 module.exports = function (key) {
   return shared[key] || (shared[key] = uid(key));
 };
 
-},{"./_shared":46,"./_uid":54}],46:[function(require,module,exports){
+},{"./_shared":47,"./_uid":55}],47:[function(require,module,exports){
 var core = require('./_core');
 var global = require('./_global');
 var SHARED = '__core-js_shared__';
@@ -629,7 +631,7 @@ var store = global[SHARED] || (global[SHARED] = {});
   copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
 });
 
-},{"./_core":13,"./_global":22,"./_library":35}],47:[function(require,module,exports){
+},{"./_core":14,"./_global":23,"./_library":36}],48:[function(require,module,exports){
 var toInteger = require('./_to-integer');
 var defined = require('./_defined');
 // true  -> String#at
@@ -648,7 +650,7 @@ module.exports = function (TO_STRING) {
   };
 };
 
-},{"./_defined":16,"./_to-integer":49}],48:[function(require,module,exports){
+},{"./_defined":17,"./_to-integer":50}],49:[function(require,module,exports){
 var toInteger = require('./_to-integer');
 var max = Math.max;
 var min = Math.min;
@@ -657,7 +659,7 @@ module.exports = function (index, length) {
   return index < 0 ? max(index + length, 0) : min(index, length);
 };
 
-},{"./_to-integer":49}],49:[function(require,module,exports){
+},{"./_to-integer":50}],50:[function(require,module,exports){
 // 7.1.4 ToInteger
 var ceil = Math.ceil;
 var floor = Math.floor;
@@ -665,7 +667,7 @@ module.exports = function (it) {
   return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
 };
 
-},{}],50:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 // to indexed object, toObject with fallback for non-array-like ES3 strings
 var IObject = require('./_iobject');
 var defined = require('./_defined');
@@ -673,7 +675,7 @@ module.exports = function (it) {
   return IObject(defined(it));
 };
 
-},{"./_defined":16,"./_iobject":27}],51:[function(require,module,exports){
+},{"./_defined":17,"./_iobject":28}],52:[function(require,module,exports){
 // 7.1.15 ToLength
 var toInteger = require('./_to-integer');
 var min = Math.min;
@@ -681,14 +683,14 @@ module.exports = function (it) {
   return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
 };
 
-},{"./_to-integer":49}],52:[function(require,module,exports){
+},{"./_to-integer":50}],53:[function(require,module,exports){
 // 7.1.13 ToObject(argument)
 var defined = require('./_defined');
 module.exports = function (it) {
   return Object(defined(it));
 };
 
-},{"./_defined":16}],53:[function(require,module,exports){
+},{"./_defined":17}],54:[function(require,module,exports){
 // 7.1.1 ToPrimitive(input [, PreferredType])
 var isObject = require('./_is-object');
 // instead of the ES6 spec version, we didn't implement @@toPrimitive case
@@ -702,14 +704,14 @@ module.exports = function (it, S) {
   throw TypeError("Can't convert object to primitive value");
 };
 
-},{"./_is-object":29}],54:[function(require,module,exports){
+},{"./_is-object":30}],55:[function(require,module,exports){
 var id = 0;
 var px = Math.random();
 module.exports = function (key) {
   return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
 };
 
-},{}],55:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 var store = require('./_shared')('wks');
 var uid = require('./_uid');
 var Symbol = require('./_global').Symbol;
@@ -722,7 +724,7 @@ var $exports = module.exports = function (name) {
 
 $exports.store = store;
 
-},{"./_global":22,"./_shared":46,"./_uid":54}],56:[function(require,module,exports){
+},{"./_global":23,"./_shared":47,"./_uid":55}],57:[function(require,module,exports){
 var classof = require('./_classof');
 var ITERATOR = require('./_wks')('iterator');
 var Iterators = require('./_iterators');
@@ -732,7 +734,7 @@ module.exports = require('./_core').getIteratorMethod = function (it) {
     || Iterators[classof(it)];
 };
 
-},{"./_classof":11,"./_core":13,"./_iterators":34,"./_wks":55}],57:[function(require,module,exports){
+},{"./_classof":12,"./_core":14,"./_iterators":35,"./_wks":56}],58:[function(require,module,exports){
 'use strict';
 var ctx = require('./_ctx');
 var $export = require('./_export');
@@ -771,12 +773,12 @@ $export($export.S + $export.F * !require('./_iter-detect')(function (iter) { Arr
   }
 });
 
-},{"./_create-property":14,"./_ctx":15,"./_export":20,"./_is-array-iter":28,"./_iter-call":30,"./_iter-detect":33,"./_to-length":51,"./_to-object":52,"./core.get-iterator-method":56}],58:[function(require,module,exports){
+},{"./_create-property":15,"./_ctx":16,"./_export":21,"./_is-array-iter":29,"./_iter-call":31,"./_iter-detect":34,"./_to-length":52,"./_to-object":53,"./core.get-iterator-method":57}],59:[function(require,module,exports){
 var $export = require('./_export');
 // 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
 $export($export.S + $export.F * !require('./_descriptors'), 'Object', { defineProperty: require('./_object-dp').f });
 
-},{"./_descriptors":17,"./_export":20,"./_object-dp":37}],59:[function(require,module,exports){
+},{"./_descriptors":18,"./_export":21,"./_object-dp":38}],60:[function(require,module,exports){
 'use strict';
 var $at = require('./_string-at')(true);
 
@@ -795,7 +797,7 @@ require('./_iter-define')(String, 'String', function (iterated) {
   return { value: point, done: false };
 });
 
-},{"./_iter-define":32,"./_string-at":47}],60:[function(require,module,exports){
+},{"./_iter-define":33,"./_string-at":48}],61:[function(require,module,exports){
 // https://d3js.org Version 4.0.0. Copyright 2016 Mike Bostock.
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -16741,7 +16743,7 @@ var   y0$3;
   Object.defineProperty(exports, '__esModule', { value: true });
 
 }));
-},{}],61:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 /* @preserve
  * Leaflet 1.3.1, a JS library for interactive maps. http://leafletjs.com
  * (c) 2010-2017 Vladimir Agafonkin, (c) 2010-2011 CloudMade
@@ -30545,7 +30547,7 @@ exports.map = createMap;
 })));
 
 
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30563,7 +30565,7 @@ function onlyUnique(value, index, self) {
   return self.indexOf(value) === index;
 }
 
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30605,7 +30607,7 @@ function join(lookupTable, mainTable, mainKey, lookupKey, select) {
   return output;
 }
 
-},{}],64:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 'use strict';
 
 var _d = require('d3');
@@ -30777,8 +30779,8 @@ function createDashboardEca(data, data2) {
    * of Assessment) which is passed on as an argument from the selectbox
    */
   var mapMarkers = dataManager.getLocationByUoA(data, selectedUoa);
-  var hierarchical = new _hierarchical2.default(data2, data, selectedUoa, selectedUni, 'ShowUniversity');
-  var barChart = new _hBarChart2.default(dataManager.getLocationByUoA(data, selectedUoa), selectedUoa, '', 'ShowUniversity');
+  var hierarchical = new _hierarchical2.default(data2, data, selectedUoa, selectedUni, 'ShowUniversity', false);
+  var barChart = new _hBarChart2.default(data, dataManager.getLocationByUoA(data, selectedUoa), selectedUoa, '', 'ShowUniversity');
 
   // Create the map
   var map = new _map2.default(mapMarkers, '4*');
@@ -30798,7 +30800,7 @@ function createDashboardEca(data, data2) {
 
     // Reload the map with the new dataset
     map.reload(dataManager.getLocationByUoA(data, selectedUoa));
-    barChart.reload('', selectedUoa, dataManager.getLocationByUoA(data, selectedUoa));
+    barChart.reload('', selectedUoa, data, dataManager.getLocationByUoA(data, selectedUoa), 'ShowUniversity');
   });
 }
 
@@ -30829,8 +30831,9 @@ function createDashboardUm(data, data2) {
    * with all the locations of the universities in a selected field (Unit
    * of Assessment) which is passed on as an argument from the selectbox
    */
-  var hierarchical = new _hierarchical2.default(data2, data, selectedUoa, selectedUni, 'ShowUoA');
-  var barChart = new _hBarChart2.default(dataManager.getLocationByUoA(data, selectedUoa), selectedUoa, selectedUni, 'ShowUoA');
+  var hierarchical = new _hierarchical2.default(data2, data, selectedUoa, selectedUni, 'ShowUoA', false);
+
+  var barChart = new _hBarChart2.default(data, dataManager.getLocationByUoA(data, selectedUoa), selectedUoa, selectedUni, 'ShowUoA');
 
   // Create a horizontal stacked bar chart
   barChart.createChart();
@@ -30844,7 +30847,7 @@ function createDashboardUm(data, data2) {
     console.log(selectedUni);
 
     // Reload the map with the new dataset
-    barChart.reload(selectedUni, selectedUoa, dataManager.getLocationByUoA(data, selectedUoa));
+    barChart.reload(selectedUni, selectedUoa, data, dataManager.getLocationByUoA(data, selectedUoa), 'ShowUoA');
   });
 }
 
@@ -30881,7 +30884,9 @@ function createDashboardIr(data, data2) {
   * of Assessment) which are passed on as an argument from the selectbox
   */
   var mapMarkers = dataManager.getLocationByCity(data, selectedCity);
-  var hierarchical = new _hierarchical2.default(data2, data, selectedUoa, selectedUni, 'ShowUniversity');
+  var hierarchical = new _hierarchical2.default(data2, data, selectedUoa, selectedUni, 'ShowUniversity', true);
+
+  var barChart = new _hBarChart2.default(data, dataManager.getUoaByUniversity(data, selectedUni), selectedUoa, selectedUni, 'StackUoa');
 
   // Create the map
   var map = new _map2.default(mapMarkers, 'mean');
@@ -30891,13 +30896,23 @@ function createDashboardIr(data, data2) {
   // Create the hierarchical sunburst chart
   hierarchical.createChart();
 
+  // Create a horizontal stacked bar chart
+  barChart.createChart();
+
   // Listen for changes on the City selectbox and get the selected value
   selectBoxCity.addEventListener('change', function (event) {
     selectedCity = selectBoxCity.options[selectBoxCity.selectedIndex].value;
     console.log(selectedCity);
 
+    // Load all universities
+    universities = dataManager.loadAllUniversitiesInCity(data, selectedCity);
+    selectedUni = universities[0];
+
     // Reload the map with the new dataset
     map.reload(dataManager.getLocationByCity(data, selectedCity));
+
+    // Reload the map with the new dataset
+    barChart.reload(selectedUni, selectedUoa, data, dataManager.getUoaByUniversity(data, selectedUni), 'StackUoa');
   });
 }
 
@@ -30907,7 +30922,7 @@ startApplication();
 // Import Menu Toggle Functionality
 (0, _menuToggle2.default)(window, document);
 
-},{"./models/data":65,"./templates/eca-phd":66,"./templates/industry-research":67,"./templates/university-management":68,"./views/force.js":69,"./views/hBarChart":70,"./views/hierarchical.js":71,"./views/map":72,"./views/menu-toggle":73,"./views/populateCities":74,"./views/populateSelections":75,"d3":60}],65:[function(require,module,exports){
+},{"./models/data":66,"./templates/eca-phd":67,"./templates/industry-research":68,"./templates/university-management":69,"./views/force.js":70,"./views/hBarChart":71,"./views/hierarchical.js":72,"./views/map":73,"./views/menu-toggle":74,"./views/populateCities":75,"./views/populateSelections":76,"d3":61}],66:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31280,6 +31295,105 @@ var DataManager = function () {
 		}
 
 		/*
+   * Function to get units of assessment given a specific university
+   * and selecting a tier of score
+   */
+
+	}, {
+		key: 'getUoaByUniversity',
+		value: function getUoaByUniversity(data, uni) {
+
+			// Create a variable to hold filtered data which will contain only universities
+			// that provide research in the selected area (Unit of Assessment)
+			var filtered = data.filter(function (item) {
+				return item.InstitutionName === uni;
+			});
+
+			// Create a variable to hold the array return from the extraction operation,
+			// using d3 nest to reshape our data into key, value pairs and return only
+			// the university (institution) name, Location coordinates (Lat, Lng) and 
+			// score fields
+			var nestedData = d3.nest()
+			// Set our key to the university name
+			.key(function (d) {
+				return d.UOA_Name;
+			})
+			// Perform a calculation on the returned values
+			.rollup(function (values) {
+				return {
+					Uoa: d3.max(values, function (d) {
+						return d.UOA_Name;
+					}),
+					City: (values, function (d) {
+						return d.Town;
+					}),
+					Overall4Score: d3.max(values, function (d) {
+						return d.Overall.FourStar;
+					}),
+					Overall3Score: d3.max(values, function (d) {
+						return d.Overall.ThreeStar;
+					}),
+					Overall2Score: d3.max(values, function (d) {
+						return d.Overall.TwoStar;
+					}),
+					Overall1Score: d3.max(values, function (d) {
+						return d.Overall.OneStar;
+					}),
+					OverallUCScore: d3.max(values, function (d) {
+						return d.Overall.Unclassified;
+					}),
+					Environment4Score: d3.max(values, function (d) {
+						return d.Environment.FourStar;
+					}),
+					Environment3Score: d3.max(values, function (d) {
+						return d.Environment.ThreeStar;
+					}),
+					Environment2Score: d3.max(values, function (d) {
+						return d.Environment.TwoStar;
+					}),
+					Environment1Score: d3.max(values, function (d) {
+						return d.Environment.OneStar;
+					}),
+					EnvironmentUCScore: d3.max(values, function (d) {
+						return d.Environment.Unclassified;
+					}),
+					Impact4Score: d3.max(values, function (d) {
+						return d.Impact.FourStar;
+					}),
+					Impact3Score: d3.max(values, function (d) {
+						return d.Impact.ThreeStar;
+					}),
+					Impact2Score: d3.max(values, function (d) {
+						return d.Impact.TwoStar;
+					}),
+					Impact1Score: d3.max(values, function (d) {
+						return d.Impact.OneStar;
+					}),
+					ImpactUCScore: d3.max(values, function (d) {
+						return d.Impact.Unclassified;
+					}),
+					Outputs4Score: d3.max(values, function (d) {
+						return d.Outputs.FourStar;
+					}),
+					Outputs3Score: d3.max(values, function (d) {
+						return d.Outputs.ThreeStar;
+					}),
+					Outputs2Score: d3.max(values, function (d) {
+						return d.Outputs.TwoStar;
+					}),
+					Outputs1Score: d3.max(values, function (d) {
+						return d.Outputs.OneStar;
+					}),
+					OutputsUCScore: d3.max(values, function (d) {
+						return d.Outputs.Unclassified;
+					})
+				};
+			}).entries(filtered);
+
+			return nestedData;
+		}
+
+		/*
    * Function to get locations of institutions given a specific Unit of Assessment and a City
    */
 
@@ -31442,8 +31556,6 @@ var DataManager = function () {
 				}
 			});
 
-			console.log('Universities: ', universities);
-
 			// Start nesting the data into a hierarchical structure
 			var nestedData = d3.nest().key(function (d) {
 				return selectedUni;
@@ -31453,12 +31565,6 @@ var DataManager = function () {
 
 			return nestedData;
 		}
-
-		/*
-   * Reformat our data into a form that could be understood by
-    * d3's stack method
-   */
-
 	}]);
 	return DataManager;
 }(); /***********************************************************************************/
@@ -31478,7 +31584,7 @@ var DataManager = function () {
 
 exports.default = DataManager;
 
-},{"../helpers/getUnique":62,"../helpers/join":63,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"babel-runtime/helpers/toConsumableArray":5,"d3":60}],66:[function(require,module,exports){
+},{"../helpers/getUnique":63,"../helpers/join":64,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"babel-runtime/helpers/toConsumableArray":5,"d3":61}],67:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31494,7 +31600,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var mainEca = exports.mainEca = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">Unit of Assessment</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
-},{}],67:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31510,7 +31616,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var industryResearch = exports.industryResearch = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">City</label>\n      <select id=\"selector-city\">\n\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
-},{}],68:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31526,7 +31632,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var universityManagement = exports.universityManagement = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">University</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
-},{}],69:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31570,7 +31676,7 @@ var ForceLayout = function ForceLayout() {
 
 exports.default = ForceLayout;
 
-},{"../models/data":65,"babel-runtime/helpers/classCallCheck":3,"d3":60}],70:[function(require,module,exports){
+},{"../models/data":66,"babel-runtime/helpers/classCallCheck":3,"d3":61}],71:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31593,11 +31699,17 @@ var _data = require('../models/data');
 
 var _data2 = _interopRequireDefault(_data);
 
+var _cluster = require('cluster');
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // Instantiate a new Data Manager Class
+var dataManager = new _data2.default();
+
+// Create a function to draw a horizontal barchart giving a dataset and a DOM
+// element as arguments
 /*****************************************************************************/
 /*               Name: Data Visualization Coursework - F21DV                 */
 /*       File Description: Create a horizontal bar chart given a dataset     */
@@ -31607,17 +31719,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 /*****************************************************************************/
 
 // Import d3 library
-var dataManager = new _data2.default();
-
-// Create a function to draw a horizontal barchart giving a dataset and a DOM
-// element as arguments
 
 var HBarChart = function () {
 
   // Create the constructor function and define variables
-  function HBarChart(data, selectedUoa, selectedUni, type) {
+  function HBarChart(orgData, data, selectedUoa, selectedUni, type) {
     (0, _classCallCheck3.default)(this, HBarChart);
 
+    this.originalData = orgData;
     this.data = data;
     this.selectedUoa = selectedUoa;
     this.selectedUni = selectedUni;
@@ -31630,6 +31739,7 @@ var HBarChart = function () {
   (0, _createClass3.default)(HBarChart, [{
     key: 'createChart',
     value: function createChart() {
+      var _this = this;
 
       /*
        * Variables
@@ -31648,7 +31758,12 @@ var HBarChart = function () {
       // Define keys for stacking our data
       var keys = ['OverallUCScore', 'Overall1Score', 'Overall2Score', 'Overall3Score', 'Overall4Score'];
       // Define horizontal scale
-      var scaleX = d3.scaleLinear().rangeRound([svgDOM.offsetHeight - svgDOM.offsetHeight / 1.8, 0]);
+      var scaleX = d3.scaleLinear();
+      if (this.type !== 'StackUoa') {
+        scaleX.rangeRound([svgDOM.offsetHeight - svgDOM.offsetHeight / 1.8, 0]);
+      } else {
+        scaleX.rangeRound([svgDOM.offsetHeight - svgDOM.offsetHeight / 1.5, 0]);
+      }
       // Define vertical scale
       var scaleY = d3.scaleBand().rangeRound([0, svgDOM.offsetWidth / 0.86]);
       // Define color range
@@ -31656,6 +31771,7 @@ var HBarChart = function () {
 
       var selectedUniversity = this.selectedUni;
       var uoa = this.selectedUoa;
+      var orgData = this.originalData;
 
       // Clear the current svg
       d3.select('#uoa-card').html(null);
@@ -31686,8 +31802,6 @@ var HBarChart = function () {
         }
       });
 
-      console.log(uniQuartiles);
-
       // Sort the dataset based on universities 4* score
       newData.sort(function (a, b) {
         return b.Overall4Score - a.Overall4Score;
@@ -31707,38 +31821,73 @@ var HBarChart = function () {
        */
 
       // Define the domains for the scale functions
-      scaleY.domain(newData.map(function (d) {
-        return d.Name;
-      }));
+      if (this.type !== 'StackUoa') {
+        scaleY.domain(newData.map(function (d) {
+          return d.Name;
+        }));
+      } else {
+        scaleY.domain(newData.map(function (d) {
+          return d.Uoa;
+        }));
+      }
       color.domain(keys);
 
       var serie = g.selectAll('.serie').data(stack.keys(keys)(newData)).enter().append('g').attr('class', 'serie').attr('fill', function (d) {
         return color(d.key);
-      }).style('opacity', 0.95).attr('transform', 'translate(' + svgDOM.offsetWidth / 3.25 + ',' + (15 - svgDOM.offsetHeight / 100) + ')');
+      }).style('opacity', 0.95);
+      //.attr('transform', 'translate(' + (svgDOM.offsetWidth / 3.25) +
+      //  ',' + (15 - svgDOM.offsetHeight / 100) + ')');
 
-      // Using the GUP to update the chart
-      serie.selectAll('rect').data(function (d) {
-        return d;
-      }).enter().append('rect').attr('stroke', 'white').attr('stroke-width', '0.5').attr('x', function (d) {
-        return scaleX(d[1]);
-      }).attr('y', function (d) {
-        return scaleY(d.data.Name);
-      }).attr('height', scaleY.bandwidth()).attr('width', function (d) {
-        return scaleX(d[0]) - scaleX(d[1]);
-      });
+      if (this.type !== 'StackUoa') {
+        serie.attr('transform', 'translate(' + svgDOM.offsetWidth / 3.25 + ',' + (15 - svgDOM.offsetHeight / 100) + ')');
 
-      // Left axis
-      // https://bl.ocks.org
-      g.append('g').attr('class', 'axis axis--y').attr('transform', 'translate(' + svgDOM.offsetWidth / 3.25 + ',' + (15 - svgDOM.offsetHeight / 100) + ')').call(d3.axisLeft(scaleY));
-
-      console.log(displayedResults);
-
-      if (this.type === 'ShowUniversity') {
-        // Legend
-        //https://bl.ocks.org
-        var legend = serie.append('g').attr('class', 'legend').attr('transform', function (d, i) {
-          return 'translate(' + scaleY.bandwidth() + ',' + 60 * (i + 1) + ')';
+        // Using the GUP to update the chart
+        serie.selectAll('rect').data(function (d) {
+          return d;
+        }).enter().append('rect').attr('stroke', 'white').attr('stroke-width', '0.5').attr('x', function (d) {
+          return scaleX(d[1]);
+        }).attr('y', function (d) {
+          return scaleY(d.data.Name);
+        }).attr('height', scaleY.bandwidth()).attr('width', function (d) {
+          return scaleX(d[0]) - scaleX(d[1]);
         });
+      } else {
+        serie.attr('transform', 'translate(' + svgDOM.offsetWidth / 2.75 + ',' + (15 - svgDOM.offsetHeight / 100) + ')');
+
+        // Using the GUP to update the chart
+        serie.selectAll('rect').data(function (d) {
+          return d;
+        }).enter().append('rect').attr('stroke', 'white').attr('stroke-width', '0.5').attr('x', function (d) {
+          return scaleX(d[1]);
+        }).attr('y', function (d) {
+          return scaleY(d.data.Uoa);
+        }).attr('height', scaleY.bandwidth()).attr('width', function (d) {
+          return scaleX(d[0]) - scaleX(d[1]);
+        }).on('click', handleClick);
+      }
+
+      if (this.type !== 'StackUoa') {
+        // Left axis
+        // https://bl.ocks.org
+        g.append('g').attr('class', 'axis axis--y').attr('transform', 'translate(' + svgDOM.offsetWidth / 3.25 + ',' + (15 - svgDOM.offsetHeight / 100) + ')').call(d3.axisLeft(scaleY));
+      } else {
+        g.append('g').attr('class', 'axis axis--y').attr('transform', 'translate(' + svgDOM.offsetWidth / 2.75 + ',' + (15 - svgDOM.offsetHeight / 100) + ')').call(d3.axisLeft(scaleY));
+      }
+
+      if (this.type === 'ShowUniversity' || this.type === 'StackUoa') {
+        var legend = serie.append('g');
+
+        if (this.type !== 'StackUoa') {
+          // Legend
+          //https://bl.ocks.org
+          legend.attr('class', 'legend').attr('transform', function (d, i) {
+            return 'translate(' + scaleY.bandwidth() + ',' + 60 * (i + 1) + ')';
+          });
+        } else {
+          legend.attr('class', 'legend').attr('transform', function (d, i) {
+            return 'translate(' + (scaleY.bandwidth() - 2000 / scaleY.bandwidth()) + ',' + 60 * (i + 1) + ')';
+          });
+        }
 
         // Legend color key
         legend.append('rect').attr('x', svgDOM.offsetWidth - 183).attr('width', 19).attr('height', 19).attr('fill', color);
@@ -31768,30 +31917,34 @@ var HBarChart = function () {
           console.log('Selected University Changed');
           // Update the hierarchical sunburst chart with new data
           selectedUniversity = event.detail.props().name;
-          newData.forEach(function (item) {
-            d3.selectAll('.tick text')._groups[0].forEach(function (el) {
-              if (el.innerHTML === selectedUniversity) {
-                // Highlight selected university name
-                d3.selectAll('.tick text').attr('transform', 'scale(1)').style('opacity', 0.25);
-                d3.select(el).attr('transform', 'scale(2)').style('opacity', 1).style('transition', 'all 0.5s');
-              }
+
+          if (_this.type !== 'StackUoa') {
+            newData.forEach(function (item) {
+              d3.selectAll('.tick text')._groups[0].forEach(function (el) {
+                if (el.innerHTML === selectedUniversity) {
+                  // Highlight selected university name
+                  d3.selectAll('.tick text').attr('transform', 'scale(1)').style('opacity', 0.25);
+                  d3.select(el).attr('transform', 'scale(2)').style('opacity', 1).style('transition', 'all 0.5s');
+                }
+              });
             });
-          });
+          } else {
+            _this.reload(selectedUniversity, uoa, orgData, dataManager.getUoaByUniversity(orgData, selectedUniversity), 'StackUoa');
+          }
         }, false);
       }
 
-      if (this.type === 'ShowUoA') {
+      if (this.type !== 'ShowUniversity') {
         d3.selectAll('.tick text')._groups[0].forEach(function (el) {
           if (el.innerHTML === selectedUniversity) {
             // Highlight selected university name
             d3.selectAll('.tick text').attr('transform', 'scale(1)').style('opacity', 0.25);
-            d3.select(el).attr('transform', 'scale(2)').style('opacity', 1).style('transition', 'all 0.5s');
+            d3.select(el).attr('transform', 'scale(1.5)').style('opacity', 1).style('transition', 'all 0.5s');
           }
         });
       }
 
-      if (this.type !== 'ShowUniversity') {
-
+      if (this.type !== 'ShowUniversity' && this.type !== 'StackUoa') {
         // Right axis with quartiles
         // https://bl.ocks.org
         g.append('g').attr('class', 'axis quartiles').attr('transform', 'translate(' + svgDOM.offsetWidth / 1.15 + ',' + (15 - svgDOM.offsetHeight / 100) + ')').call(d3.axisRight(scaleY).tickValues(uniQuartiles));
@@ -31837,6 +31990,29 @@ var HBarChart = function () {
 
         return sorted[Math.floor(index)];
       }
+
+      // Handle mouse click events
+      function handleClick(d) {
+        // Create a new custom event and listen to it in the main module
+        var selectNewUoa = new CustomEvent('selectNewUoa', { detail: {
+            props: function props() {
+              return d;
+            }
+          }
+        });
+        svgDOM.dispatchEvent(selectNewUoa);
+
+        // Visual effects
+        newData.forEach(function (item) {
+          d3.selectAll('.tick text')._groups[0].forEach(function (el) {
+            if (el.innerHTML === d.data.Uoa) {
+              // Highlight selected university name
+              d3.selectAll('.tick text').attr('transform', 'scale(1)').style('opacity', 0.25);
+              d3.select(el).attr('transform', 'scale(1.5)').style('opacity', 1).style('transition', 'all 0.5s');
+            }
+          });
+        });
+      }
     }
 
     /*
@@ -31845,13 +32021,15 @@ var HBarChart = function () {
 
   }, {
     key: 'reload',
-    value: function reload(newUni, newUoa, data) {
+    value: function reload(newUni, newUoa, orgData, data, type) {
       this.selectedUni = newUni;
       this.selectedUoa = newUoa;
       console.log('Reloading the chart using a new dataset');
 
       // Rearrange the dataset
+      this.originalData = orgData;
       this.data = data;
+      this.type = type;
       this.createChart();
     }
   }]);
@@ -31860,7 +32038,7 @@ var HBarChart = function () {
 
 exports.default = HBarChart;
 
-},{"../models/data":65,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60}],71:[function(require,module,exports){
+},{"../models/data":66,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"cluster":6,"d3":61}],72:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31902,7 +32080,7 @@ var dataManager = new _data2.default();
 var Hierarchical = function () {
 
   // Create constructor function
-  function Hierarchical(data, cityData, selectedUoa, selectedUni, type) {
+  function Hierarchical(data, cityData, selectedUoa, selectedUni, type, showImpact) {
     (0, _classCallCheck3.default)(this, Hierarchical);
 
     this.data = data;
@@ -31911,6 +32089,7 @@ var Hierarchical = function () {
     this.selectedUni = selectedUni;
     this.hierarchicalData = [];
     this.type = type;
+    this.showImpact = showImpact;
   }
 
   (0, _createClass3.default)(Hierarchical, [{
@@ -31932,6 +32111,8 @@ var Hierarchical = function () {
       var explanation = document.getElementById('explanation');
       // Get map conatiner
       var map = document.getElementById('map');
+      // Get stacked chart conatiner
+      var stack = document.getElementById('uoa-card');
       // Get the current selection from the select box
       var selectBox = document.getElementById('selector');
       var selectBoxCity = document.getElementById('selector-city');
@@ -31940,6 +32121,7 @@ var Hierarchical = function () {
       var uoa = this.selectedUoa;
       var cityData = this.cityData;
       var dataType = this.type;
+      var showImpact = this.showImpact;
 
       // Append svg to the leaflet map and specify width and height as the same
       // for the parent DOM element, then append a group to hold all markers
@@ -31998,6 +32180,18 @@ var Hierarchical = function () {
         return console.log(d);
       });
 
+      if (showImpact === true) {
+        d3.selectAll('.node').style('opacity', function (d) {
+          var result = 0;
+          if (d.data.key === 'Impact') {
+            result = 1;
+          } else {
+            result = 0.65;
+          }
+          return result;
+        });
+      }
+
       // Adding text labels to sunbusrt partitions based
       // on fed data
       g.selectAll('.category').data(nodes.filter(function (d) {
@@ -32046,6 +32240,20 @@ var Hierarchical = function () {
           } else if (_this.type === 'ShowUoA') {
             explanation.innerText = _this.selectedUoa;
           }
+          update(_this.hierarchicalData);
+        }, false);
+      }
+
+      // Listen for selected unit of assessment from stack and update
+      // the chart accordingly
+      if (stack !== null) {
+        stack.addEventListener('selectNewUoa', function (event) {
+          console.log('Selected UoA Changed');
+          // Update the hierarchical sunburst chart with new data
+          uoa = event.detail.props().data.Uoa;
+          _this.reload(selectedUniversity, uoa);
+
+          explanation.innerText = _this.selectedUni;
           update(_this.hierarchicalData);
         }, false);
       }
@@ -32177,7 +32385,7 @@ var Hierarchical = function () {
 
 exports.default = Hierarchical;
 
-},{"../models/data":65,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60}],72:[function(require,module,exports){
+},{"../models/data":66,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":61}],73:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32204,14 +32412,16 @@ var _data = require('../models/data');
 
 var _data2 = _interopRequireDefault(_data);
 
+var _hBarChart = require('../views/hBarChart');
+
+var _hBarChart2 = _interopRequireDefault(_hBarChart);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // Instantiate a new Data Manager Class
-
-// Import Leaflet module for creating maps
-var dataManager = new _data2.default(); /*****************************************************************************/
+/*****************************************************************************/
 /*               Name: Data Visualization Coursework - F21DV                 */
 /*  File Description: Create Map and add markers latlng from provided data   */
 /*                        Author: Heba El-Shimy                              */
@@ -32220,6 +32430,8 @@ var dataManager = new _data2.default(); /***************************************
 /*****************************************************************************/
 
 // Import D3js library
+var dataManager = new _data2.default();
+// Import Leaflet module for creating maps
 
 var Map = function () {
 
@@ -32410,7 +32622,7 @@ var Map = function () {
 
 exports.default = Map;
 
-},{"../models/data":65,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60,"leaflet":61}],73:[function(require,module,exports){
+},{"../models/data":66,"../views/hBarChart":71,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":61,"leaflet":62}],74:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32471,7 +32683,7 @@ function toggleMenu(window, document) {
   window.addEventListener(WINDOW_CHANGE_EVENT, closeMenu);
 }
 
-},{}],74:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32497,7 +32709,7 @@ function populateCities(data) {
   });
 }
 
-},{}],75:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32523,4 +32735,4 @@ function populateSelections(data) {
   });
 }
 
-},{}]},{},[64]);
+},{}]},{},[65]);

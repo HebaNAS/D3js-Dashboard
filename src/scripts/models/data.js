@@ -284,6 +284,59 @@ export default class DataManager {
 	}
 
 	/*
+	 * Function to get units of assessment given a specific university
+	 * and selecting a tier of score
+	 */
+	getUoaByUniversity(data, uni) {
+		
+		// Create a variable to hold filtered data which will contain only universities
+		// that provide research in the selected area (Unit of Assessment)
+		let filtered = data.filter((item) => {
+			return item.InstitutionName === uni;
+		});
+
+		// Create a variable to hold the array return from the extraction operation,
+		// using d3 nest to reshape our data into key, value pairs and return only
+		// the university (institution) name, Location coordinates (Lat, Lng) and 
+		// score fields
+		let nestedData = d3.nest()
+			// Set our key to the university name
+			.key((d) => {
+				return d.UOA_Name;
+			})
+			// Perform a calculation on the returned values
+			.rollup((values) => {
+				return {
+					Uoa: d3.max(values, (d) => { return d.UOA_Name; }),
+					City: (values, (d) => { return d.Town; }),
+					Overall4Score: d3.max(values, (d) => { return d.Overall.FourStar; }),
+					Overall3Score: d3.max(values, (d) => { return d.Overall.ThreeStar; }),
+					Overall2Score: d3.max(values, (d) => { return d.Overall.TwoStar; }),
+					Overall1Score: d3.max(values, (d) => { return d.Overall.OneStar; }),
+					OverallUCScore: d3.max(values, (d) => { return d.Overall.Unclassified; }),
+					Environment4Score: d3.max(values, (d) => { return d.Environment.FourStar; }),
+					Environment3Score: d3.max(values, (d) => { return d.Environment.ThreeStar; }),
+					Environment2Score: d3.max(values, (d) => { return d.Environment.TwoStar; }),
+					Environment1Score: d3.max(values, (d) => { return d.Environment.OneStar; }),
+					EnvironmentUCScore: d3.max(values, (d) => { return d.Environment.Unclassified; }),
+					Impact4Score: d3.max(values, (d) => { return d.Impact.FourStar; }),
+					Impact3Score: d3.max(values, (d) => { return d.Impact.ThreeStar; }),
+					Impact2Score: d3.max(values, (d) => { return d.Impact.TwoStar; }),
+					Impact1Score: d3.max(values, (d) => { return d.Impact.OneStar; }),
+					ImpactUCScore: d3.max(values, (d) => { return d.Impact.Unclassified; }),
+					Outputs4Score: d3.max(values, (d) => { return d.Outputs.FourStar; }),
+					Outputs3Score: d3.max(values, (d) => { return d.Outputs.ThreeStar; }),
+					Outputs2Score: d3.max(values, (d) => { return d.Outputs.TwoStar; }),
+					Outputs1Score: d3.max(values, (d) => { return d.Outputs.OneStar; }),
+					OutputsUCScore: d3.max(values, (d) => { return d.Outputs.Unclassified; })
+				};
+			})
+			.entries(filtered);
+
+		return nestedData;
+	}
+
+	/*
 	 * Function to get locations of institutions given a specific Unit of Assessment and a City
 	 */
 	getLocationByCity(data, city) {
@@ -433,8 +486,6 @@ export default class DataManager {
       }
 		});
 
-		console.log('Universities: ', universities);
-
 		// Start nesting the data into a hierarchical structure
 		const nestedData = d3.nest()
 			.key((d) => selectedUni)
@@ -443,10 +494,5 @@ export default class DataManager {
 
 		return nestedData;
 	}
-
-	/*
-	 * Reformat our data into a form that could be understood by
-   * d3's stack method
-	 */
 
 }

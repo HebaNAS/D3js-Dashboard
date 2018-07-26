@@ -141,9 +141,11 @@ function createDashboardEca(data, data2) {
     data,
     selectedUoa,
     selectedUni,
-    'ShowUniversity'
+    'ShowUniversity',
+    false
   );
   const barChart = new HBarChart(
+    data,
     dataManager.getLocationByUoA(data, selectedUoa),
     selectedUoa,
     '',
@@ -167,7 +169,13 @@ function createDashboardEca(data, data2) {
 
     // Reload the map with the new dataset
     map.reload(dataManager.getLocationByUoA(data, selectedUoa));
-    barChart.reload('', selectedUoa, dataManager.getLocationByUoA(data, selectedUoa));
+    barChart.reload(
+      '',
+      selectedUoa,
+      data,
+      dataManager.getLocationByUoA(data, selectedUoa),
+      'ShowUniversity'
+    );
   });
 
 }
@@ -204,9 +212,12 @@ function createDashboardUm(data, data2) {
     data,
     selectedUoa,
     selectedUni,
-    'ShowUoA'
+    'ShowUoA',
+    false
   );
+
   const barChart = new HBarChart(
+    data,
     dataManager.getLocationByUoA(data, selectedUoa),
     selectedUoa,
     selectedUni,
@@ -225,7 +236,13 @@ function createDashboardUm(data, data2) {
     console.log(selectedUni);
 
     // Reload the map with the new dataset
-    barChart.reload(selectedUni, selectedUoa, dataManager.getLocationByUoA(data, selectedUoa));
+    barChart.reload(
+      selectedUni,
+      selectedUoa,
+      data,
+      dataManager.getLocationByUoA(data, selectedUoa),
+      'ShowUoA'
+    );
   });
 
 }
@@ -268,7 +285,16 @@ function createDashboardIr(data, data2) {
     data,
     selectedUoa,
     selectedUni,
-    'ShowUniversity'
+    'ShowUniversity',
+    true
+  );
+
+  const barChart = new HBarChart(
+    data,
+    dataManager.getUoaByUniversity(data, selectedUni),
+    selectedUoa,
+    selectedUni,
+    'StackUoa'
   );
 
   // Create the map
@@ -279,13 +305,29 @@ function createDashboardIr(data, data2) {
   // Create the hierarchical sunburst chart
   hierarchical.createChart();
 
+  // Create a horizontal stacked bar chart
+  barChart.createChart();
+
   // Listen for changes on the City selectbox and get the selected value
   selectBoxCity.addEventListener('change', (event) => {
     selectedCity = selectBoxCity.options[selectBoxCity.selectedIndex].value;
     console.log(selectedCity);
 
+    // Load all universities
+    universities = dataManager.loadAllUniversitiesInCity(data, selectedCity);
+    selectedUni = universities[0];
+
     // Reload the map with the new dataset
     map.reload(dataManager.getLocationByCity(data, selectedCity));
+
+    // Reload the map with the new dataset
+    barChart.reload(
+      selectedUni,
+      selectedUoa,
+      data,
+      dataManager.getUoaByUniversity(data, selectedUni),
+      'StackUoa'
+    );
   });
 
 }

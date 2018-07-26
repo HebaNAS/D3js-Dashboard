@@ -17,13 +17,14 @@ const dataManager = new DataManager();
 export default class Hierarchical {
 
   // Create constructor function
-  constructor(data, cityData, selectedUoa, selectedUni, type) {
+  constructor(data, cityData, selectedUoa, selectedUni, type, showImpact) {
     this.data = data;
     this.cityData = cityData;
     this.selectedUoa = selectedUoa;
     this.selectedUni = selectedUni;
     this.hierarchicalData = [];
     this.type = type;
+    this.showImpact = showImpact;
   }
 
   createChart() {
@@ -47,6 +48,8 @@ export default class Hierarchical {
     const explanation = document.getElementById('explanation');
     // Get map conatiner
     const map = document.getElementById('map');
+    // Get stacked chart conatiner
+    const stack = document.getElementById('uoa-card');
     // Get the current selection from the select box
     const selectBox = document.getElementById('selector');
     const selectBoxCity = document.getElementById('selector-city');
@@ -55,6 +58,7 @@ export default class Hierarchical {
     let uoa = this.selectedUoa;
     let cityData = this.cityData;
     let dataType = this.type;
+    let showImpact = this.showImpact;
 
     // Append svg to the leaflet map and specify width and height as the same
     // for the parent DOM element, then append a group to hold all markers
@@ -119,6 +123,18 @@ export default class Hierarchical {
       .on('mouseout', handleMouseOut)
       .on('click', (d) => console.log(d));
     
+    if (showImpact === true) {
+      d3.selectAll('.node').style('opacity',(d) => {
+        let result = 0;
+        if (d.data.key === 'Impact') {
+          result = 1;
+        } else {
+          result = 0.65;
+        }
+        return result;
+      });
+    }
+    
     // Adding text labels to sunbusrt partitions based
     // on fed data
     g.selectAll('.category')
@@ -170,6 +186,20 @@ export default class Hierarchical {
         } else if (this.type === 'ShowUoA') {
           explanation.innerText = this.selectedUoa;
         }
+        update(this.hierarchicalData);
+      }, false);
+    }
+
+    // Listen for selected unit of assessment from stack and update
+    // the chart accordingly
+    if (stack !== null) {
+      stack.addEventListener('selectNewUoa', (event) => { 
+        console.log('Selected UoA Changed');
+        // Update the hierarchical sunburst chart with new data
+        uoa = event.detail.props().data.Uoa;
+        this.reload(selectedUniversity, uoa);
+
+        explanation.innerText = this.selectedUni;
         update(this.hierarchicalData);
       }, false);
     }

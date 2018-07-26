@@ -10,6 +10,7 @@
 import * as d3 from 'd3';
 
 import DataManager from '../models/data';
+import { on } from 'cluster';
 
 // Instantiate a new Data Manager Class
 const dataManager = new DataManager();
@@ -19,7 +20,8 @@ const dataManager = new DataManager();
 export default class HBarChart {
 
   // Create the constructor function and define variables
-  constructor(data, selectedUoa, selectedUni, type) {
+  constructor(orgData, data, selectedUoa, selectedUni, type) {
+    this.originalData = orgData;
     this.data = data;
     this.selectedUoa = selectedUoa;
     this.selectedUni = selectedUni;
@@ -45,8 +47,14 @@ export default class HBarChart {
     const keys = ['OverallUCScore', 'Overall1Score', 'Overall2Score',
               'Overall3Score', 'Overall4Score'];
     // Define horizontal scale
-    const scaleX = d3.scaleLinear()
-      .rangeRound([svgDOM.offsetHeight - (svgDOM.offsetHeight / 1.8), 0]);
+    const scaleX = d3.scaleLinear();
+    if (this.type !== 'StackUoa') {
+      scaleX
+        .rangeRound([svgDOM.offsetHeight - (svgDOM.offsetHeight / 1.8), 0]);
+    } else {
+      scaleX
+        .rangeRound([svgDOM.offsetHeight - (svgDOM.offsetHeight / 1.5), 0]);
+    }
     // Define vertical scale
     const scaleY = d3.scaleBand()
         .rangeRound([0, svgDOM.offsetWidth / 0.86]);
@@ -57,6 +65,7 @@ export default class HBarChart {
     
     let selectedUniversity = this.selectedUni;
     let uoa = this.selectedUoa;
+    let orgData = this.originalData;
 
     // Clear the current svg
     d3.select('#uoa-card').html(null);
@@ -87,8 +96,6 @@ export default class HBarChart {
       }
     });
 
-    console.log(uniQuartiles);
-
     // Sort the dataset based on universities 4* score
     newData.sort((a, b) => {
       return b.Overall4Score - a.Overall4Score;
@@ -113,7 +120,11 @@ export default class HBarChart {
      */
 
     // Define the domains for the scale functions
-    scaleY.domain(newData.map((d) => { return d.Name; }));
+    if (this.type !== 'StackUoa') {
+      scaleY.domain(newData.map((d) => { return d.Name; }));
+    } else {
+      scaleY.domain(newData.map((d) => { return d.Uoa; }));
+    }
     color.domain(keys);
 
     const serie = g.selectAll('.serie')
@@ -121,42 +132,78 @@ export default class HBarChart {
       .enter().append('g')
       .attr('class', 'serie')
       .attr('fill', (d) => color(d.key))
-      .style('opacity', 0.95)
-      .attr('transform', 'translate(' + (svgDOM.offsetWidth / 3.25) +
-        ',' + (15 - svgDOM.offsetHeight / 100) + ')');
+      .style('opacity', 0.95);
+      //.attr('transform', 'translate(' + (svgDOM.offsetWidth / 3.25) +
+      //  ',' + (15 - svgDOM.offsetHeight / 100) + ')');
   
-    // Using the GUP to update the chart
-    serie.selectAll('rect')
-      .data((d) => { return d; })
-      .enter().append('rect')
-      .attr('stroke', 'white')
-      .attr('stroke-width', '0.5')
-      .attr('x', (d) => { return scaleX(d[1]); })
-      .attr('y', (d) => { return scaleY(d.data.Name); })
-      .attr('height', scaleY.bandwidth())
-      .attr('width', (d) => { return scaleX(d[0]) - scaleX(d[1]); });
+    if (this.type !== 'StackUoa') {
+      serie.attr('transform', 'translate(' + (svgDOM.offsetWidth / 3.25) +
+          ',' + (15 - svgDOM.offsetHeight / 100) + ')');
+
+      // Using the GUP to update the chart
+      serie.selectAll('rect')
+        .data((d) => { return d; })
+        .enter().append('rect')
+        .attr('stroke', 'white')
+        .attr('stroke-width', '0.5')
+        .attr('x', (d) => { return scaleX(d[1]); })
+        .attr('y', (d) => { return scaleY(d.data.Name); })
+        .attr('height', scaleY.bandwidth())
+        .attr('width', (d) => { return scaleX(d[0]) - scaleX(d[1]); });
+    } else {
+      serie.attr('transform', 'translate(' + (svgDOM.offsetWidth / 2.75) +
+          ',' + (15 - svgDOM.offsetHeight / 100) + ')');
+
+      // Using the GUP to update the chart
+      serie.selectAll('rect')
+        .data((d) => { return d; })
+        .enter().append('rect')
+        .attr('stroke', 'white')
+        .attr('stroke-width', '0.5')
+        .attr('x', (d) => { return scaleX(d[1]); })
+        .attr('y', (d) => { return scaleY(d.data.Uoa); })
+        .attr('height', scaleY.bandwidth())
+        .attr('width', (d) => { return scaleX(d[0]) - scaleX(d[1]); })
+        .on('click', handleClick);
+    }
        
-    // Left axis
-    // https://bl.ocks.org
-    g.append('g')
-      .attr('class', 'axis axis--y')
-      .attr('transform', 'translate(' + (svgDOM.offsetWidth / 3.25) +
-      ',' + (15 - svgDOM.offsetHeight / 100) + ')')
-      .call(d3.axisLeft(scaleY));
+    if (this.type !== 'StackUoa') {
+      // Left axis
+      // https://bl.ocks.org
+      g.append('g')
+        .attr('class', 'axis axis--y')
+        .attr('transform', 'translate(' + (svgDOM.offsetWidth / 3.25) +
+        ',' + (15 - svgDOM.offsetHeight / 100) + ')')
+        .call(d3.axisLeft(scaleY));
+    } else {
+      g.append('g')
+        .attr('class', 'axis axis--y')
+        .attr('transform', 'translate(' + (svgDOM.offsetWidth / 2.75) +
+        ',' + (15 - svgDOM.offsetHeight / 100) + ')')
+        .call(d3.axisLeft(scaleY));
+    }
 
-    console.log(displayedResults);
-
-    if (this.type === 'ShowUniversity') {
-      // Legend
-      //https://bl.ocks.org
-      const legend = serie.append('g')
-        .attr('class', 'legend')
-        .attr('transform', (d, i) => {
-          return 'translate(' +
-            (scaleY.bandwidth()) + ',' +
-            (60 * (i + 1)) + ')';
-        });
+    if (this.type === 'ShowUniversity' || this.type === 'StackUoa') {
+      const legend = serie.append('g');
       
+      if (this.type !== 'StackUoa') {
+        // Legend
+        //https://bl.ocks.org
+        legend.attr('class', 'legend')
+          .attr('transform', (d, i) => {
+            return 'translate(' +
+              (scaleY.bandwidth()) + ',' +
+              (60 * (i + 1)) + ')';
+          });
+      } else {
+        legend.attr('class', 'legend')
+          .attr('transform', (d, i) => {
+            return 'translate(' +
+              (scaleY.bandwidth() - 2000 / scaleY.bandwidth()) + ',' +
+              (60 * (i + 1)) + ')';
+          });
+      } 
+
       // Legend color key
       legend.append('rect')
         .attr('x', svgDOM.offsetWidth - 183)
@@ -194,24 +241,35 @@ export default class HBarChart {
         console.log('Selected University Changed');
         // Update the hierarchical sunburst chart with new data
         selectedUniversity = event.detail.props().name;
-        newData.forEach((item) => {
-          d3.selectAll('.tick text')._groups[0].forEach((el) => {
-            if (el.innerHTML === selectedUniversity) {
-              // Highlight selected university name
-              d3.selectAll('.tick text')
-                .attr('transform', 'scale(1)')
-                .style('opacity', 0.25);
-              d3.select(el)
-                .attr('transform', 'scale(2)')
-                .style('opacity', 1)
-                .style('transition', 'all 0.5s');  
-            }
+
+        if (this.type !== 'StackUoa') {
+          newData.forEach((item) => {
+            d3.selectAll('.tick text')._groups[0].forEach((el) => {
+              if (el.innerHTML === selectedUniversity) {
+                // Highlight selected university name
+                d3.selectAll('.tick text')
+                  .attr('transform', 'scale(1)')
+                  .style('opacity', 0.25);
+                d3.select(el)
+                  .attr('transform', 'scale(2)')
+                  .style('opacity', 1)
+                  .style('transition', 'all 0.5s');  
+              }
+            });
           });
-        });
+        } else {
+          this.reload(
+            selectedUniversity,
+            uoa,
+            orgData,
+            dataManager.getUoaByUniversity(orgData, selectedUniversity),
+            'StackUoa'
+          );
+        }
       }, false);
     }
 
-    if (this.type === 'ShowUoA') {
+    if (this.type !== 'ShowUniversity') {
       d3.selectAll('.tick text')._groups[0].forEach((el) => {
         if (el.innerHTML === selectedUniversity) {
           // Highlight selected university name
@@ -219,15 +277,14 @@ export default class HBarChart {
             .attr('transform', 'scale(1)')
             .style('opacity', 0.25);
           d3.select(el)
-            .attr('transform', 'scale(2)')
+            .attr('transform', 'scale(1.5)')
             .style('opacity', 1)
             .style('transition', 'all 0.5s');  
         }
       });
     }
 
-    if (this.type !== 'ShowUniversity') {
-
+    if (this.type !== 'ShowUniversity' && this.type !== 'StackUoa') {
       // Right axis with quartiles
       // https://bl.ocks.org
       g.append('g')
@@ -281,18 +338,46 @@ export default class HBarChart {
       return sorted[Math.floor(index)];
     }
 
+    // Handle mouse click events
+    function handleClick(d) {
+      // Create a new custom event and listen to it in the main module
+      const selectNewUoa = new CustomEvent('selectNewUoa', { detail: {
+          props: () => d
+        }
+      });
+      svgDOM.dispatchEvent(selectNewUoa);
+
+      // Visual effects
+      newData.forEach((item) => {
+        d3.selectAll('.tick text')._groups[0].forEach((el) => {
+          if (el.innerHTML === d.data.Uoa) {
+            // Highlight selected university name
+            d3.selectAll('.tick text')
+              .attr('transform', 'scale(1)')
+              .style('opacity', 0.25);
+            d3.select(el)
+              .attr('transform', 'scale(1.5)')
+              .style('opacity', 1)
+              .style('transition', 'all 0.5s');  
+          }
+        });
+      });
+    }
+
   }
 
   /*
    * Function to reload the map with new dataset
    */
-  reload(newUni, newUoa, data) {
+  reload(newUni, newUoa, orgData, data, type) {
     this.selectedUni = newUni;
     this.selectedUoa = newUoa;
     console.log('Reloading the chart using a new dataset');
 
     // Rearrange the dataset
+    this.originalData = orgData;
     this.data = data;
+    this.type = type;
     this.createChart();
   }
 
