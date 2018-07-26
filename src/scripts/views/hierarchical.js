@@ -17,12 +17,13 @@ const dataManager = new DataManager();
 export default class Hierarchical {
 
   // Create constructor function
-  constructor(data, cityData, selectedUoa, selectedUni) {
+  constructor(data, cityData, selectedUoa, selectedUni, type) {
     this.data = data;
     this.cityData = cityData;
     this.selectedUoa = selectedUoa;
     this.selectedUni = selectedUni;
     this.hierarchicalData = [];
+    this.type = type;
   }
 
   createChart() {
@@ -53,6 +54,7 @@ export default class Hierarchical {
     let selectedUniversity = this.selectedUni;
     let uoa = this.selectedUoa;
     let cityData = this.cityData;
+    let dataType = this.type;
 
     // Append svg to the leaflet map and specify width and height as the same
     // for the parent DOM element, then append a group to hold all markers
@@ -147,26 +149,41 @@ export default class Hierarchical {
     // Position the explanation text circle which contains the selected
     // university name
     explanation.style.position = 'absolute';
-    explanation.style.top = svgDOM.offsetHeight / 1.6 + 'px';
+    explanation.style.top = svgDOM.offsetHeight / 1.615 + 'px';
     explanation.style.right = svgDOM.offsetWidth / 2.2 + 'px';
-    explanation.innerText = this.selectedUni;
+    if (this.type === 'ShowUniversity') {
+      explanation.innerText = this.selectedUni;
+    } else if (this.type === 'ShowUoA') {
+      explanation.innerText = this.selectedUoa;
+    }
     
     // Listen for selected university from map and update
     // the chart accordingly
-    map.addEventListener('selectNewMarker', (event) => { 
-      console.log('Selected University Changed');
-      // Update the hierarchical sunburst chart with new data
-      selectedUniversity = event.detail.props().name;
-      this.reload(selectedUniversity, uoa);
-      explanation.innerText = this.selectedUni;
-      update(this.hierarchicalData);
-    }, false);
+    if (map !== null) {
+      map.addEventListener('selectNewMarker', (event) => { 
+        console.log('Selected University Changed');
+        // Update the hierarchical sunburst chart with new data
+        selectedUniversity = event.detail.props().name;
+        this.reload(selectedUniversity, uoa);
+        if (this.type === 'ShowUniversity') {
+          explanation.innerText = this.selectedUni;
+        } else if (this.type === 'ShowUoA') {
+          explanation.innerText = this.selectedUoa;
+        }
+        update(this.hierarchicalData);
+      }, false);
+    }
 
     // Listen for changes on the selectbox and get the selected value
     // then update the chart accordingly
     if (selectBox !== null) {
       selectBox.addEventListener('change', (event) => {
-        uoa = selectBox.options[selectBox.selectedIndex].value;
+        if (dataType === 'ShowUniversity') {
+          uoa = selectBox.options[selectBox.selectedIndex].value;
+        } else if (dataType === 'ShowUoA') {
+          selectedUniversity = selectBox.options[selectBox.selectedIndex].value;
+        }
+        
         this.reload(selectedUniversity, uoa);
 
         update(this.hierarchicalData);

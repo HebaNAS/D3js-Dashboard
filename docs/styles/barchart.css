@@ -15,6 +15,9 @@
 #uoa-card .axis--y path {
   display: none;
 }
+#uoa-card .quartiles path {
+  fill: var(--white);
+}
 #uoa-card .tick line {
   stroke: var(--white);
 }

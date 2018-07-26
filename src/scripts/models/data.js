@@ -166,6 +166,26 @@ export default class DataManager {
 	/*
 	 * Function to extract all Universities from a given dataset
 	 */
+	loadAllUniversities(data) {
+
+		// Create a variable to hold the filtered data which will only contain the uoa
+		let filtered = [];
+		
+		// Loopt through the dataset to get all UoAs
+		data.forEach((entry) => {
+			filtered.push(entry.InstitutionName);
+		});
+
+		// Filter only unique values and remove duplicates
+		filtered = [...new Set(filtered)]; 
+		console.log('UoA count: ', filtered.length);
+
+		return filtered;
+	}
+
+	/*
+	 * Function to extract all Universities from a given dataset
+	 */
 	loadAllUniversitiesInCity(data, city) {
 
 		// Create a variable to hold the filtered data which will only contain the uoa

@@ -20,6 +20,7 @@ import populateSelections from './views/populateSelections';
 import populateCities from './views/populateCities';
 import HBarChart from './views/hBarChart';
 import Hierarchical from './views/hierarchical.js';
+import ForceLayout from './views/force.js';
 
 // Instantiate a new Data Manager Class
 const dataManager = new DataManager();
@@ -93,7 +94,7 @@ function startApplication() {
           document.title = 'REF2014 Results Dashboard - University Management';
           mainDOM.innerHTML = main;
           mainDOM.setAttribute('id', 'um');
-          //createDashboardUm(dataset);
+          createDashboardUm(dataset, dataset2);
         }
         // Industry Collaborators and Research Strategists Dashboard
         else if (dashboard === 'industry-research') {
@@ -139,9 +140,14 @@ function createDashboardEca(data, data2) {
     data2,
     data,
     selectedUoa,
-    selectedUni
+    selectedUni,
+    'ShowUniversity'
   );
-  const barChart = new HBarChart(dataManager.getLocationByUoA(data, selectedUoa), selectedUoa);
+  const barChart = new HBarChart(
+    dataManager.getLocationByUoA(data, selectedUoa),
+    selectedUoa,
+    '',
+    'ShowUniversity');
   
   // Create the map
   const map = new Map(mapMarkers, '4*');
@@ -161,6 +167,64 @@ function createDashboardEca(data, data2) {
 
     // Reload the map with the new dataset
     map.reload(dataManager.getLocationByUoA(data, selectedUoa));
+    barChart.reload('', selectedUoa, dataManager.getLocationByUoA(data, selectedUoa));
+  });
+
+}
+
+// Create a function to start drawing the dashboard and visualizations
+// for University management
+function createDashboardUm(data, data2) {
+  
+  /*
+   * Loading all Units os Assessment and use this for populating
+   * select box which will control the whole layout and all the visualizations
+   * on this page
+   */
+  // Load all Unit of Assessment options
+  //let uoas = dataManager.loadAllUoAs(data);
+  let unis = dataManager.loadAllUniversities(data);
+  
+  // Populate the select box with the options
+  populateSelections(unis);
+
+  // Get the current selection from the select box
+  let selectBox = document.getElementById('selector');
+  selectBox.selectedIndex = 0;
+  let selectedUoa = 'Business and Management Studies';
+  let selectedUni = 'Anglia Ruskin University';
+
+ /*
+  * Creating the first visualization, which is a map of the UK,
+  * with all the locations of the universities in a selected field (Unit
+  * of Assessment) which is passed on as an argument from the selectbox
+  */
+  const hierarchical = new Hierarchical(
+    data2,
+    data,
+    selectedUoa,
+    selectedUni,
+    'ShowUoA'
+  );
+  const barChart = new HBarChart(
+    dataManager.getLocationByUoA(data, selectedUoa),
+    selectedUoa,
+    selectedUni,
+    'ShowUoA'
+  );
+
+  // Create a horizontal stacked bar chart
+  barChart.createChart();
+
+  // Create the hierarchical sunburst chart
+  hierarchical.createChart();
+
+  // Listen for changes on the selectbox and get the selected value
+  selectBox.addEventListener('change', (event) => {
+    selectedUni = selectBox.options[selectBox.selectedIndex].value;
+    console.log(selectedUni);
+
+    // Reload the map with the new dataset
     barChart.reload(selectedUni, selectedUoa, dataManager.getLocationByUoA(data, selectedUoa));
   });
 
@@ -203,7 +267,8 @@ function createDashboardIr(data, data2) {
     data2,
     data,
     selectedUoa,
-    selectedUni
+    selectedUni,
+    'ShowUniversity'
   );
 
   // Create the map

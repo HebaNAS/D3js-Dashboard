@@ -30646,17 +30646,15 @@ var _hierarchical = require('./views/hierarchical.js');
 
 var _hierarchical2 = _interopRequireDefault(_hierarchical);
 
+var _force = require('./views/force.js');
+
+var _force2 = _interopRequireDefault(_force);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 // Instantiate a new Data Manager Class
-
-
-// Import this application's modules
-var dataManager = new _data2.default();
-
-// Create a function where we call all other modules and start the application
 /*****************************************************************************/
 /*               Name: Data Visualization Coursework - F21DV                 */
 /*       File Description: Import all modules and start the application      */
@@ -30666,6 +30664,12 @@ var dataManager = new _data2.default();
 /*****************************************************************************/
 
 // Import d3 library from node_modules
+var dataManager = new _data2.default();
+
+// Create a function where we call all other modules and start the application
+
+
+// Import this application's modules
 function startApplication() {
 
   // Start loading our datasets in parallel using D3-queue,
@@ -30731,7 +30735,7 @@ function startApplication() {
             document.title = 'REF2014 Results Dashboard - University Management';
             mainDOM.innerHTML = main;
             mainDOM.setAttribute('id', 'um');
-            //createDashboardUm(dataset);
+            createDashboardUm(dataset, dataset2);
           }
           // Industry Collaborators and Research Strategists Dashboard
           else if (dashboard === 'industry-research') {
@@ -30773,8 +30777,8 @@ function createDashboardEca(data, data2) {
    * of Assessment) which is passed on as an argument from the selectbox
    */
   var mapMarkers = dataManager.getLocationByUoA(data, selectedUoa);
-  var hierarchical = new _hierarchical2.default(data2, data, selectedUoa, selectedUni);
-  var barChart = new _hBarChart2.default(dataManager.getLocationByUoA(data, selectedUoa), selectedUoa);
+  var hierarchical = new _hierarchical2.default(data2, data, selectedUoa, selectedUni, 'ShowUniversity');
+  var barChart = new _hBarChart2.default(dataManager.getLocationByUoA(data, selectedUoa), selectedUoa, '', 'ShowUniversity');
 
   // Create the map
   var map = new _map2.default(mapMarkers, '4*');
@@ -30794,6 +30798,52 @@ function createDashboardEca(data, data2) {
 
     // Reload the map with the new dataset
     map.reload(dataManager.getLocationByUoA(data, selectedUoa));
+    barChart.reload('', selectedUoa, dataManager.getLocationByUoA(data, selectedUoa));
+  });
+}
+
+// Create a function to start drawing the dashboard and visualizations
+// for University management
+function createDashboardUm(data, data2) {
+
+  /*
+   * Loading all Units os Assessment and use this for populating
+   * select box which will control the whole layout and all the visualizations
+   * on this page
+   */
+  // Load all Unit of Assessment options
+  //let uoas = dataManager.loadAllUoAs(data);
+  var unis = dataManager.loadAllUniversities(data);
+
+  // Populate the select box with the options
+  (0, _populateSelections2.default)(unis);
+
+  // Get the current selection from the select box
+  var selectBox = document.getElementById('selector');
+  selectBox.selectedIndex = 0;
+  var selectedUoa = 'Business and Management Studies';
+  var selectedUni = 'Anglia Ruskin University';
+
+  /*
+   * Creating the first visualization, which is a map of the UK,
+   * with all the locations of the universities in a selected field (Unit
+   * of Assessment) which is passed on as an argument from the selectbox
+   */
+  var hierarchical = new _hierarchical2.default(data2, data, selectedUoa, selectedUni, 'ShowUoA');
+  var barChart = new _hBarChart2.default(dataManager.getLocationByUoA(data, selectedUoa), selectedUoa, selectedUni, 'ShowUoA');
+
+  // Create a horizontal stacked bar chart
+  barChart.createChart();
+
+  // Create the hierarchical sunburst chart
+  hierarchical.createChart();
+
+  // Listen for changes on the selectbox and get the selected value
+  selectBox.addEventListener('change', function (event) {
+    selectedUni = selectBox.options[selectBox.selectedIndex].value;
+    console.log(selectedUni);
+
+    // Reload the map with the new dataset
     barChart.reload(selectedUni, selectedUoa, dataManager.getLocationByUoA(data, selectedUoa));
   });
 }
@@ -30831,7 +30881,7 @@ function createDashboardIr(data, data2) {
   * of Assessment) which are passed on as an argument from the selectbox
   */
   var mapMarkers = dataManager.getLocationByCity(data, selectedCity);
-  var hierarchical = new _hierarchical2.default(data2, data, selectedUoa, selectedUni);
+  var hierarchical = new _hierarchical2.default(data2, data, selectedUoa, selectedUni, 'ShowUniversity');
 
   // Create the map
   var map = new _map2.default(mapMarkers, 'mean');
@@ -30857,7 +30907,7 @@ startApplication();
 // Import Menu Toggle Functionality
 (0, _menuToggle2.default)(window, document);
 
-},{"./models/data":65,"./templates/eca-phd":66,"./templates/industry-research":67,"./templates/university-management":68,"./views/hBarChart":69,"./views/hierarchical.js":70,"./views/map":71,"./views/menu-toggle":72,"./views/populateCities":73,"./views/populateSelections":74,"d3":60}],65:[function(require,module,exports){
+},{"./models/data":65,"./templates/eca-phd":66,"./templates/industry-research":67,"./templates/university-management":68,"./views/force.js":69,"./views/hBarChart":70,"./views/hierarchical.js":71,"./views/map":72,"./views/menu-toggle":73,"./views/populateCities":74,"./views/populateSelections":75,"d3":60}],65:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31039,6 +31089,29 @@ var DataManager = function () {
 			// Loopt through the dataset to get all UoAs
 			data.forEach(function (entry) {
 				filtered.push(entry.UOA_Name);
+			});
+
+			// Filter only unique values and remove duplicates
+			filtered = [].concat((0, _toConsumableArray3.default)(new Set(filtered)));
+			console.log('UoA count: ', filtered.length);
+
+			return filtered;
+		}
+
+		/*
+   * Function to extract all Universities from a given dataset
+   */
+
+	}, {
+		key: 'loadAllUniversities',
+		value: function loadAllUniversities(data) {
+
+			// Create a variable to hold the filtered data which will only contain the uoa
+			var filtered = [];
+
+			// Loopt through the dataset to get all UoAs
+			data.forEach(function (entry) {
+				filtered.push(entry.InstitutionName);
 			});
 
 			// Filter only unique values and remove duplicates
@@ -31451,9 +31524,53 @@ Object.defineProperty(exports, "__esModule", {
 /*                        Date: 15 July 2018                                 */
 /*****************************************************************************/
 
-var universityManagement = exports.universityManagement = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"\"></div>\n    <div class=\"card-style\"></div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">Unit of Assessment</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
+var universityManagement = exports.universityManagement = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">University</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
 },{}],69:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _d = require('d3');
+
+var d3 = _interopRequireWildcard(_d);
+
+var _data = require('../models/data');
+
+var _data2 = _interopRequireDefault(_data);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// Instantiate a new Data Manager Class
+/*****************************************************************************/
+/*               Name: Data Visualization Coursework - F21DV                 */
+/*    File Description: Create a collapsible force layout  given a dataset   */
+/*                        Author: Heba El-Shimy                              */
+/*                        Email: he12@hw.ac.uk                               */
+/*                         Date: 27 July 2018                                */
+/*****************************************************************************/
+
+// Import d3 library
+var dataManager = new _data2.default();
+
+// Create a function to draw a horizontal barchart giving a dataset and a DOM
+// element as arguments
+
+var ForceLayout = function ForceLayout() {
+  (0, _classCallCheck3.default)(this, ForceLayout);
+};
+
+exports.default = ForceLayout;
+
+},{"../models/data":65,"babel-runtime/helpers/classCallCheck":3,"d3":60}],70:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31498,12 +31615,13 @@ var dataManager = new _data2.default();
 var HBarChart = function () {
 
   // Create the constructor function and define variables
-  function HBarChart(data, selectedUoa) {
+  function HBarChart(data, selectedUoa, selectedUni, type) {
     (0, _classCallCheck3.default)(this, HBarChart);
 
     this.data = data;
     this.selectedUoa = selectedUoa;
-    this.selectedUni = '';
+    this.selectedUni = selectedUni;
+    this.type = type;
   }
 
   // Append svg to the selected DOM Element and set its width and height
@@ -31539,13 +31657,41 @@ var HBarChart = function () {
       var selectedUniversity = this.selectedUni;
       var uoa = this.selectedUoa;
 
+      // Clear the current svg
+      d3.select('#uoa-card').html(null);
+
+      // Get all overall 4 star scores
+      var Overall4StarScores = [];
+      newData.forEach(function (item) {
+        Overall4StarScores.push(item.Outputs4Score);
+      });
+
+      // Statistics & calculation of lower, middle and upper quartile
+      var lower = quantile(Overall4StarScores, 1, 4);
+      var mid = quantile(Overall4StarScores, 2, 4);
+      var upper = quantile(Overall4StarScores, 3, 4);
+
+      var uniQuartiles = [];
+      var displayedResults = [];
+      newData.forEach(function (item) {
+        if (item.Outputs4Score === lower) {
+          uniQuartiles.push(item.Name);
+          displayedResults.push('Lower Q. (' + item.Outputs4Score + ')');
+        } else if (item.Outputs4Score === mid) {
+          uniQuartiles.push(item.Name);
+          displayedResults.push('Average (' + item.Outputs4Score + ')');
+        } else if (item.Outputs4Score === upper) {
+          uniQuartiles.push(item.Name);
+          displayedResults.push('Upper Q. (' + item.Outputs4Score + ')');
+        }
+      });
+
+      console.log(uniQuartiles);
+
       // Sort the dataset based on universities 4* score
       newData.sort(function (a, b) {
         return b.Overall4Score - a.Overall4Score;
       });
-
-      // Clear the current svg
-      d3.select('#uoa-card').html(null);
 
       // Define the stack structure
       var stack = d3.stack().offset(d3.stackOffsetExpand);
@@ -31581,52 +31727,116 @@ var HBarChart = function () {
         return scaleX(d[0]) - scaleX(d[1]);
       });
 
+      // Left axis
       // https://bl.ocks.org
       g.append('g').attr('class', 'axis axis--y').attr('transform', 'translate(' + svgDOM.offsetWidth / 3.25 + ',' + (15 - svgDOM.offsetHeight / 100) + ')').call(d3.axisLeft(scaleY));
 
-      //https://bl.ocks.org
-      var legend = serie.append('g').attr('class', 'legend').attr('transform', function (d, i) {
-        return 'translate(' + scaleY.bandwidth() + ',' + 60 * (i + 1) + ')';
-      });
+      console.log(displayedResults);
 
-      // Legend color key
-      legend.append('rect').attr('x', svgDOM.offsetWidth - 190).attr('width', 19).attr('height', 19).attr('fill', color);
+      if (this.type === 'ShowUniversity') {
+        // Legend
+        //https://bl.ocks.org
+        var legend = serie.append('g').attr('class', 'legend').attr('transform', function (d, i) {
+          return 'translate(' + scaleY.bandwidth() + ',' + 60 * (i + 1) + ')';
+        });
 
-      // Legend text
-      legend.append('text').attr('x', svgDOM.offsetWidth - 200).attr('y', 25.5).attr('dy', '0.32em').text(function (d) {
-        var output = '';
-        if (d.key === 'Overall4Score') {
-          output = '4* score';
-        } else if (d.key === 'Overall3Score') {
-          output = '3* score';
-        } else if (d.key === 'Overall2Score') {
-          output = '2* score';
-        } else if (d.key === 'Overall1Score') {
-          output = '1* score';
-        } else if (d.key === 'OverallUCScore') {
-          output = 'unclassified';
-        }
-        return output;
-      });
+        // Legend color key
+        legend.append('rect').attr('x', svgDOM.offsetWidth - 183).attr('width', 19).attr('height', 19).attr('fill', color);
+
+        // Legend text
+        legend.append('text').attr('x', svgDOM.offsetWidth - 193).attr('y', 25.5).attr('dy', '0.32em').text(function (d) {
+          var output = '';
+          if (d.key === 'Overall4Score') {
+            output = '4* score';
+          } else if (d.key === 'Overall3Score') {
+            output = '3* score';
+          } else if (d.key === 'Overall2Score') {
+            output = '2* score';
+          } else if (d.key === 'Overall1Score') {
+            output = '1* score';
+          } else if (d.key === 'OverallUCScore') {
+            output = 'unclassified';
+          }
+          return output;
+        });
+      }
 
       // Listen for selected university from map and update
       // the chart accordingly
-      map.addEventListener('selectNewMarker', function (event) {
-        console.log('Selected University Changed');
-        // Update the hierarchical sunburst chart with new data
-        selectedUniversity = event.detail.props().name;
-        newData.forEach(function (item) {
-          d3.selectAll('.tick text')._groups[0].forEach(function (el) {
-            if (el.innerHTML === selectedUniversity) {
-              // Highlight selected university name
-              d3.selectAll('.tick text').attr('transform', 'scale(1)').style('opacity', 0.25);
-              d3.select(el).attr('transform', 'scale(2)').style('opacity', 1).style('transition', 'all 0.5s');
-            }
+      if (map !== null) {
+        map.addEventListener('selectNewMarker', function (event) {
+          console.log('Selected University Changed');
+          // Update the hierarchical sunburst chart with new data
+          selectedUniversity = event.detail.props().name;
+          newData.forEach(function (item) {
+            d3.selectAll('.tick text')._groups[0].forEach(function (el) {
+              if (el.innerHTML === selectedUniversity) {
+                // Highlight selected university name
+                d3.selectAll('.tick text').attr('transform', 'scale(1)').style('opacity', 0.25);
+                d3.select(el).attr('transform', 'scale(2)').style('opacity', 1).style('transition', 'all 0.5s');
+              }
+            });
           });
+        }, false);
+      }
+
+      if (this.type === 'ShowUoA') {
+        d3.selectAll('.tick text')._groups[0].forEach(function (el) {
+          if (el.innerHTML === selectedUniversity) {
+            // Highlight selected university name
+            d3.selectAll('.tick text').attr('transform', 'scale(1)').style('opacity', 0.25);
+            d3.select(el).attr('transform', 'scale(2)').style('opacity', 1).style('transition', 'all 0.5s');
+          }
         });
-      }, false);
+      }
+
+      if (this.type !== 'ShowUniversity') {
+
+        // Right axis with quartiles
+        // https://bl.ocks.org
+        g.append('g').attr('class', 'axis quartiles').attr('transform', 'translate(' + svgDOM.offsetWidth / 1.15 + ',' + (15 - svgDOM.offsetHeight / 100) + ')').call(d3.axisRight(scaleY).tickValues(uniQuartiles));
+
+        d3.selectAll('.quartiles .tick text').text(function (d) {
+          var result = '';
+          if (d === uniQuartiles[0]) {
+            result = displayedResults[0];
+          } else if (d === uniQuartiles[1]) {
+            result = displayedResults[2];
+          } else if (d === uniQuartiles[2]) {
+            result = displayedResults[1];
+          }
+
+          return result;
+        }).style('opacity', 1);
+      }
 
       /*------------------------------------------------------*/
+
+      /*
+       * Private functions
+       */
+
+      // http://bl.ocks.org/zikes/4285872
+      // Calculate the kth q-quantile of a set of numbers in an array.
+      // As per http://en.wikipedia.org/wiki/Quantile#Quantiles_of_a_population
+      function quantile(arr, k, q) {
+        var sorted, count, index;
+
+        if (k === 0) return Math.min.apply(null, arr);
+
+        if (k === q) return Math.max.apply(null, arr);
+
+        sorted = arr.slice(0);
+        sorted.sort(function (a, b) {
+          return a - b;
+        });
+        count = sorted.length;
+        index = count * k / q;
+
+        if (index % 1 === 0) return 0.5 * sorted[index - 1] + 0.5 * sorted[index];
+
+        return sorted[Math.floor(index)];
+      }
     }
 
     /*
@@ -31650,7 +31860,7 @@ var HBarChart = function () {
 
 exports.default = HBarChart;
 
-},{"../models/data":65,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60}],70:[function(require,module,exports){
+},{"../models/data":65,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60}],71:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31692,7 +31902,7 @@ var dataManager = new _data2.default();
 var Hierarchical = function () {
 
   // Create constructor function
-  function Hierarchical(data, cityData, selectedUoa, selectedUni) {
+  function Hierarchical(data, cityData, selectedUoa, selectedUni, type) {
     (0, _classCallCheck3.default)(this, Hierarchical);
 
     this.data = data;
@@ -31700,6 +31910,7 @@ var Hierarchical = function () {
     this.selectedUoa = selectedUoa;
     this.selectedUni = selectedUni;
     this.hierarchicalData = [];
+    this.type = type;
   }
 
   (0, _createClass3.default)(Hierarchical, [{
@@ -31728,6 +31939,7 @@ var Hierarchical = function () {
       var selectedUniversity = this.selectedUni;
       var uoa = this.selectedUoa;
       var cityData = this.cityData;
+      var dataType = this.type;
 
       // Append svg to the leaflet map and specify width and height as the same
       // for the parent DOM element, then append a group to hold all markers
@@ -31813,26 +32025,41 @@ var Hierarchical = function () {
       // Position the explanation text circle which contains the selected
       // university name
       explanation.style.position = 'absolute';
-      explanation.style.top = svgDOM.offsetHeight / 1.6 + 'px';
+      explanation.style.top = svgDOM.offsetHeight / 1.615 + 'px';
       explanation.style.right = svgDOM.offsetWidth / 2.2 + 'px';
-      explanation.innerText = this.selectedUni;
+      if (this.type === 'ShowUniversity') {
+        explanation.innerText = this.selectedUni;
+      } else if (this.type === 'ShowUoA') {
+        explanation.innerText = this.selectedUoa;
+      }
 
       // Listen for selected university from map and update
       // the chart accordingly
-      map.addEventListener('selectNewMarker', function (event) {
-        console.log('Selected University Changed');
-        // Update the hierarchical sunburst chart with new data
-        selectedUniversity = event.detail.props().name;
-        _this.reload(selectedUniversity, uoa);
-        explanation.innerText = _this.selectedUni;
-        update(_this.hierarchicalData);
-      }, false);
+      if (map !== null) {
+        map.addEventListener('selectNewMarker', function (event) {
+          console.log('Selected University Changed');
+          // Update the hierarchical sunburst chart with new data
+          selectedUniversity = event.detail.props().name;
+          _this.reload(selectedUniversity, uoa);
+          if (_this.type === 'ShowUniversity') {
+            explanation.innerText = _this.selectedUni;
+          } else if (_this.type === 'ShowUoA') {
+            explanation.innerText = _this.selectedUoa;
+          }
+          update(_this.hierarchicalData);
+        }, false);
+      }
 
       // Listen for changes on the selectbox and get the selected value
       // then update the chart accordingly
       if (selectBox !== null) {
         selectBox.addEventListener('change', function (event) {
-          uoa = selectBox.options[selectBox.selectedIndex].value;
+          if (dataType === 'ShowUniversity') {
+            uoa = selectBox.options[selectBox.selectedIndex].value;
+          } else if (dataType === 'ShowUoA') {
+            selectedUniversity = selectBox.options[selectBox.selectedIndex].value;
+          }
+
           _this.reload(selectedUniversity, uoa);
 
           update(_this.hierarchicalData);
@@ -31950,7 +32177,7 @@ var Hierarchical = function () {
 
 exports.default = Hierarchical;
 
-},{"../models/data":65,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60}],71:[function(require,module,exports){
+},{"../models/data":65,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60}],72:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32183,7 +32410,7 @@ var Map = function () {
 
 exports.default = Map;
 
-},{"../models/data":65,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60,"leaflet":61}],72:[function(require,module,exports){
+},{"../models/data":65,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":60,"leaflet":61}],73:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32244,7 +32471,7 @@ function toggleMenu(window, document) {
   window.addEventListener(WINDOW_CHANGE_EVENT, closeMenu);
 }
 
-},{}],73:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32270,7 +32497,7 @@ function populateCities(data) {
   });
 }
 
-},{}],74:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

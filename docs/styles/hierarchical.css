@@ -31,7 +31,7 @@ text {
   display: none;
   position: absolute;
   z-index: 1000;
-  width: 50px;
+  width: 60px;
   height: 40px;
   padding: 1rem;
   background-color: var(--transparent-lighter-charcoal-grey);

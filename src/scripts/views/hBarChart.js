@@ -19,10 +19,11 @@ const dataManager = new DataManager();
 export default class HBarChart {
 
   // Create the constructor function and define variables
-  constructor(data, selectedUoa) {
+  constructor(data, selectedUoa, selectedUni, type) {
     this.data = data;
     this.selectedUoa = selectedUoa;
-    this.selectedUni = '';
+    this.selectedUni = selectedUni;
+    this.type = type;
   }
 
   // Append svg to the selected DOM Element and set its width and height
@@ -57,13 +58,41 @@ export default class HBarChart {
     let selectedUniversity = this.selectedUni;
     let uoa = this.selectedUoa;
 
+    // Clear the current svg
+    d3.select('#uoa-card').html(null);
+
+    // Get all overall 4 star scores
+    let Overall4StarScores = [];
+    newData.forEach((item) => {
+      Overall4StarScores.push(item.Outputs4Score);
+    });
+
+    // Statistics & calculation of lower, middle and upper quartile
+    const lower = quantile(Overall4StarScores, 1, 4);
+    const mid = quantile(Overall4StarScores, 2, 4);
+    const upper = quantile(Overall4StarScores, 3, 4);
+
+    let uniQuartiles = [];
+    let displayedResults = [];
+    newData.forEach((item) => {
+      if (item.Outputs4Score === lower) {
+        uniQuartiles.push(item.Name);
+        displayedResults.push('Lower Q. (' + item.Outputs4Score + ')');
+      } else if (item.Outputs4Score === mid) {
+        uniQuartiles.push(item.Name);
+        displayedResults.push('Average (' + item.Outputs4Score + ')');
+      } else if (item.Outputs4Score === upper) {
+        uniQuartiles.push(item.Name);
+        displayedResults.push('Upper Q. (' + item.Outputs4Score + ')');
+      }
+    });
+
+    console.log(uniQuartiles);
+
     // Sort the dataset based on universities 4* score
     newData.sort((a, b) => {
       return b.Overall4Score - a.Overall4Score;
     });
-
-    // Clear the current svg
-    d3.select('#uoa-card').html(null);
   
     // Define the stack structure
     const stack = d3.stack()
@@ -106,7 +135,8 @@ export default class HBarChart {
       .attr('y', (d) => { return scaleY(d.data.Name); })
       .attr('height', scaleY.bandwidth())
       .attr('width', (d) => { return scaleX(d[0]) - scaleX(d[1]); });
-        
+       
+    // Left axis
     // https://bl.ocks.org
     g.append('g')
       .attr('class', 'axis axis--y')
@@ -114,66 +144,142 @@ export default class HBarChart {
       ',' + (15 - svgDOM.offsetHeight / 100) + ')')
       .call(d3.axisLeft(scaleY));
 
-    //https://bl.ocks.org
-    const legend = serie.append('g')
-      .attr('class', 'legend')
-      .attr('transform', (d, i) => {
-        return 'translate(' +
-          (scaleY.bandwidth()) + ',' +
-          (60 * (i + 1)) + ')';
-      });
-    
-    // Legend color key
-    legend.append('rect')
-      .attr('x', svgDOM.offsetWidth - 190)
-      .attr('width', 19)
-      .attr('height', 19)
-      .attr('fill', color);
+    console.log(displayedResults);
 
-    // Legend text
-    legend.append('text')
-      .attr('x', svgDOM.offsetWidth - 200)
-      .attr('y', 25.5)
-      .attr('dy', '0.32em')
-      .text((d) => {
-        let output = '';
-        if (d.key === 'Overall4Score') {
-          output = '4* score';
-        } else if (d.key === 'Overall3Score') {
-          output = '3* score';
-        } else if (d.key === 'Overall2Score') {
-          output = '2* score';
-        } else if (d.key === 'Overall1Score') {
-          output = '1* score';
-        } else if (d.key === 'OverallUCScore') {
-          output = 'unclassified';
-        }
-        return output;
-      });
+    if (this.type === 'ShowUniversity') {
+      // Legend
+      //https://bl.ocks.org
+      const legend = serie.append('g')
+        .attr('class', 'legend')
+        .attr('transform', (d, i) => {
+          return 'translate(' +
+            (scaleY.bandwidth()) + ',' +
+            (60 * (i + 1)) + ')';
+        });
+      
+      // Legend color key
+      legend.append('rect')
+        .attr('x', svgDOM.offsetWidth - 183)
+        .attr('width', 19)
+        .attr('height', 19)
+        .attr('fill', color);
+
+      // Legend text
+      legend.append('text')
+        .attr('x', svgDOM.offsetWidth - 193)
+        .attr('y', 25.5)
+        .attr('dy', '0.32em')
+        .text((d) => {
+          let output = '';
+          if (d.key === 'Overall4Score') {
+            output = '4* score';
+          } else if (d.key === 'Overall3Score') {
+            output = '3* score';
+          } else if (d.key === 'Overall2Score') {
+            output = '2* score';
+          } else if (d.key === 'Overall1Score') {
+            output = '1* score';
+          } else if (d.key === 'OverallUCScore') {
+            output = 'unclassified';
+          }
+          return output;
+        });
+
+    }
   
     // Listen for selected university from map and update
     // the chart accordingly
-    map.addEventListener('selectNewMarker', (event) => { 
-      console.log('Selected University Changed');
-      // Update the hierarchical sunburst chart with new data
-      selectedUniversity = event.detail.props().name;
-      newData.forEach((item) => {
-        d3.selectAll('.tick text')._groups[0].forEach((el) => {
-          if (el.innerHTML === selectedUniversity) {
-            // Highlight selected university name
-            d3.selectAll('.tick text')
-              .attr('transform', 'scale(1)')
-              .style('opacity', 0.25);
-            d3.select(el)
-              .attr('transform', 'scale(2)')
-              .style('opacity', 1)
-              .style('transition', 'all 0.5s');  
-          }
+    if (map !== null) {
+      map.addEventListener('selectNewMarker', (event) => { 
+        console.log('Selected University Changed');
+        // Update the hierarchical sunburst chart with new data
+        selectedUniversity = event.detail.props().name;
+        newData.forEach((item) => {
+          d3.selectAll('.tick text')._groups[0].forEach((el) => {
+            if (el.innerHTML === selectedUniversity) {
+              // Highlight selected university name
+              d3.selectAll('.tick text')
+                .attr('transform', 'scale(1)')
+                .style('opacity', 0.25);
+              d3.select(el)
+                .attr('transform', 'scale(2)')
+                .style('opacity', 1)
+                .style('transition', 'all 0.5s');  
+            }
+          });
         });
+      }, false);
+    }
+
+    if (this.type === 'ShowUoA') {
+      d3.selectAll('.tick text')._groups[0].forEach((el) => {
+        if (el.innerHTML === selectedUniversity) {
+          // Highlight selected university name
+          d3.selectAll('.tick text')
+            .attr('transform', 'scale(1)')
+            .style('opacity', 0.25);
+          d3.select(el)
+            .attr('transform', 'scale(2)')
+            .style('opacity', 1)
+            .style('transition', 'all 0.5s');  
+        }
       });
-    }, false);
+    }
+
+    if (this.type !== 'ShowUniversity') {
+
+      // Right axis with quartiles
+      // https://bl.ocks.org
+      g.append('g')
+        .attr('class','axis quartiles')
+        .attr('transform', 'translate(' + (svgDOM.offsetWidth / 1.15) +
+        ',' + (15 - svgDOM.offsetHeight / 100) + ')')
+        .call(d3.axisRight(scaleY)
+            .tickValues(uniQuartiles)
+        );
+    
+      d3.selectAll('.quartiles .tick text')
+        .text((d) => {
+          let result = '';
+          if (d === uniQuartiles[0]) {
+            result = displayedResults[0];
+          } else if (d === uniQuartiles[1]) {
+            result = displayedResults[2];
+          } else if (d === uniQuartiles[2]) {
+            result = displayedResults[1];
+          }
+            
+          return result;
+        })
+        .style('opacity', 1);
+
+    }
 
     /*------------------------------------------------------*/
+
+    /*
+     * Private functions
+     */
+
+    // http://bl.ocks.org/zikes/4285872
+    // Calculate the kth q-quantile of a set of numbers in an array.
+    // As per http://en.wikipedia.org/wiki/Quantile#Quantiles_of_a_population
+    function quantile (arr, k, q) {
+      var sorted, count, index;
+
+      if(k === 0) return Math.min.apply(null, arr);
+
+      if (k === q) return Math.max.apply(null, arr);
+
+      sorted = arr.slice(0);
+      sorted.sort(function (a, b) { return a - b; });
+      count = sorted.length;
+      index = count * k / q;
+
+      if (index % 1 === 0) return 0.5 * sorted[index - 1] + 0.5 * sorted[index];
+
+      return sorted[Math.floor(index)];
+    }
 
   }
 
