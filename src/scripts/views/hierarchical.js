@@ -50,6 +50,8 @@ export default class Hierarchical {
     const map = document.getElementById('map');
     // Get stacked chart conatiner
     const stack = document.getElementById('uoa-card');
+    // Get force layout conatiner
+    const force = document.getElementById('graph');
     // Get the current selection from the select box
     const selectBox = document.getElementById('selector');
     const selectBoxCity = document.getElementById('selector-city');
@@ -201,6 +203,20 @@ export default class Hierarchical {
         this.reload(selectedUniversity, uoa);
 
         explanation.innerText = this.selectedUni;
+        update(this.hierarchicalData);
+      }, false);
+    }
+
+    // Listen for selected unit of assessment from stack and update
+    // the chart accordingly
+    if (force !== null) {
+      force.addEventListener('selectForceUoa', (event) => { 
+        console.log('Selected UoA Changed');
+        // Update the hierarchical sunburst chart with new data
+        uoa = event.detail.props().key;
+        this.reload(selectedUniversity, uoa);
+
+        explanation.innerText = this.selectedUoa;
         update(this.hierarchicalData);
       }, false);
     }

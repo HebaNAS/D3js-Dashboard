@@ -31704,7 +31704,7 @@ Object.defineProperty(exports, "__esModule", {
 /*                        Date: 15 July 2018                                 */
 /*****************************************************************************/
 
-var universityManagement = exports.universityManagement = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"graph\">\n      <span>Available Units of Assessment</span>\n    </div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">University</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
+var universityManagement = exports.universityManagement = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"graph\">\n      <div class=\"tooltip\"></div>\n      <span>Available Units of Assessment</span>\n    </div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip-graph\"></div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">University</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
 },{}],70:[function(require,module,exports){
 'use strict';
@@ -31792,11 +31792,8 @@ var ForceLayout = function () {
       var g = svg.append('g');
       // https://bl.ocks.org/
       var simulation = d3.forceSimulation().force('forceX', d3.forceX().strength(0.1).x(svgDOM.offsetWidth * 0.5)).force('forceY', d3.forceY().strength(0.1).y(svgDOM.offsetHeight * 0.5)).force('center', d3.forceCenter().x(svgDOM.offsetWidth * 0.5).y(svgDOM.offsetHeight * 0.5)).force('charge', d3.forceManyBody().strength(-15));
-
-      // Select label class
-      var labels = d3.selectAll('.label');
       // Append tooltip
-      var tooltip = d3.select('.tooltip');
+      var tooltip = d3.select('.tooltip-graph');
       // Define color domain
       var color = d3.scaleLinear().domain([0, 35]).range(['#FFBE57', '#25CD6B']);
       // Define nodes
@@ -31835,21 +31832,31 @@ var ForceLayout = function () {
 
       // Handle mouse over events
       function handleMouseOver(d, i) {
-        d3.select(this).style('opacity', 1);
         var x = event.clientX;
         var y = event.clientY;
 
         // Display tooltip div containing the score
         // and position it according to mouse coordinates
-        if (d.data.value !== undefined) {
-          tooltip.style('display', 'block').style('top', y - 80 + 'px').style('left', x - 80 + 'px').html('<strong>Score<br>' + d.data.value + ' %</strong>');
+        if (d.key !== undefined) {
+          tooltip.style('display', 'block').style('top', y - 100 + 'px').style('left', x - 80 + 'px').html(d.key);
         }
       }
 
       // Handle mouse out events
       function handleMouseOut(d, i) {
-        d3.select(this).style('opacity', 0.65);
         tooltip.style('display', 'none');
+      }
+
+      // Handle mouse click events
+      function handleClick(d, i) {
+        // Create a new custom event and listen to it in the main module
+        var selectForceUoa = new CustomEvent('selectForceUoa', { detail: {
+            props: function props() {
+              return d;
+            }
+          }
+        });
+        svgDOM.dispatchEvent(selectForceUoa);
       }
 
       // Redraw and scale paths according to map selection
@@ -31884,7 +31891,7 @@ var ForceLayout = function () {
           return d.values[3].values[0].value + 1;
         }).attr('fill', function (d) {
           return color(d.values[3].values[0].value);
-        }).merge(node);
+        }).merge(node).on('mouseover', handleMouseOver).on('mouseout', handleMouseOut).on('click', handleClick);
 
         // https://bl.ocks.org/
         // Dragging interactions
@@ -32378,6 +32385,8 @@ var Hierarchical = function () {
       var map = document.getElementById('map');
       // Get stacked chart conatiner
       var stack = document.getElementById('uoa-card');
+      // Get force layout conatiner
+      var force = document.getElementById('graph');
       // Get the current selection from the select box
       var selectBox = document.getElementById('selector');
       var selectBoxCity = document.getElementById('selector-city');
@@ -32520,6 +32529,20 @@ var Hierarchical = function () {
           _this.reload(selectedUniversity, uoa);
 
           explanation.innerText = _this.selectedUni;
+          update(_this.hierarchicalData);
+        }, false);
+      }
+
+      // Listen for selected unit of assessment from stack and update
+      // the chart accordingly
+      if (force !== null) {
+        force.addEventListener('selectForceUoa', function (event) {
+          console.log('Selected UoA Changed');
+          // Update the hierarchical sunburst chart with new data
+          uoa = event.detail.props().key;
+          _this.reload(selectedUniversity, uoa);
+
+          explanation.innerText = _this.selectedUoa;
           update(_this.hierarchicalData);
         }, false);
       }

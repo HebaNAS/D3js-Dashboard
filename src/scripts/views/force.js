@@ -68,11 +68,8 @@ export default class ForceLayout {
       .force('forceY', d3.forceY().strength(0.1).y(svgDOM.offsetHeight * 0.5))
       .force('center', d3.forceCenter().x(svgDOM.offsetWidth * 0.5).y(svgDOM.offsetHeight * 0.5))
       .force('charge', d3.forceManyBody().strength(-15));
-
-    // Select label class
-    const labels = d3.selectAll('.label');
     // Append tooltip
-    const tooltip = d3.select('.tooltip');
+    const tooltip = d3.select('.tooltip-graph');
       // Define color domain
     const color = d3.scaleLinear()
       .domain([0, 35])
@@ -117,24 +114,32 @@ export default class ForceLayout {
 
     // Handle mouse over events
     function handleMouseOver(d, i) {
-      d3.select(this).style('opacity', 1);
       let x = event.clientX;
       let y = event.clientY; 
 
       // Display tooltip div containing the score
       // and position it according to mouse coordinates
-      if (d.data.value !== undefined) {
+      if (d.key !== undefined) {
         tooltip.style('display', 'block')
-          .style('top', (y - 80) + 'px')
+          .style('top', (y - 100) + 'px')
           .style('left', (x - 80) + 'px')
-          .html('<strong>Score<br>' + d.data.value + ' %</strong>');
+          .html(d.key);
       }
     }
 
     // Handle mouse out events
     function handleMouseOut(d, i) {
-      d3.select(this).style('opacity', 0.65);
       tooltip.style('display', 'none');
+    }
+
+    // Handle mouse click events
+    function handleClick(d, i) {
+      // Create a new custom event and listen to it in the main module
+      const selectForceUoa = new CustomEvent('selectForceUoa', { detail: {
+          props: () => d
+        }
+      });
+      svgDOM.dispatchEvent(selectForceUoa);
     }
 
     // Redraw and scale paths according to map selection
@@ -171,7 +176,10 @@ export default class ForceLayout {
       node = node.enter().append('circle')
         .attr('r', (d) => { return d.values[3].values[0].value + 1; })
         .attr('fill', (d) => { return color(d.values[3].values[0].value); })
-        .merge(node);
+        .merge(node)
+        .on('mouseover', handleMouseOver)
+        .on('mouseout', handleMouseOut)
+        .on('click', handleClick);
   
       // https://bl.ocks.org/
       // Dragging interactions

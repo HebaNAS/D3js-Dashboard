@@ -16,11 +16,12 @@ export const universityManagement =
     <p class=""></p>
     <div class="card-style" id="uoa-card"></div>
     <div class="card-style" id="graph">
+      <div class="tooltip"></div>
       <span>Available Units of Assessment</span>
     </div>
     <div class="card-style" id="compare-uni">
       <div id="chart">
-        <div class="tooltip"></div>
+        <div class="tooltip-graph"></div>
         <div id="explanation" style="visibility: visible;">
         </div>
       </div>
