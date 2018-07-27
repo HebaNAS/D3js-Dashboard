@@ -15,7 +15,9 @@ export const universityManagement =
     <p class=""></p>
     <p class=""></p>
     <div class="card-style" id="uoa-card"></div>
-    <div class="card-style" id=""></div>
+    <div class="card-style" id="graph">
+      <span>Available Units of Assessment</span>
+    </div>
     <div class="card-style" id="compare-uni">
       <div id="chart">
         <div class="tooltip"></div>

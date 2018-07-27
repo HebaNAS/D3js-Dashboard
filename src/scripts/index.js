@@ -216,6 +216,15 @@ function createDashboardUm(data, data2) {
     false
   );
 
+  const force = new ForceLayout(
+    data2,
+    data,
+    selectedUoa,
+    selectedUni,
+    'ShowUoA',
+    false
+  );
+
   const barChart = new HBarChart(
     data,
     dataManager.getLocationByUoA(data, selectedUoa),
@@ -230,6 +239,9 @@ function createDashboardUm(data, data2) {
   // Create the hierarchical sunburst chart
   hierarchical.createChart();
 
+  // Create the force layout
+  force.createChart();
+
   // Listen for changes on the selectbox and get the selected value
   selectBox.addEventListener('change', (event) => {
     selectedUni = selectBox.options[selectBox.selectedIndex].value;
@@ -237,6 +249,15 @@ function createDashboardUm(data, data2) {
 
     // Reload the map with the new dataset
     barChart.reload(
+      selectedUni,
+      selectedUoa,
+      data,
+      dataManager.getLocationByUoA(data, selectedUoa),
+      'ShowUoA'
+    );
+
+    // Reload the force layout 
+    force.reload(
       selectedUni,
       selectedUoa,
       data,

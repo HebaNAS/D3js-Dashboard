@@ -30833,6 +30833,8 @@ function createDashboardUm(data, data2) {
    */
   var hierarchical = new _hierarchical2.default(data2, data, selectedUoa, selectedUni, 'ShowUoA', false);
 
+  var force = new _force2.default(data2, data, selectedUoa, selectedUni, 'ShowUoA', false);
+
   var barChart = new _hBarChart2.default(data, dataManager.getLocationByUoA(data, selectedUoa), selectedUoa, selectedUni, 'ShowUoA');
 
   // Create a horizontal stacked bar chart
@@ -30841,6 +30843,9 @@ function createDashboardUm(data, data2) {
   // Create the hierarchical sunburst chart
   hierarchical.createChart();
 
+  // Create the force layout
+  force.createChart();
+
   // Listen for changes on the selectbox and get the selected value
   selectBox.addEventListener('change', function (event) {
     selectedUni = selectBox.options[selectBox.selectedIndex].value;
@@ -30848,6 +30853,9 @@ function createDashboardUm(data, data2) {
 
     // Reload the map with the new dataset
     barChart.reload(selectedUni, selectedUoa, data, dataManager.getLocationByUoA(data, selectedUoa), 'ShowUoA');
+
+    // Reload the force layout 
+    force.reload(selectedUni, selectedUoa, data, dataManager.getLocationByUoA(data, selectedUoa), 'ShowUoA');
   });
 }
 
@@ -31536,6 +31544,41 @@ var DataManager = function () {
 		}
 
 		/*
+   * Reformat our data into a form that could be understood by
+    * d3's geoPath method
+   */
+
+	}, {
+		key: 'reformatUoaData',
+		value: function reformatUoaData(data) {
+			if (data !== undefined || data !== []) {
+				try {
+					data.forEach(function (el) {
+						el.values.forEach(function (item) {
+							item.values.push({ 'key': '4*', 'value': parseFloat(item.values[0]['4*']) });
+							item.values.push({ 'key': '3*', 'value': parseFloat(item.values[0]['3*']) });
+							item.values.push({ 'key': '2*', 'value': parseFloat(item.values[0]['2*']) });
+							item.values.push({ 'key': '1*', 'value': parseFloat(item.values[0]['1*']) });
+							item.values.push({ 'key': 'unclassified', 'value': parseFloat(item.values[0].unclassified) });
+						});
+					});
+					data.forEach(function (el) {
+						el.values.forEach(function (item) {
+							item.values.shift();
+							if (item.values[0]['Unit of assessment name'] !== undefined) {
+								item.values.shift();
+							}
+						});
+					});
+				} catch (err) {
+					console.log('Please try another selection');
+				}
+			}
+
+			return data;
+		}
+
+		/*
    * Function to reconstruct the flat dataset into a JSON like
    * structure containing a root of a selected unit of assessments which
    * will include all universities having that uoa and nested inside the
@@ -31562,6 +31605,37 @@ var DataManager = function () {
 			}).key(function (d) {
 				return d.Profile;
 			}).entries(universities);
+
+			return nestedData;
+		}
+
+		/*
+   * Function to reconstruct the flat dataset into a JSON like
+   * structure containing a root of a selected university which
+   * will include all units of assessment nested inside the
+   * assessment categories and scores
+   */
+
+	}, {
+		key: 'createUoaPerUniPerformanceHierarchy',
+		value: function createUoaPerUniPerformanceHierarchy(data, selectedUni) {
+			// Create an empty array to hold universities filtered out
+			// according to Unit of assessment
+			var uoas = [];
+
+			// Only add universities that have the selected department
+			data.forEach(function (item) {
+				if (item['Institution name'] === selectedUni) {
+					uoas.push(item);
+				}
+			});
+
+			// Start nesting the data into a hierarchical structure
+			var nestedData = d3.nest().key(function (d) {
+				return d['Unit of assessment name'];
+			}).key(function (d) {
+				return d.Profile;
+			}).entries(uoas);
 
 			return nestedData;
 		}
@@ -31630,7 +31704,7 @@ Object.defineProperty(exports, "__esModule", {
 /*                        Date: 15 July 2018                                 */
 /*****************************************************************************/
 
-var universityManagement = exports.universityManagement = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">University</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
+var universityManagement = exports.universityManagement = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"graph\">\n      <span>Available Units of Assessment</span>\n    </div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">University</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
 },{}],70:[function(require,module,exports){
 'use strict';
@@ -31642,6 +31716,10 @@ Object.defineProperty(exports, "__esModule", {
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _d = require('d3');
 
@@ -31670,13 +31748,200 @@ var dataManager = new _data2.default();
 // Create a function to draw a horizontal barchart giving a dataset and a DOM
 // element as arguments
 
-var ForceLayout = function ForceLayout() {
-  (0, _classCallCheck3.default)(this, ForceLayout);
-};
+var ForceLayout = function () {
+
+  // Create constructor function
+  function ForceLayout(data, cityData, selectedUoa, selectedUni, type, showImpact) {
+    (0, _classCallCheck3.default)(this, ForceLayout);
+
+    this.data = data;
+    this.cityData = cityData;
+    this.selectedUoa = selectedUoa;
+    this.selectedUni = selectedUni;
+    this.hierarchicalData = [];
+    this.type = type;
+    this.showImpact = showImpact;
+  }
+
+  (0, _createClass3.default)(ForceLayout, [{
+    key: 'createChart',
+    value: function createChart() {
+      var _this = this;
+
+      // Create hierarchy from our dataset
+      this.hierarchicalData = dataManager.reformatUoaData(dataManager.createUoaPerUniPerformanceHierarchy(this.data, this.selectedUni));
+
+      /*------------------------------------------------------*/
+
+      /*
+       * Variables
+       */
+
+      // Get parent element
+      var svgDOM = document.getElementById('graph');
+      // Get the current selection from the select box
+      var selectBox = document.getElementById('selector');
+
+      var selectedUniversity = this.selectedUni;
+      var uoa = this.selectedUoa;
+      var dataType = this.type;
+
+      // Append svg to the leaflet map and specify width and height as the same
+      // for the parent DOM element, then append a group to hold all markers
+      var svg = d3.select('#graph').append('svg').attr('width', svgDOM.offsetWidth).attr('height', svgDOM.offsetHeight - 50);
+      var g = svg.append('g');
+      // https://bl.ocks.org/
+      var simulation = d3.forceSimulation().force('forceX', d3.forceX().strength(0.1).x(svgDOM.offsetWidth * 0.5)).force('forceY', d3.forceY().strength(0.1).y(svgDOM.offsetHeight * 0.5)).force('center', d3.forceCenter().x(svgDOM.offsetWidth * 0.5).y(svgDOM.offsetHeight * 0.5)).force('charge', d3.forceManyBody().strength(-15));
+
+      // Select label class
+      var labels = d3.selectAll('.label');
+      // Append tooltip
+      var tooltip = d3.select('.tooltip');
+      // Define color domain
+      var color = d3.scaleLinear().domain([0, 35]).range(['#FFBE57', '#25CD6B']);
+      // Define nodes
+      var node = g.append('g').attr('stroke', '#fff').attr('stroke-width', 1).attr('stroke-opacity', 0.8).selectAll('.node');
+
+      /*------------------------------------------------------*/
+
+      /*
+       * Dynamic changes
+       */
+
+      // Draw layout
+      update(this.hierarchicalData);
+
+      // Listen for changes on the selectbox and get the selected value
+      // then update the chart accordingly
+      if (selectBox !== null) {
+        selectBox.addEventListener('change', function (event) {
+          if (dataType === 'ShowUniversity') {
+            uoa = selectBox.options[selectBox.selectedIndex].value;
+          } else if (dataType === 'ShowUoA') {
+            selectedUniversity = selectBox.options[selectBox.selectedIndex].value;
+          }
+
+          _this.reload(selectedUniversity, uoa);
+
+          update(_this.hierarchicalData);
+        });
+      }
+
+      /*------------------------------------------------------*/
+
+      /*
+       * Private functions
+       */
+
+      // Handle mouse over events
+      function handleMouseOver(d, i) {
+        d3.select(this).style('opacity', 1);
+        var x = event.clientX;
+        var y = event.clientY;
+
+        // Display tooltip div containing the score
+        // and position it according to mouse coordinates
+        if (d.data.value !== undefined) {
+          tooltip.style('display', 'block').style('top', y - 80 + 'px').style('left', x - 80 + 'px').html('<strong>Score<br>' + d.data.value + ' %</strong>');
+        }
+      }
+
+      // Handle mouse out events
+      function handleMouseOut(d, i) {
+        d3.select(this).style('opacity', 0.65);
+        tooltip.style('display', 'none');
+      }
+
+      // Redraw and scale paths according to map selection
+      function update(data) {
+        console.log('New Dataset Force: ', data);
+
+        // Sort the nodes so that the bigger ones are at the back
+        // https://bl.ocks.org/
+        data = data.sort(function (a, b) {
+          var sizeA = 0,
+              sizeB = 0;
+          sizeA = a.values[3].values[0].value;
+          sizeB = b.values[3].values[0].value;
+
+          return sizeB - sizeA;
+        });
+
+        // Bind data to nodes
+        node = node.data(data);
+
+        // Use General Update Pattern
+        // Exit and remove unused nodes
+        node.exit().transition().duration(100).attr('r', 1e-6).remove();
+
+        // Update existing nodes
+        node.transition().duration(100).attr('r', function (d) {
+          return d.values[3].values[0].value + 1;
+        });
+
+        // Draw nodes
+        node = node.enter().append('circle').attr('r', function (d) {
+          return d.values[3].values[0].value + 1;
+        }).attr('fill', function (d) {
+          return color(d.values[3].values[0].value);
+        }).merge(node);
+
+        // https://bl.ocks.org/
+        // Dragging interactions
+        node.call(d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended));
+
+        // Update the simulation based on the data
+        simulation.nodes(data).force('collide', d3.forceCollide().strength(0.5).radius(function (d) {
+          return d.values[3].values[0].value * 1.5 + 2.5;
+        }).iterations(1)).on('tick', function (d) {
+          node.attr('cx', function (d) {
+            return d.x;
+          }).attr('cy', function (d) {
+            return d.y;
+          });
+        });
+      }
+
+      // https://bl.ocks.org/HarryStevens/f636199a46fc4b210fbca3b1dc4ef372
+      function dragstarted(d) {
+        if (!d3.event.active) simulation.alphaTarget(0.03).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+      }
+
+      // https://bl.ocks.org/HarryStevens/f636199a46fc4b210fbca3b1dc4ef372
+      function dragged(d) {
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+      }
+
+      // https://bl.ocks.org/HarryStevens/f636199a46fc4b210fbca3b1dc4ef372
+      function dragended(d) {
+        if (!d3.event.active) simulation.alphaTarget(0.03);
+        d.fx = null;
+        d.fy = null;
+      }
+    }
+
+    /*
+     * Function to reload the map with new dataset
+     */
+
+  }, {
+    key: 'reload',
+    value: function reload(newUni, newUoa) {
+      this.selectedUni = newUni;
+      this.selectedUoa = newUoa;
+      console.log('Reloading the chart using a new dataset');
+      this.hierarchicalData = dataManager.reformatUoaData(dataManager.createUoaPerUniPerformanceHierarchy(this.data, this.selectedUni));
+    }
+  }]);
+  return ForceLayout;
+}();
 
 exports.default = ForceLayout;
 
-},{"../models/data":66,"babel-runtime/helpers/classCallCheck":3,"d3":61}],71:[function(require,module,exports){
+},{"../models/data":66,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":61}],71:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31947,7 +32212,7 @@ var HBarChart = function () {
       if (this.type !== 'ShowUniversity' && this.type !== 'StackUoa') {
         // Right axis with quartiles
         // https://bl.ocks.org
-        g.append('g').attr('class', 'axis quartiles').attr('transform', 'translate(' + svgDOM.offsetWidth / 1.15 + ',' + (15 - svgDOM.offsetHeight / 100) + ')').call(d3.axisRight(scaleY).tickValues(uniQuartiles));
+        g.append('g').attr('class', 'axis quartiles').attr('transform', 'translate(' + svgDOM.offsetWidth / 1.125 + ',' + (15 - svgDOM.offsetHeight / 100) + ')').call(d3.axisRight(scaleY).tickValues(uniQuartiles));
 
         d3.selectAll('.quartiles .tick text').text(function (d) {
           var result = '';
@@ -32183,6 +32448,7 @@ var Hierarchical = function () {
       if (showImpact === true) {
         d3.selectAll('.node').style('opacity', function (d) {
           var result = 0;
+
           if (d.data.key === 'Impact') {
             result = 1;
           } else {
@@ -32220,7 +32486,7 @@ var Hierarchical = function () {
       // university name
       explanation.style.position = 'absolute';
       explanation.style.top = svgDOM.offsetHeight / 1.615 + 'px';
-      explanation.style.right = svgDOM.offsetWidth / 2.2 + 'px';
+      explanation.style.right = svgDOM.offsetWidth / 2.225 + 'px';
       if (this.type === 'ShowUniversity') {
         explanation.innerText = this.selectedUni;
       } else if (this.type === 'ShowUoA') {

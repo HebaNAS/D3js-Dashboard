@@ -126,6 +126,7 @@ export default class Hierarchical {
     if (showImpact === true) {
       d3.selectAll('.node').style('opacity',(d) => {
         let result = 0;
+        
         if (d.data.key === 'Impact') {
           result = 1;
         } else {
@@ -166,7 +167,7 @@ export default class Hierarchical {
     // university name
     explanation.style.position = 'absolute';
     explanation.style.top = svgDOM.offsetHeight / 1.615 + 'px';
-    explanation.style.right = svgDOM.offsetWidth / 2.2 + 'px';
+    explanation.style.right = svgDOM.offsetWidth / 2.225 + 'px';
     if (this.type === 'ShowUniversity') {
       explanation.innerText = this.selectedUni;
     } else if (this.type === 'ShowUoA') {

@@ -1,0 +1,14 @@
+/*****************************************************************************/
+/*               Name: Data Visualization Coursework - F21DV                 */
+/*                 File Description: Force Layout Styles                     */
+/*                        Author: Heba El-Shimy                              */
+/*                        Email: he12@hw.ac.uk                               */
+/*                         Date: 28 July 2018                                */
+/*****************************************************************************/
+
+#graph {
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: bold;
+  padding-top: 0.5rem;
+}

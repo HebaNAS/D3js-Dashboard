@@ -289,7 +289,7 @@ export default class HBarChart {
       // https://bl.ocks.org
       g.append('g')
         .attr('class','axis quartiles')
-        .attr('transform', 'translate(' + (svgDOM.offsetWidth / 1.15) +
+        .attr('transform', 'translate(' + (svgDOM.offsetWidth / 1.125) +
         ',' + (15 - svgDOM.offsetHeight / 100) + ')')
         .call(d3.axisRight(scaleY)
             .tickValues(uniQuartiles)

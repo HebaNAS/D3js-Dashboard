@@ -468,6 +468,39 @@ export default class DataManager {
 	}
 
 	/*
+	 * Reformat our data into a form that could be understood by
+   * d3's geoPath method
+	 */
+	reformatUoaData(data) {
+		if (data !== undefined || data !== []) {
+			try {
+				data.forEach((el) => {
+					el.values.forEach((item) => {
+						item.values.push({'key': '4*', 'value': parseFloat(item.values[0]['4*'])});
+						item.values.push({'key': '3*', 'value': parseFloat(item.values[0]['3*'])});
+						item.values.push({'key': '2*', 'value': parseFloat(item.values[0]['2*'])});
+						item.values.push({'key': '1*', 'value': parseFloat(item.values[0]['1*'])});
+						item.values.push({'key': 'unclassified', 'value': parseFloat(item.values[0].unclassified)});
+					});
+				});
+				data.forEach((el) => {
+					el.values.forEach((item) => {
+						item.values.shift();
+						if (item.values[0]['Unit of assessment name'] !== undefined) {
+							item.values.shift();
+						}
+					});
+				});
+			}
+			catch(err) {
+				console.log('Please try another selection');
+			}
+		}
+
+		return data;
+	}
+
+	/*
 	 * Function to reconstruct the flat dataset into a JSON like
 	 * structure containing a root of a selected unit of assessments which
 	 * will include all universities having that uoa and nested inside the
@@ -491,6 +524,33 @@ export default class DataManager {
 			.key((d) => selectedUni)
 			.key((d) => d.Profile)
 			.entries(universities);
+
+		return nestedData;
+	}
+
+	/*
+	 * Function to reconstruct the flat dataset into a JSON like
+	 * structure containing a root of a selected university which
+	 * will include all units of assessment nested inside the
+	 * assessment categories and scores
+	 */
+	createUoaPerUniPerformanceHierarchy(data, selectedUni) {
+		// Create an empty array to hold universities filtered out
+		// according to Unit of assessment
+		let uoas = [];
+		
+		// Only add universities that have the selected department
+    data.forEach((item) => {
+			if (item['Institution name'] === selectedUni) {
+        uoas.push(item);
+      }
+		});
+
+		// Start nesting the data into a hierarchical structure
+		const nestedData = d3.nest()
+			.key((d) => d['Unit of assessment name'])
+			.key((d) => d.Profile)
+			.entries(uoas);
 
 		return nestedData;
 	}
