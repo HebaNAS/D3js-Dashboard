@@ -133,8 +133,6 @@ export default class HBarChart {
       .attr('class', 'serie')
       .attr('fill', (d) => color(d.key))
       .style('opacity', 0.95);
-      //.attr('transform', 'translate(' + (svgDOM.offsetWidth / 3.25) +
-      //  ',' + (15 - svgDOM.offsetHeight / 100) + ')');
   
     if (this.type !== 'StackUoa') {
       serie.attr('transform', 'translate(' + (svgDOM.offsetWidth / 3.25) +
@@ -164,6 +162,7 @@ export default class HBarChart {
         .attr('y', (d) => { return scaleY(d.data.Uoa); })
         .attr('height', scaleY.bandwidth())
         .attr('width', (d) => { return scaleX(d[0]) - scaleX(d[1]); })
+        .style('cursor', 'pointer')
         .on('click', handleClick);
     }
        

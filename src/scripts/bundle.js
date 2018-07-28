@@ -31887,7 +31887,9 @@ var ForceLayout = function () {
         });
 
         // Draw nodes
-        node = node.enter().append('circle').attr('r', function (d) {
+        node = node.enter().append('g');
+
+        node.append('circle').attr('r', function (d) {
           return d.values[3].values[0].value + 1;
         }).attr('fill', function (d) {
           return color(d.values[3].values[0].value);
@@ -31896,6 +31898,10 @@ var ForceLayout = function () {
         // https://bl.ocks.org/
         // Dragging interactions
         node.call(d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended));
+
+        node.append('text').style('font-size', '0.15rem').text(function (d) {
+          return d.key;
+        });
 
         // Update the simulation based on the data
         simulation.nodes(data).force('collide', d3.forceCollide().strength(0.5).radius(function (d) {
@@ -32107,8 +32113,6 @@ var HBarChart = function () {
       var serie = g.selectAll('.serie').data(stack.keys(keys)(newData)).enter().append('g').attr('class', 'serie').attr('fill', function (d) {
         return color(d.key);
       }).style('opacity', 0.95);
-      //.attr('transform', 'translate(' + (svgDOM.offsetWidth / 3.25) +
-      //  ',' + (15 - svgDOM.offsetHeight / 100) + ')');
 
       if (this.type !== 'StackUoa') {
         serie.attr('transform', 'translate(' + svgDOM.offsetWidth / 3.25 + ',' + (15 - svgDOM.offsetHeight / 100) + ')');
@@ -32135,7 +32139,7 @@ var HBarChart = function () {
           return scaleY(d.data.Uoa);
         }).attr('height', scaleY.bandwidth()).attr('width', function (d) {
           return scaleX(d[0]) - scaleX(d[1]);
-        }).on('click', handleClick);
+        }).style('cursor', 'pointer').on('click', handleClick);
       }
 
       if (this.type !== 'StackUoa') {
@@ -32462,6 +32466,28 @@ var Hierarchical = function () {
             result = 1;
           } else {
             result = 0.65;
+          }
+          return result;
+        });
+
+        d3.selectAll('.node').on('mouseover', function (d) {
+          var result = 0;
+
+          if (d.data.key === 'Impact') {
+            result = d;
+          } else {
+            result = handleMouseOver(d);
+          }
+          return result;
+        });
+
+        d3.selectAll('.node').on('mouseout', function (d) {
+          var result = 0;
+
+          if (d.data.key === 'Impact') {
+            result = d;
+          } else {
+            result = handleMouseOut(d);
           }
           return result;
         });

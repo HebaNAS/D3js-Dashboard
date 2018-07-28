@@ -9,6 +9,7 @@
 path {
   stroke: var(--transparent-lighter-charcoal-grey);
   stroke-width: 1;
+  cursor: pointer;
 }
 text {
   fill: var(--white);

@@ -27,3 +27,8 @@
   text-align: center;
   color: var(--white);
 }
+#graph circle text {
+  position: absolute;
+  top: 100px;
+  left: 100px;
+}

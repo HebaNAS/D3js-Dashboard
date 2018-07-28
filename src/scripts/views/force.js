@@ -173,7 +173,10 @@ export default class ForceLayout {
         .attr('r', (d) => { return d.values[3].values[0].value + 1; });
 
       // Draw nodes
-      node = node.enter().append('circle')
+      node = node.enter()
+        .append('g');
+
+      node.append('circle')
         .attr('r', (d) => { return d.values[3].values[0].value + 1; })
         .attr('fill', (d) => { return color(d.values[3].values[0].value); })
         .merge(node)
@@ -188,6 +191,10 @@ export default class ForceLayout {
         .on('drag', dragged)
         .on('end', dragended)
       );
+
+      node.append('text')
+        .style('font-size', '0.15rem')
+        .text((d) => { return d.key; });
 
       // Update the simulation based on the data
       simulation

@@ -136,6 +136,28 @@ export default class Hierarchical {
         }
         return result;
       });
+
+      d3.selectAll('.node').on('mouseover',(d) => {
+        let result = 0;
+        
+        if (d.data.key === 'Impact') {
+          result = d;
+        } else {
+          result = handleMouseOver(d);
+        }
+        return result;
+      });
+
+      d3.selectAll('.node').on('mouseout',(d) => {
+        let result = 0;
+        
+        if (d.data.key === 'Impact') {
+          result = d;
+        } else {
+          result = handleMouseOut(d);
+        }
+        return result;
+      });
     }
     
     // Adding text labels to sunbusrt partitions based
