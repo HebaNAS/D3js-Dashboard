@@ -518,11 +518,15 @@ export default class DataManager {
       }
 		});
 
+
 		// Start nesting the data into a hierarchical structure
 		const nestedData = d3.nest()
 			.key((d) => selectedUni)
 			.key((d) => d.Profile)
 			.entries(universities);
+
+		
+			console.log('this: ', universities);
 
 		return nestedData;
 	}

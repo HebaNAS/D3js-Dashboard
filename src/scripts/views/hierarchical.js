@@ -28,7 +28,6 @@ export default class Hierarchical {
   }
 
   createChart() {
-
     // Create hierarchy from our dataset
     this.hierarchicalData = 
       dataManager.reformatData(
@@ -52,6 +51,8 @@ export default class Hierarchical {
     const stack = document.getElementById('uoa-card');
     // Get force layout conatiner
     const force = document.getElementById('graph');
+    // Get error div
+    const error = document.getElementById('error');
     // Get the current selection from the select box
     const selectBox = document.getElementById('selector');
     const selectBoxCity = document.getElementById('selector-city');
@@ -172,7 +173,13 @@ export default class Hierarchical {
       .text((d) => { return d.depth === 1 ? d.data.key : ''; });
 
     g.selectAll('.label')
-      .data(nodes.filter((d) => { return d.data.value > 0 && d.data.key !== 'unclassified'; }))
+      .data(nodes.filter((d) => {
+        let result = '';
+        if (d.data !== undefined) {
+          result = d.data.value > 0 && d.data.key !== 'unclassified';
+        }
+        return result;
+      }))
       .enter().append('text')
       .attr('class', 'label')
       .attr('transform', (d) => {
@@ -210,6 +217,9 @@ export default class Hierarchical {
           explanation.innerText = this.selectedUni;
         } else if (this.type === 'ShowUoA') {
           explanation.innerText = this.selectedUoa;
+        }
+        if (error.style.display === 'flex') {
+          error.style.display = 'none';
         }
         update(this.hierarchicalData);
       }, false);
@@ -254,8 +264,13 @@ export default class Hierarchical {
         }
         
         this.reload(selectedUniversity, uoa);
-
-        update(this.hierarchicalData);
+        console.log('now: ', this.hierarchicalData);
+        if (this.hierarchicalData.length === 0) {
+          console.log('that: ', 'true');
+          d3.select('#error').transition().duration(100).style('display', 'flex');
+        } else {
+          update(this.hierarchicalData);
+        }
       });
     }
     if (selectBoxCity !== null) {
@@ -320,6 +335,12 @@ export default class Hierarchical {
     function update(data) {
       console.log('New Dataset: ', data);
 
+      // if (data === undefined) {
+      //   d3.select('#error').transition()
+      //     .duration(100)
+      //     .style('display', 'flex');
+      // }
+
       // Update node values
       root = d3.hierarchy(data[0], (d) => d.values);
       root.sum((d) => d.value);
@@ -347,8 +368,12 @@ export default class Hierarchical {
         .attrTween('d', arcTween);
 
       g.selectAll('.label')
-      .data(nodes.filter((d) => { 
-        return d.value > 0 && d.depth === 2 && d.data.key !== 'unclassified'; 
+      .data(nodes.filter((d) => {
+        let result = '';
+        if (d.data !== undefined) {
+          result = d.value > 0 && d.depth === 2 && d.data.key !== 'unclassified';
+        }
+        return result;
       }))
       .transition()
       .duration(500)
@@ -379,5 +404,10 @@ export default class Hierarchical {
         this.data, this.selectedUoa, this.selectedUni
       )
     );
+    // if (this.hierarchicalData === undefined || this.hierarchicalData === []) {
+    //   console.log('that: ', 'true');
+    //   d3.select('#error').style('display', 'flex');
+    // }
+    
   }
 }

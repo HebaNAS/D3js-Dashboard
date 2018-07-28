@@ -31648,6 +31648,8 @@ var DataManager = function () {
 				return d.Profile;
 			}).entries(universities);
 
+			console.log('this: ', universities);
+
 			return nestedData;
 		}
 
@@ -31704,7 +31706,7 @@ Object.defineProperty(exports, "__esModule", {
 /*                        Date: 15 July 2018                                 */
 /*****************************************************************************/
 
-var mainEca = exports.mainEca = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">Unit of Assessment</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
+var mainEca = exports.mainEca = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"error\">Please Select a University from the map to update the chart</div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">Unit of Assessment</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
 },{}],69:[function(require,module,exports){
 "use strict";
@@ -31720,7 +31722,7 @@ Object.defineProperty(exports, "__esModule", {
 /*                        Date: 15 July 2018                                 */
 /*****************************************************************************/
 
-var industryResearch = exports.industryResearch = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">City</label>\n      <select id=\"selector-city\">\n\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
+var industryResearch = exports.industryResearch = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"error\">Please Select a University from the map to update the chart</div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">City</label>\n      <select id=\"selector-city\">\n\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
 },{}],70:[function(require,module,exports){
 "use strict";
@@ -31736,7 +31738,7 @@ Object.defineProperty(exports, "__esModule", {
 /*                        Date: 15 July 2018                                 */
 /*****************************************************************************/
 
-var universityManagement = exports.universityManagement = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"graph\">\n      <div class=\"tooltip\"></div>\n      <span>Available Units of Assessment</span>\n    </div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip-graph\"></div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">University</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
+var universityManagement = exports.universityManagement = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"graph\">\n      <div class=\"tooltip\"></div>\n      <span>Available Units of Assessment</span>\n    </div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip-graph\"></div>\n        <div id=\"error\">Please Select a Unit of Assessment to update the chart</div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">University</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
 },{}],71:[function(require,module,exports){
 'use strict';
@@ -32417,6 +32419,8 @@ var Hierarchical = function () {
       var stack = document.getElementById('uoa-card');
       // Get force layout conatiner
       var force = document.getElementById('graph');
+      // Get error div
+      var error = document.getElementById('error');
       // Get the current selection from the select box
       var selectBox = document.getElementById('selector');
       var selectBoxCity = document.getElementById('selector-city');
@@ -32530,7 +32534,11 @@ var Hierarchical = function () {
       });
 
       g.selectAll('.label').data(nodes.filter(function (d) {
-        return d.data.value > 0 && d.data.key !== 'unclassified';
+        var result = '';
+        if (d.data !== undefined) {
+          result = d.data.value > 0 && d.data.key !== 'unclassified';
+        }
+        return result;
       })).enter().append('text').attr('class', 'label').attr('transform', function (d) {
         return 'translate(' + arc.centroid(d) + ') rotate(' + computeTextRotation(d) + ')';
       }).text(function (d) {
@@ -32566,6 +32574,9 @@ var Hierarchical = function () {
             explanation.innerText = _this.selectedUni;
           } else if (_this.type === 'ShowUoA') {
             explanation.innerText = _this.selectedUoa;
+          }
+          if (error.style.display === 'flex') {
+            error.style.display = 'none';
           }
           update(_this.hierarchicalData);
         }, false);
@@ -32610,8 +32621,13 @@ var Hierarchical = function () {
           }
 
           _this.reload(selectedUniversity, uoa);
-
-          update(_this.hierarchicalData);
+          console.log('now: ', _this.hierarchicalData);
+          if (_this.hierarchicalData.length === 0) {
+            console.log('that: ', 'true');
+            d3.select('#error').transition().duration(100).style('display', 'flex');
+          } else {
+            update(_this.hierarchicalData);
+          }
         });
       }
       if (selectBoxCity !== null) {
@@ -32673,6 +32689,12 @@ var Hierarchical = function () {
       function update(data) {
         console.log('New Dataset: ', data);
 
+        // if (data === undefined) {
+        //   d3.select('#error').transition()
+        //     .duration(100)
+        //     .style('display', 'flex');
+        // }
+
         // Update node values
         root = d3.hierarchy(data[0], function (d) {
           return d.values;
@@ -32692,7 +32714,11 @@ var Hierarchical = function () {
         g.selectAll('path').data(nodes).transition().duration(500).attrTween('d', arcTween);
 
         g.selectAll('.label').data(nodes.filter(function (d) {
-          return d.value > 0 && d.depth === 2 && d.data.key !== 'unclassified';
+          var result = '';
+          if (d.data !== undefined) {
+            result = d.value > 0 && d.depth === 2 && d.data.key !== 'unclassified';
+          }
+          return result;
         })).transition().duration(500).attr('transform', function (d) {
           return 'translate(' + arc.centroid(d) + ') rotate(' + computeTextRotation(d) + ')';
         }).text(function (d) {
@@ -32719,6 +32745,10 @@ var Hierarchical = function () {
       this.selectedUoa = newUoa;
       console.log('Reloading the chart using a new dataset');
       this.hierarchicalData = dataManager.reformatData(dataManager.createUniversitiesPerformanceHierarchy(this.data, this.selectedUoa, this.selectedUni));
+      // if (this.hierarchicalData === undefined || this.hierarchicalData === []) {
+      //   console.log('that: ', 'true');
+      //   d3.select('#error').style('display', 'flex');
+      // }
     }
   }]);
   return Hierarchical;

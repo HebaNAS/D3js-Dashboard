@@ -22,6 +22,7 @@ export const universityManagement =
     <div class="card-style" id="compare-uni">
       <div id="chart">
         <div class="tooltip-graph"></div>
+        <div id="error">Please Select a Unit of Assessment to update the chart</div>
         <div id="explanation" style="visibility: visible;">
         </div>
       </div>

@@ -19,6 +19,7 @@ export const industryResearch =
     <div class="card-style" id="compare-uni">
       <div id="chart">
         <div class="tooltip"></div>
+        <div id="error">Please Select a University from the map to update the chart</div>
         <div id="explanation" style="visibility: visible;">
         </div>
       </div>
