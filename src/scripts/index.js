@@ -16,11 +16,11 @@ import { universityManagement } from './templates/university-management';
 import { industryResearch } from './templates/industry-research';
 import toggleMenu from './views/menu-toggle';
 import Map from './views/map';
-import populateSelections from './views/populateSelections';
-import populateCities from './views/populateCities';
+import populateSelections from './helpers/populateSelections';
+import populateCities from './helpers/populateCities';
 import HBarChart from './views/hBarChart';
-import Hierarchical from './views/hierarchical.js';
-import ForceLayout from './views/force.js';
+import Hierarchical from './views/hierarchical';
+import ForceLayout from './views/force';
 
 // Instantiate a new Data Manager Class
 const dataManager = new DataManager();

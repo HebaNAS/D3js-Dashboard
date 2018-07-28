@@ -30592,6 +30592,58 @@ function join(lookupTable, mainTable, mainKey, lookupKey, select) {
 },{}],64:[function(require,module,exports){
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = populateCities;
+/*****************************************************************************/
+/*               Name: Data Visualization Coursework - F21DV                 */
+/*    File Description: Populate Selection with universities from dataset    */
+/*                        Author: Heba El-Shimy                              */
+/*                        Email: he12@hw.ac.uk                               */
+/*                        Date: 15 July 2018                                 */
+/*****************************************************************************/
+
+function populateCities(data) {
+  var selector = document.getElementById('selector-city');
+
+  data.forEach(function (item) {
+    var option = document.createElement('option');
+    option.text = item;
+    option.value = item;
+    selector.appendChild(option);
+  });
+}
+
+},{}],65:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = populateSelections;
+/*****************************************************************************/
+/*               Name: Data Visualization Coursework - F21DV                 */
+/*    File Description: Populate HTML Selection with options from dataset    */
+/*                        Author: Heba El-Shimy                              */
+/*                        Email: he12@hw.ac.uk                               */
+/*                        Date: 6 July 2018                                 */
+/*****************************************************************************/
+
+function populateSelections(data) {
+  var selector = document.getElementById('selector');
+
+  data.forEach(function (item) {
+    var option = document.createElement('option');
+    option.text = item;
+    option.value = item;
+    selector.appendChild(option);
+  });
+}
+
+},{}],66:[function(require,module,exports){
+'use strict';
+
 var _d = require('d3');
 
 var d3 = _interopRequireWildcard(_d);
@@ -30614,11 +30666,11 @@ var _map = require('./views/map');
 
 var _map2 = _interopRequireDefault(_map);
 
-var _populateSelections = require('./views/populateSelections');
+var _populateSelections = require('./helpers/populateSelections');
 
 var _populateSelections2 = _interopRequireDefault(_populateSelections);
 
-var _populateCities = require('./views/populateCities');
+var _populateCities = require('./helpers/populateCities');
 
 var _populateCities2 = _interopRequireDefault(_populateCities);
 
@@ -30626,11 +30678,11 @@ var _hBarChart = require('./views/hBarChart');
 
 var _hBarChart2 = _interopRequireDefault(_hBarChart);
 
-var _hierarchical = require('./views/hierarchical.js');
+var _hierarchical = require('./views/hierarchical');
 
 var _hierarchical2 = _interopRequireDefault(_hierarchical);
 
-var _force = require('./views/force.js');
+var _force = require('./views/force');
 
 var _force2 = _interopRequireDefault(_force);
 
@@ -30912,7 +30964,7 @@ startApplication();
 // Import Menu Toggle Functionality
 (0, _menuToggle2.default)(window, document);
 
-},{"./models/data":65,"./templates/eca-phd":66,"./templates/industry-research":67,"./templates/university-management":68,"./views/force.js":69,"./views/hBarChart":70,"./views/hierarchical.js":71,"./views/map":72,"./views/menu-toggle":73,"./views/populateCities":74,"./views/populateSelections":75,"d3":61}],65:[function(require,module,exports){
+},{"./helpers/populateCities":64,"./helpers/populateSelections":65,"./models/data":67,"./templates/eca-phd":68,"./templates/industry-research":69,"./templates/university-management":70,"./views/force":71,"./views/hBarChart":72,"./views/hierarchical":73,"./views/map":74,"./views/menu-toggle":75,"d3":61}],67:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31638,7 +31690,7 @@ var DataManager = function () {
 
 exports.default = DataManager;
 
-},{"../helpers/join":63,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"babel-runtime/helpers/toConsumableArray":5,"d3":61}],66:[function(require,module,exports){
+},{"../helpers/join":63,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"babel-runtime/helpers/toConsumableArray":5,"d3":61}],68:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31654,7 +31706,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var mainEca = exports.mainEca = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">Unit of Assessment</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
-},{}],67:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31670,7 +31722,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var industryResearch = exports.industryResearch = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">City</label>\n      <select id=\"selector-city\">\n\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
-},{}],68:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31686,7 +31738,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var universityManagement = exports.universityManagement = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"graph\">\n      <div class=\"tooltip\"></div>\n      <span>Available Units of Assessment</span>\n    </div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip-graph\"></div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">University</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
-},{}],69:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31934,7 +31986,7 @@ var ForceLayout = function () {
 
 exports.default = ForceLayout;
 
-},{"../models/data":65,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":61}],70:[function(require,module,exports){
+},{"../models/data":67,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":61}],72:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32294,7 +32346,7 @@ var HBarChart = function () {
 
 exports.default = HBarChart;
 
-},{"../models/data":65,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"cluster":6,"d3":61}],71:[function(require,module,exports){
+},{"../models/data":67,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"cluster":6,"d3":61}],73:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32680,7 +32732,7 @@ var Hierarchical = function () {
 
 exports.default = Hierarchical;
 
-},{"../models/data":65,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":61}],72:[function(require,module,exports){
+},{"../models/data":67,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":61}],74:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32707,16 +32759,14 @@ var _data = require('../models/data');
 
 var _data2 = _interopRequireDefault(_data);
 
-var _hBarChart = require('../views/hBarChart');
-
-var _hBarChart2 = _interopRequireDefault(_hBarChart);
-
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // Instantiate a new Data Manager Class
-/*****************************************************************************/
+
+// Import Leaflet module for creating maps
+var dataManager = new _data2.default(); /*****************************************************************************/
 /*               Name: Data Visualization Coursework - F21DV                 */
 /*  File Description: Create Map and add markers latlng from provided data   */
 /*                        Author: Heba El-Shimy                              */
@@ -32725,8 +32775,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 /*****************************************************************************/
 
 // Import D3js library
-var dataManager = new _data2.default();
-// Import Leaflet module for creating maps
 
 var Map = function () {
 
@@ -32917,7 +32965,7 @@ var Map = function () {
 
 exports.default = Map;
 
-},{"../models/data":65,"../views/hBarChart":70,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":61,"leaflet":62}],73:[function(require,module,exports){
+},{"../models/data":67,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":61,"leaflet":62}],75:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32978,56 +33026,4 @@ function toggleMenu(window, document) {
   window.addEventListener(WINDOW_CHANGE_EVENT, closeMenu);
 }
 
-},{}],74:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = populateCities;
-/*****************************************************************************/
-/*               Name: Data Visualization Coursework - F21DV                 */
-/*    File Description: Populate Selection with universities from dataset    */
-/*                        Author: Heba El-Shimy                              */
-/*                        Email: he12@hw.ac.uk                               */
-/*                        Date: 15 July 2018                                 */
-/*****************************************************************************/
-
-function populateCities(data) {
-  var selector = document.getElementById('selector-city');
-
-  data.forEach(function (item) {
-    var option = document.createElement('option');
-    option.text = item;
-    option.value = item;
-    selector.appendChild(option);
-  });
-}
-
-},{}],75:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = populateSelections;
-/*****************************************************************************/
-/*               Name: Data Visualization Coursework - F21DV                 */
-/*    File Description: Populate HTML Selection with options from dataset    */
-/*                        Author: Heba El-Shimy                              */
-/*                        Email: he12@hw.ac.uk                               */
-/*                        Date: 6 July 2018                                 */
-/*****************************************************************************/
-
-function populateSelections(data) {
-  var selector = document.getElementById('selector');
-
-  data.forEach(function (item) {
-    var option = document.createElement('option');
-    option.text = item;
-    option.value = item;
-    selector.appendChild(option);
-  });
-}
-
-},{}]},{},[64]);
+},{}]},{},[66]);

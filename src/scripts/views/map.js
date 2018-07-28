@@ -12,7 +12,6 @@ import * as d3 from 'd3';
 import * as L from 'leaflet';
 
 import DataManager from '../models/data';
-import HBarChart from '../views/hBarChart';
 
 // Instantiate a new Data Manager Class
 const dataManager = new DataManager();
