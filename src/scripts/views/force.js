@@ -158,15 +158,15 @@ export default class ForceLayout {
 
       // Bind data to nodes
       node = node.data(data);
-  
+      
       // Use General Update Pattern
-      // Exit and remove unused nodes
+      // Exit and remove unused nodes  
       node.exit()
         .transition()
         .duration(100)
         .attr('r', 1e-6)
         .remove();
-
+      
       // Update existing nodes
       node.transition()
         .duration(100)
@@ -174,11 +174,10 @@ export default class ForceLayout {
 
       // Draw nodes
       node = node.enter()
-        .append('g');
-
-      node.append('circle')
-        .attr('r', (d) => { return d.values[3].values[0].value + 1; })
+        .append('circle')
+        .attr('r', (d) => { return d.values[3].values[0].value / 1.25 + 1; })
         .attr('fill', (d) => { return color(d.values[3].values[0].value); })
+        .style('cursor', 'pointer')
         .merge(node)
         .on('mouseover', handleMouseOver)
         .on('mouseout', handleMouseOut)
@@ -192,25 +191,19 @@ export default class ForceLayout {
         .on('end', dragended)
       );
 
-      node.append('text')
-        .style('font-size', '0.15rem')
-        .text((d) => { return d.key; });
-
       // Update the simulation based on the data
       simulation
-      .nodes(data)
-      .force('collide',
-        d3.forceCollide()
-          .strength(0.5)
-          .radius((d) => { return d.values[3].values[0].value * 1.5 + 2.5; })
-          .iterations(1)
-      )
-      .on('tick', (d) => {
-        node
-          .attr('cx', (d) => { return d.x; })
-          .attr('cy', (d) => { return d.y; });
-      }); 
-      
+        .nodes(data)
+        .force('collide',
+          d3.forceCollide()
+            .strength(0.5)
+            .radius((d) => { return d.values[3].values[0].value + 2.5; })
+            .iterations(1)
+        )
+        .on('tick', (d) => {
+          node.attr('cx', (d) => d.x)
+            .attr('cy', (d) => d.y);
+        });
     }
 
     // https://bl.ocks.org/HarryStevens/f636199a46fc4b210fbca3b1dc4ef372

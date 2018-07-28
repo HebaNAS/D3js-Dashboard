@@ -27,7 +27,7 @@
   text-align: center;
   color: var(--white);
 }
-#graph circle text {
+#graph circle text.graph-labels {
   position: absolute;
   top: 100px;
   left: 100px;

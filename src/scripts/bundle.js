@@ -31910,7 +31910,7 @@ var ForceLayout = function () {
         node = node.data(data);
 
         // Use General Update Pattern
-        // Exit and remove unused nodes
+        // Exit and remove unused nodes  
         node.exit().transition().duration(100).attr('r', 1e-6).remove();
 
         // Update existing nodes
@@ -31919,25 +31919,19 @@ var ForceLayout = function () {
         });
 
         // Draw nodes
-        node = node.enter().append('g');
-
-        node.append('circle').attr('r', function (d) {
-          return d.values[3].values[0].value + 1;
+        node = node.enter().append('circle').attr('r', function (d) {
+          return d.values[3].values[0].value / 1.25 + 1;
         }).attr('fill', function (d) {
           return color(d.values[3].values[0].value);
-        }).merge(node).on('mouseover', handleMouseOver).on('mouseout', handleMouseOut).on('click', handleClick);
+        }).style('cursor', 'pointer').merge(node).on('mouseover', handleMouseOver).on('mouseout', handleMouseOut).on('click', handleClick);
 
         // https://bl.ocks.org/
         // Dragging interactions
         node.call(d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended));
 
-        node.append('text').style('font-size', '0.15rem').text(function (d) {
-          return d.key;
-        });
-
         // Update the simulation based on the data
         simulation.nodes(data).force('collide', d3.forceCollide().strength(0.5).radius(function (d) {
-          return d.values[3].values[0].value * 1.5 + 2.5;
+          return d.values[3].values[0].value + 2.5;
         }).iterations(1)).on('tick', function (d) {
           node.attr('cx', function (d) {
             return d.x;
