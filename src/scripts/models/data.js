@@ -15,7 +15,6 @@ import * as d3 from 'd3';
 
 // Import array join code snippet
 import join from '../helpers/join';
-import onlyUnique from '../helpers/getUnique';
 
 export default class DataManager {
 

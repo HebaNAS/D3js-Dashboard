@@ -30553,24 +30553,6 @@ exports.map = createMap;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = onlyUnique;
-/*
- * Code Snippet provided by Stack Overflow
- * URL: https://stackoverflow.com/questions/1960473/get-all-unique-values-in-an-array-remove-duplicates
- * Adapted for use with this application's requirements
- */
-
-// Create a function to return unique values of an array
-function onlyUnique(value, index, self) {
-  return self.indexOf(value) === index;
-}
-
-},{}],64:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 exports.default = join;
 /*
  * Code Snippet provided by LearnJSData.com
@@ -30607,7 +30589,7 @@ function join(lookupTable, mainTable, mainKey, lookupKey, select) {
   return output;
 }
 
-},{}],65:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 'use strict';
 
 var _d = require('d3');
@@ -30930,7 +30912,7 @@ startApplication();
 // Import Menu Toggle Functionality
 (0, _menuToggle2.default)(window, document);
 
-},{"./models/data":66,"./templates/eca-phd":67,"./templates/industry-research":68,"./templates/university-management":69,"./views/force.js":70,"./views/hBarChart":71,"./views/hierarchical.js":72,"./views/map":73,"./views/menu-toggle":74,"./views/populateCities":75,"./views/populateSelections":76,"d3":61}],66:[function(require,module,exports){
+},{"./models/data":65,"./templates/eca-phd":66,"./templates/industry-research":67,"./templates/university-management":68,"./views/force.js":69,"./views/hBarChart":70,"./views/hierarchical.js":71,"./views/map":72,"./views/menu-toggle":73,"./views/populateCities":74,"./views/populateSelections":75,"d3":61}],65:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30957,15 +30939,23 @@ var _join = require('../helpers/join');
 
 var _join2 = _interopRequireDefault(_join);
 
-var _getUnique = require('../helpers/getUnique');
-
-var _getUnique2 = _interopRequireDefault(_getUnique);
-
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// Import array join code snippet
+/***********************************************************************************/
+/*                   Name: Data Visualization Coursework - F21DV                   */
+/*  File Description: Class to manage all functionality for extracting needed data */
+/*                              Author: Heba El-Shimy                              */
+/*                             Email: he12@hw.ac.uk                                */
+/*                              Date: 28 June 2018                                 */
+/*              References: LearnJSData.com - Combining Data                       */
+/*                     http://learnjsdata.com/combine_data.html                    */
+/*                         Student contribution: 90%                               */
+/*                          External Resources: 10%                                */
+/***********************************************************************************/
+
+// Import D3js library
 var DataManager = function () {
 
 	// Create a constructor function with variables to work with
@@ -31641,24 +31631,14 @@ var DataManager = function () {
 		}
 	}]);
 	return DataManager;
-}(); /***********************************************************************************/
-/*                   Name: Data Visualization Coursework - F21DV                   */
-/*  File Description: Class to manage all functionality for extracting needed data */
-/*                              Author: Heba El-Shimy                              */
-/*                             Email: he12@hw.ac.uk                                */
-/*                              Date: 28 June 2018                                 */
-/*              References: LearnJSData.com - Combining Data                       */
-/*                     http://learnjsdata.com/combine_data.html                    */
-/*                         Student contribution: 90%                               */
-/*                          External Resources: 10%                                */
-/***********************************************************************************/
+}();
 
-// Import D3js library
+// Import array join code snippet
 
 
 exports.default = DataManager;
 
-},{"../helpers/getUnique":63,"../helpers/join":64,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"babel-runtime/helpers/toConsumableArray":5,"d3":61}],67:[function(require,module,exports){
+},{"../helpers/join":63,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"babel-runtime/helpers/toConsumableArray":5,"d3":61}],66:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31674,7 +31654,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var mainEca = exports.mainEca = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">Unit of Assessment</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
-},{}],68:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31690,7 +31670,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var industryResearch = exports.industryResearch = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">City</label>\n      <select id=\"selector-city\">\n\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
-},{}],69:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31706,7 +31686,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var universityManagement = exports.universityManagement = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"graph\">\n      <div class=\"tooltip\"></div>\n      <span>Available Units of Assessment</span>\n    </div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip-graph\"></div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">University</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
-},{}],70:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31954,7 +31934,7 @@ var ForceLayout = function () {
 
 exports.default = ForceLayout;
 
-},{"../models/data":66,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":61}],71:[function(require,module,exports){
+},{"../models/data":65,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":61}],70:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32314,7 +32294,7 @@ var HBarChart = function () {
 
 exports.default = HBarChart;
 
-},{"../models/data":66,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"cluster":6,"d3":61}],72:[function(require,module,exports){
+},{"../models/data":65,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"cluster":6,"d3":61}],71:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32700,7 +32680,7 @@ var Hierarchical = function () {
 
 exports.default = Hierarchical;
 
-},{"../models/data":66,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":61}],73:[function(require,module,exports){
+},{"../models/data":65,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":61}],72:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32937,7 +32917,7 @@ var Map = function () {
 
 exports.default = Map;
 
-},{"../models/data":66,"../views/hBarChart":71,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":61,"leaflet":62}],74:[function(require,module,exports){
+},{"../models/data":65,"../views/hBarChart":70,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":61,"leaflet":62}],73:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32998,7 +32978,7 @@ function toggleMenu(window, document) {
   window.addEventListener(WINDOW_CHANGE_EVENT, closeMenu);
 }
 
-},{}],75:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33024,7 +33004,7 @@ function populateCities(data) {
   });
 }
 
-},{}],76:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33050,4 +33030,4 @@ function populateSelections(data) {
   });
 }
 
-},{}]},{},[65]);
+},{}]},{},[64]);
