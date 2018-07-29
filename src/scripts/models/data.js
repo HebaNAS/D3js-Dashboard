@@ -525,9 +525,6 @@ export default class DataManager {
 			.key((d) => d.Profile)
 			.entries(universities);
 
-		
-			console.log('this: ', universities);
-
 		return nestedData;
 	}
 

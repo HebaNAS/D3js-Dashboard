@@ -41,8 +41,14 @@ export default class HBarChart {
     const map = document.getElementById('map');
     // Get the current selection from the select box
     const selectBox = document.getElementById('selector');
+    // Get force layout conatiner
+    const force = document.getElementById('graph');
     // Rearrange the dataset
-    const newData = this.data.map((d) => d.value);
+    let newData = this.data.map((d) => d.value);
+    // Sort the dataset based on universities 4* score
+    newData = newData.sort((a, b) => {
+      return b.Overall4Score - a.Overall4Score;
+    });
     // Define keys for stacking our data
     const keys = ['OverallUCScore', 'Overall1Score', 'Overall2Score',
               'Overall3Score', 'Overall4Score'];
@@ -94,11 +100,6 @@ export default class HBarChart {
         uniQuartiles.push(item.Name);
         displayedResults.push('Upper Q. (' + item.Outputs4Score + ')');
       }
-    });
-
-    // Sort the dataset based on universities 4* score
-    newData.sort((a, b) => {
-      return b.Overall4Score - a.Overall4Score;
     });
   
     // Define the stack structure
@@ -283,7 +284,25 @@ export default class HBarChart {
       });
     }
 
+    // Listen for selected unit of assessment from stack and update
+      // the chart accordingly
+      if (force !== null) {
+        force.addEventListener('selectForceUoa', (event) => { 
+          console.log('Selected UoA Changed');
+          // Update the hierarchical sunburst chart with new data
+          uoa = event.detail.props().key;
+          this.reload(
+            selectedUniversity,
+            uoa,
+            orgData,
+            dataManager.getLocationByUoA(orgData, uoa),
+            'ShowUoA'
+          );
+        }, false);
+      }
+
     if (this.type !== 'ShowUniversity' && this.type !== 'StackUoa') {
+
       // Right axis with quartiles
       // https://bl.ocks.org
       g.append('g')
@@ -300,9 +319,9 @@ export default class HBarChart {
           if (d === uniQuartiles[0]) {
             result = displayedResults[0];
           } else if (d === uniQuartiles[1]) {
-            result = displayedResults[2];
-          } else if (d === uniQuartiles[2]) {
             result = displayedResults[1];
+          } else if (d === uniQuartiles[2]) {
+            result = displayedResults[2];
           }
             
           return result;
@@ -310,6 +329,7 @@ export default class HBarChart {
         .style('opacity', 1);
 
     }
+
 
     /*------------------------------------------------------*/
 

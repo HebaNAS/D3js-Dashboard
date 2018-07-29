@@ -19,7 +19,10 @@ export const mainEca =
     <div class="card-style" id="compare-uni">
       <div id="chart">
         <div class="tooltip"></div>
-        <div id="error">Please Select a University from the map to update the chart</div>
+        <div id="error">
+          The current university doesn't have the selected Unit of Assessment. <br>
+          Please Select another University from the map to update the chart
+        </div>
         <div id="explanation" style="visibility: visible;">
         </div>
       </div>

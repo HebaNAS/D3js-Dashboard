@@ -31648,8 +31648,6 @@ var DataManager = function () {
 				return d.Profile;
 			}).entries(universities);
 
-			console.log('this: ', universities);
-
 			return nestedData;
 		}
 
@@ -31706,7 +31704,7 @@ Object.defineProperty(exports, "__esModule", {
 /*                        Date: 15 July 2018                                 */
 /*****************************************************************************/
 
-var mainEca = exports.mainEca = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"error\">Please Select a University from the map to update the chart</div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">Unit of Assessment</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
+var mainEca = exports.mainEca = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"error\">\n          The current university doesn't have the selected Unit of Assessment. <br>\n          Please Select another University from the map to update the chart\n        </div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">Unit of Assessment</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
 },{}],69:[function(require,module,exports){
 "use strict";
@@ -32057,9 +32055,15 @@ var HBarChart = function () {
       var map = document.getElementById('map');
       // Get the current selection from the select box
       var selectBox = document.getElementById('selector');
+      // Get force layout conatiner
+      var force = document.getElementById('graph');
       // Rearrange the dataset
       var newData = this.data.map(function (d) {
         return d.value;
+      });
+      // Sort the dataset based on universities 4* score
+      newData = newData.sort(function (a, b) {
+        return b.Overall4Score - a.Overall4Score;
       });
       // Define keys for stacking our data
       var keys = ['OverallUCScore', 'Overall1Score', 'Overall2Score', 'Overall3Score', 'Overall4Score'];
@@ -32106,11 +32110,6 @@ var HBarChart = function () {
           uniQuartiles.push(item.Name);
           displayedResults.push('Upper Q. (' + item.Outputs4Score + ')');
         }
-      });
-
-      // Sort the dataset based on universities 4* score
-      newData.sort(function (a, b) {
-        return b.Overall4Score - a.Overall4Score;
       });
 
       // Define the stack structure
@@ -32248,7 +32247,19 @@ var HBarChart = function () {
         });
       }
 
+      // Listen for selected unit of assessment from stack and update
+      // the chart accordingly
+      if (force !== null) {
+        force.addEventListener('selectForceUoa', function (event) {
+          console.log('Selected UoA Changed');
+          // Update the hierarchical sunburst chart with new data
+          uoa = event.detail.props().key;
+          _this.reload(selectedUniversity, uoa, orgData, dataManager.getLocationByUoA(orgData, uoa), 'ShowUoA');
+        }, false);
+      }
+
       if (this.type !== 'ShowUniversity' && this.type !== 'StackUoa') {
+
         // Right axis with quartiles
         // https://bl.ocks.org
         g.append('g').attr('class', 'axis quartiles').attr('transform', 'translate(' + svgDOM.offsetWidth / 1.125 + ',' + (15 - svgDOM.offsetHeight / 100) + ')').call(d3.axisRight(scaleY).tickValues(uniQuartiles));
@@ -32258,9 +32269,9 @@ var HBarChart = function () {
           if (d === uniQuartiles[0]) {
             result = displayedResults[0];
           } else if (d === uniQuartiles[1]) {
-            result = displayedResults[2];
-          } else if (d === uniQuartiles[2]) {
             result = displayedResults[1];
+          } else if (d === uniQuartiles[2]) {
+            result = displayedResults[2];
           }
 
           return result;
@@ -32523,7 +32534,7 @@ var Hierarchical = function () {
         });
       }
 
-      // Adding text labels to sunbusrt partitions based
+      // Adding text labels to sunburst partitions based
       // on fed data
       g.selectAll('.category').data(nodes.filter(function (d) {
         return d.data.value === undefined;
@@ -32542,7 +32553,7 @@ var Hierarchical = function () {
       })).enter().append('text').attr('class', 'label').attr('transform', function (d) {
         return 'translate(' + arc.centroid(d) + ') rotate(' + computeTextRotation(d) + ')';
       }).text(function (d) {
-        return d.parent ? d.data.key : '';
+        return d.data.key;
       });
 
       /*------------------------------------------------------*/

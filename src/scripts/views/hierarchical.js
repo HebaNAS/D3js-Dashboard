@@ -161,7 +161,7 @@ export default class Hierarchical {
       });
     }
     
-    // Adding text labels to sunbusrt partitions based
+    // Adding text labels to sunburst partitions based
     // on fed data
     g.selectAll('.category')
       .data(nodes.filter((d) => { return d.data.value === undefined; }))
@@ -185,7 +185,7 @@ export default class Hierarchical {
       .attr('transform', (d) => {
               return 'translate(' + arc.centroid(d) +
               ') rotate(' + computeTextRotation(d) + ')'; })
-      .text((d) => { return d.parent ? d.data.key : ''; });
+      .text((d) => { return d.data.key; });
 
 
     /*------------------------------------------------------*/
