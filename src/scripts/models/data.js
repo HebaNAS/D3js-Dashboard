@@ -231,7 +231,6 @@ export default class DataManager {
 	 * and selecting a tier of score
 	 */
 	getLocationByUoA(data, uoa) {
-		
 		// Create a variable to hold filtered data which will contain only universities
 		// that provide research in the selected area (Unit of Assessment)
 		let filtered = data.filter((item) => {
@@ -433,7 +432,6 @@ export default class DataManager {
 				delete d.value;
 			}
 		});
-		
 		return data;
 	}
 

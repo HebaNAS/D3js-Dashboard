@@ -250,6 +250,10 @@ export default class Hierarchical {
 
         explanation.innerText = this.selectedUoa;
         update(this.hierarchicalData);
+
+        if (error.style.display === 'flex') {
+          error.style.display = 'none';
+        }
       }, false);
     }
 

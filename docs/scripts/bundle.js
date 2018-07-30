@@ -30595,6 +30595,67 @@ function join(lookupTable, mainTable, mainKey, lookupKey, select) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.default = toggleMenu;
+/*****************************************************************************/
+/*               Name: Data Visualization Coursework - F21DV                 */
+/*            File Description: Mobile menu toggle functionality             */
+/*   References: PureCSS - https://purecss.io/layouts/tucked-menu-vertical/  */
+/*                        Author: Heba El-Shimy                              */
+/*                        Email: he12@hw.ac.uk                               */
+/*                        Date: 25 June 2018                                 */
+/*                     Student Contribution: 20%                             */
+/*                     Code from reference: 80%                              */
+/*****************************************************************************/
+
+function toggleMenu(window, document) {
+
+  var menu = document.getElementById('mobile-menu');
+  var button = document.getElementById('toggle');
+  var WINDOW_CHANGE_EVENT = 'onorientationchange' in window ? 'orientationchange' : 'resize';
+
+  function toggleMenu() {
+    if (!menu.classList.contains('open')) {
+      menu.style.display = 'flex';
+      menu.style.transition = 'all 0.5s ease-in-out';
+      setTimeout(function () {
+        menu.style.opacity = 1;
+        menu.style.height = '200px';
+      }, 0.02);
+      //menu.style.maxHeight = '600px';
+      menu.classList.add('open');
+      button.classList.add('x');
+    } else {
+      menu.style.display = 'none';
+      menu.style.transition = 'all 0.5s ease-in-out';
+      setTimeout(function () {
+        menu.style.opacity = 0;
+        menu.style.height = 0;
+      }, 0.02);
+      menu.classList.remove('open');
+      button.classList.remove('x');
+    }
+  }
+
+  function closeMenu() {
+    if (menu.classList.contains('open')) {
+      toggleMenu();
+    }
+  }
+
+  button.addEventListener('click', function (e) {
+    toggleMenu();
+    e.preventDefault();
+  });
+
+  window.addEventListener(WINDOW_CHANGE_EVENT, closeMenu);
+}
+
+},{}],65:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 exports.default = populateCities;
 /*****************************************************************************/
 /*               Name: Data Visualization Coursework - F21DV                 */
@@ -30615,7 +30676,7 @@ function populateCities(data) {
   });
 }
 
-},{}],65:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30641,7 +30702,7 @@ function populateSelections(data) {
   });
 }
 
-},{}],66:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 'use strict';
 
 var _d = require('d3');
@@ -30658,7 +30719,7 @@ var _universityManagement = require('./templates/university-management');
 
 var _industryResearch = require('./templates/industry-research');
 
-var _menuToggle = require('./views/menu-toggle');
+var _menuToggle = require('./helpers/menu-toggle');
 
 var _menuToggle2 = _interopRequireDefault(_menuToggle);
 
@@ -30964,7 +31025,7 @@ startApplication();
 // Import Menu Toggle Functionality
 (0, _menuToggle2.default)(window, document);
 
-},{"./helpers/populateCities":64,"./helpers/populateSelections":65,"./models/data":67,"./templates/eca-phd":68,"./templates/industry-research":69,"./templates/university-management":70,"./views/force":71,"./views/hBarChart":72,"./views/hierarchical":73,"./views/map":74,"./views/menu-toggle":75,"d3":61}],67:[function(require,module,exports){
+},{"./helpers/menu-toggle":64,"./helpers/populateCities":65,"./helpers/populateSelections":66,"./models/data":68,"./templates/eca-phd":69,"./templates/industry-research":70,"./templates/university-management":71,"./views/force":72,"./views/hBarChart":73,"./views/hierarchical":74,"./views/map":75,"d3":61}],68:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31244,7 +31305,6 @@ var DataManager = function () {
 	}, {
 		key: 'getLocationByUoA',
 		value: function getLocationByUoA(data, uoa) {
-
 			// Create a variable to hold filtered data which will contain only universities
 			// that provide research in the selected area (Unit of Assessment)
 			var filtered = data.filter(function (item) {
@@ -31550,7 +31610,6 @@ var DataManager = function () {
 					delete d.value;
 				}
 			});
-
 			return data;
 		}
 
@@ -31690,7 +31749,7 @@ var DataManager = function () {
 
 exports.default = DataManager;
 
-},{"../helpers/join":63,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"babel-runtime/helpers/toConsumableArray":5,"d3":61}],68:[function(require,module,exports){
+},{"../helpers/join":63,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"babel-runtime/helpers/toConsumableArray":5,"d3":61}],69:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31706,7 +31765,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var mainEca = exports.mainEca = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"error\">\n          The current university doesn't have the selected Unit of Assessment. <br>\n          Please Select another University from the map to update the chart\n        </div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">Unit of Assessment</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
-},{}],69:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31720,9 +31779,9 @@ Object.defineProperty(exports, "__esModule", {
 /*                        Date: 15 July 2018                                 */
 /*****************************************************************************/
 
-var industryResearch = exports.industryResearch = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"error\">Please Select a University from the map to update the chart</div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">City</label>\n      <select id=\"selector-city\">\n\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
+var industryResearch = exports.industryResearch = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"map\"></div>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip\"></div>\n        <div id=\"error\">\n          The current university doesn't have the selected Unit of Assessment. <br>\n          Please Select another University from the map to update the chart\n        </div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">City</label>\n      <select id=\"selector-city\">\n\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
-},{}],70:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31736,9 +31795,9 @@ Object.defineProperty(exports, "__esModule", {
 /*                        Date: 15 July 2018                                 */
 /*****************************************************************************/
 
-var universityManagement = exports.universityManagement = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"graph\">\n      <div class=\"tooltip\"></div>\n      <span>Available Units of Assessment</span>\n    </div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip-graph\"></div>\n        <div id=\"error\">Please Select a Unit of Assessment to update the chart</div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">University</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
+var universityManagement = exports.universityManagement = "\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <div class=\"card-style\" id=\"uoa-card\"></div>\n    <div class=\"card-style\" id=\"graph\">\n      <div class=\"tooltip\"></div>\n      <span>Available Units of Assessment</span>\n    </div>\n    <div class=\"card-style\" id=\"compare-uni\">\n      <div id=\"chart\">\n        <div class=\"tooltip-graph\"></div>\n        <div id=\"error\">\n          Please Select a Unit of Assessment to update the chart\n        </div>\n        <div id=\"explanation\" style=\"visibility: visible;\">\n        </div>\n      </div>\n    </div>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <form class=\"selector text-center\">\n      <label class=\"font-07 font-bold\">University</label>\n      <select id=\"selector\">\n      </select>\n    </form>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n    <p class=\"\"></p>\n  ";
 
-},{}],71:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31980,7 +32039,7 @@ var ForceLayout = function () {
 
 exports.default = ForceLayout;
 
-},{"../models/data":67,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":61}],72:[function(require,module,exports){
+},{"../models/data":68,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":61}],73:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32353,7 +32412,7 @@ var HBarChart = function () {
 
 exports.default = HBarChart;
 
-},{"../models/data":67,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"cluster":6,"d3":61}],73:[function(require,module,exports){
+},{"../models/data":68,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"cluster":6,"d3":61}],74:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32618,6 +32677,10 @@ var Hierarchical = function () {
 
           explanation.innerText = _this.selectedUoa;
           update(_this.hierarchicalData);
+
+          if (error.style.display === 'flex') {
+            error.style.display = 'none';
+          }
         }, false);
       }
 
@@ -32767,7 +32830,7 @@ var Hierarchical = function () {
 
 exports.default = Hierarchical;
 
-},{"../models/data":67,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":61}],74:[function(require,module,exports){
+},{"../models/data":68,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":61}],75:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33000,65 +33063,4 @@ var Map = function () {
 
 exports.default = Map;
 
-},{"../models/data":67,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":61,"leaflet":62}],75:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = toggleMenu;
-/*****************************************************************************/
-/*               Name: Data Visualization Coursework - F21DV                 */
-/*            File Description: Mobile menu toggle functionality             */
-/*   References: PureCSS - https://purecss.io/layouts/tucked-menu-vertical/  */
-/*                        Author: Heba El-Shimy                              */
-/*                        Email: he12@hw.ac.uk                               */
-/*                        Date: 25 June 2018                                 */
-/*                     Student Contribution: 20%                             */
-/*                     Code from reference: 80%                              */
-/*****************************************************************************/
-
-function toggleMenu(window, document) {
-
-  var menu = document.getElementById('mobile-menu');
-  var button = document.getElementById('toggle');
-  var WINDOW_CHANGE_EVENT = 'onorientationchange' in window ? 'orientationchange' : 'resize';
-
-  function toggleMenu() {
-    if (!menu.classList.contains('open')) {
-      menu.style.display = 'flex';
-      menu.style.transition = 'all 0.5s ease-in-out';
-      setTimeout(function () {
-        menu.style.opacity = 1;
-        menu.style.height = '200px';
-      }, 0.02);
-      //menu.style.maxHeight = '600px';
-      menu.classList.add('open');
-      button.classList.add('x');
-    } else {
-      menu.style.display = 'none';
-      menu.style.transition = 'all 0.5s ease-in-out';
-      setTimeout(function () {
-        menu.style.opacity = 0;
-        menu.style.height = 0;
-      }, 0.02);
-      menu.classList.remove('open');
-      button.classList.remove('x');
-    }
-  }
-
-  function closeMenu() {
-    if (menu.classList.contains('open')) {
-      toggleMenu();
-    }
-  }
-
-  button.addEventListener('click', function (e) {
-    toggleMenu();
-    e.preventDefault();
-  });
-
-  window.addEventListener(WINDOW_CHANGE_EVENT, closeMenu);
-}
-
-},{}]},{},[66]);
+},{"../models/data":68,"babel-runtime/helpers/classCallCheck":3,"babel-runtime/helpers/createClass":4,"d3":61,"leaflet":62}]},{},[67]);

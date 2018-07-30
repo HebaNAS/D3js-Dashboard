@@ -14,7 +14,7 @@ import DataManager from './models/data';
 import { mainEca } from './templates/eca-phd';
 import { universityManagement } from './templates/university-management';
 import { industryResearch } from './templates/industry-research';
-import toggleMenu from './views/menu-toggle';
+import toggleMenu from './helpers/menu-toggle';
 import Map from './views/map';
 import populateSelections from './helpers/populateSelections';
 import populateCities from './helpers/populateCities';
@@ -32,8 +32,8 @@ function startApplication() {
   // then create a callback for the function responsible
   // for building the dashboard
   d3.queue()
-  .defer(d3.csv, 'https://raw.githubusercontent.com/HebaNAS/D3js-Dashboard/master/_data/REF2014_Results.csv')
-  .defer(d3.csv, 'https://raw.githubusercontent.com/HebaNAS/D3js-Dashboard/master/_data/learning-providers-plus.csv')
+  .defer(d3.csv, '../_data/REF2014_Results.csv')
+  .defer(d3.csv, '../_data/learning-providers-plus.csv')
   .await((err, mainData, extraData) => {
     // After waiting for datasets to load, do cleaning and pass data for
     // creating the dashboard
