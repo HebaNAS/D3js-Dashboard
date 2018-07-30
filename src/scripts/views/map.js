@@ -24,7 +24,6 @@ export default class Map {
     this.scoreCalc = scoreCalc;
     this.map = {};
   }
-
   /*
    * Function that draws a map inside the specified element in the DOM
    * and takes in data and uses that to draw markers for locations on the map
@@ -149,6 +148,8 @@ export default class Map {
         .duration(100)
         .remove();
 
+      // Example of updating nodes and applying a smooth transition
+      // effect using d3.transition
       g.selectAll('path')
         .transition()
         .duration(250)

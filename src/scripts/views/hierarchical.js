@@ -4,6 +4,9 @@
 /*                        Author: Heba El-Shimy                              */
 /*                        Email: he12@hw.ac.uk                               */
 /*                         Date: 16 July 2018                                */
+/*                     Student Contribution: 10%                             */
+/*                     Code from reference: 90%                              */
+/*                 References:  https://bl.ocks.org/                         */
 /*****************************************************************************/
 
 // Import D3js library
@@ -338,12 +341,6 @@ export default class Hierarchical {
     // Redraw and scale paths according to map selection
     function update(data) {
       console.log('New Dataset: ', data);
-
-      // if (data === undefined) {
-      //   d3.select('#error').transition()
-      //     .duration(100)
-      //     .style('display', 'flex');
-      // }
 
       // Update node values
       root = d3.hierarchy(data[0], (d) => d.values);
