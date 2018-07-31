@@ -4,8 +4,8 @@
 /*                        Author: Heba El-Shimy                              */
 /*                        Email: he12@hw.ac.uk                               */
 /*                         Date: 16 July 2018                                */
-/*                     Student Contribution: 10%                             */
-/*                     Code from reference: 90%                              */
+/*                     Student Contribution: 90%                             */
+/*                     Code from reference: 10%                              */
 /*                 References:  https://bl.ocks.org/                         */
 /*****************************************************************************/
 
